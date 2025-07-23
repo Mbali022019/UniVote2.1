@@ -1,27 +1,45 @@
-#container {
+.home-bg {
+  background: #001f33;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
   text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.logo-container {
+  margin-top: 50px;
+
+  .title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #b3e5fc;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: #80d8ff;
+  }
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+.image-container {
+  margin: 30px auto;
+  max-width: 80%;
+  img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 0 25px #00bcd4;
+  }
 }
 
-#container a {
-  text-decoration: none;
+.button-container {
+  margin: 30px;
+  ion-button {
+    --background: #0288d1;
+    --color: white;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-radius: 12px;
+  }
 }

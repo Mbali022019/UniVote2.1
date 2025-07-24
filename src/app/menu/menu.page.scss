@@ -1,0 +1,271 @@
+/* menu.page.scss */
+
+// Variables
+$primary-blue: #4A90C2;
+$secondary-blue: #5B9BD5;
+$teal: #26C6DA;
+$light-gray: #F5F5F5;
+$dark-gray: #333;
+$white: #FFFFFF;
+
+// Header Styles
+ion-header {
+  ion-toolbar {
+    --background: #{$light-gray};
+    --color: #{$dark-gray};
+    --border-width: 0 0 2px 0;
+    --border-color: #{$primary-blue};
+    
+    .top-nav {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0;
+      
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        padding: 8px 16px;
+        transition: all 0.3s ease;
+        
+        .nav-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 4px;
+          
+          ion-icon {
+            font-size: 20px;
+            color: white;
+          }
+          
+          &.profile-icon {
+            background: #{$teal};
+          }
+          
+          &.notifications-icon {
+            background: #{$primary-blue};
+          }
+        }
+        
+        .nav-label {
+          font-size: 12px;
+          font-weight: 500;
+          color: #{$dark-gray};
+        }
+        
+        &.active {
+          .nav-label {
+            color: #{$primary-blue};
+            font-weight: 600;
+          }
+        }
+        
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+}
+
+// Content Styles
+.menu-content {
+  --background: #{$light-gray};
+  
+  .welcome-section {
+    padding: 32px 20px 24px 20px;
+    
+    .welcome-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #{$dark-gray};
+      margin: 0;
+      letter-spacing: 1px;
+    }
+  }
+  
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 20px 40px 20px;
+    
+    .menu-card {
+      background: #{$secondary-blue};
+      border-radius: 16px;
+      padding: 32px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+      
+      .card-icon {
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        ion-icon {
+          font-size: 40px;
+          color: #{$dark-gray};
+        }
+        
+        .vote-icon {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          
+          .vote-button {
+            background: #{$dark-gray};
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+          }
+          
+          .hand-pointer {
+            font-size: 24px;
+          }
+        }
+        
+        .results-icon {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          
+          > ion-icon {
+            margin-bottom: 8px;
+          }
+          
+          .people-icons {
+            display: flex;
+            gap: 4px;
+            
+            ion-icon {
+              font-size: 16px;
+            }
+          }
+        }
+        
+        .polls-icon {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          
+          .poll-item {
+            width: 40px;
+            height: 8px;
+            background: #{$dark-gray};
+            border-radius: 4px;
+            position: relative;
+            
+            &:nth-child(1) {
+              width: 40px;
+            }
+            
+            &:nth-child(2) {
+              width: 32px;
+            }
+            
+            &:nth-child(3) {
+              width: 36px;
+            }
+            
+            &::before {
+              content: '';
+              position: absolute;
+              right: -8px;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 6px;
+              height: 6px;
+              background: #{$dark-gray};
+              border-radius: 50%;
+            }
+          }
+        }
+      }
+      
+      .card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #{$dark-gray};
+        margin: 0;
+        text-align: center;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .menu-grid {
+    gap: 12px;
+    padding: 0 16px 32px 16px;
+    
+    .menu-card {
+      padding: 24px 12px;
+      min-height: 120px;
+      
+      .card-icon {
+        margin-bottom: 12px;
+        
+        ion-icon {
+          font-size: 32px;
+        }
+      }
+      
+      .card-title {
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .welcome-section {
+    padding: 24px 16px 20px 16px;
+    
+    .welcome-title {
+      font-size: 28px;
+    }
+  }
+}
+
+// Animation for cards
+@keyframes cardHover {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-2px);
+  }
+}
+
+.menu-card {
+  &:hover {
+    animation: cardHover 0.3s ease forwards;
+  }
+}

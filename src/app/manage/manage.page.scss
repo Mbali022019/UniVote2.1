@@ -1,0 +1,29 @@
+/* simple-poll.page.scss */
+
+.question-section {
+  margin-bottom: 24px;
+}
+
+.options-section {
+  margin-bottom: 24px;
+  
+  ion-item {
+    margin-bottom: 8px;
+  }
+  
+  ion-button {
+    margin-top: 12px;
+  }
+}
+
+.settings-section {
+  margin-bottom: 32px;
+  
+  ion-item {
+    --padding-start: 0;
+  }
+}
+
+.button-section {
+  margin-top: 24px;
+}

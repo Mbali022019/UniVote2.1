@@ -1,0 +1,39 @@
+<ion-content class="login-content">
+  <div class="header-section">
+    <div class="sign-in-box">
+      <h1>Sign In</h1>
+      <p>skip the line, vote online</p>
+    </div>
+  </div>
+  
+  <div class="form-section">
+    <div class="login-form">
+      <div class="input-group">
+        <ion-label>Email</ion-label>
+        <ion-input
+          type="email"
+          placeholder="Value"
+          [(ngModel)]="email"
+          class="custom-input">
+        </ion-input>
+      </div>
+      
+      <div class="input-group">
+        <ion-label>Password</ion-label>
+        <ion-input
+          type="password"
+          placeholder="Value"
+          [(ngModel)]="password"
+          class="custom-input">
+        </ion-input>
+      </div>
+      
+      <ion-button 
+        expand="block" 
+        class="enter-button"
+        (click)="login()">
+        ENTER
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,61 @@
+<ion-content class="ion-padding">
+  
+  <!-- Question Section -->
+  <div class="question-section">
+    <ion-item>
+      <ion-label position="stacked">Question</ion-label>
+      <ion-input 
+        [(ngModel)]="question" 
+        placeholder="What's your question?"
+        type="text">
+      </ion-input>
+    </ion-item>
+  </div>
+
+  <!-- Options Section -->
+  <div class="options-section">
+    <ion-item *ngFor="let option of options; let i = index">
+      <ion-label position="stacked">Option {{i + 1}}</ion-label>
+      <ion-input 
+        [(ngModel)]="option.text" 
+        placeholder="Enter option"
+        type="text">
+      </ion-input>
+      <ion-button 
+        fill="clear" 
+        slot="end" 
+        (click)="removeOption(i)"
+        *ngIf="options.length > 2">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+
+    <ion-button 
+      fill="outline" 
+      size="small" 
+      (click)="addOption()"
+      *ngIf="options.length < 5">
+      <ion-icon name="add" slot="start"></ion-icon>
+      Add Option
+    </ion-button>
+  </div>
+
+  <!-- Settings -->
+  <div class="settings-section">
+    <ion-item>
+      <ion-checkbox [(ngModel)]="allowMultiple"></ion-checkbox>
+      <ion-label class="ion-margin-start">Allow multiple answers</ion-label>
+    </ion-item>
+  </div>
+
+  <!-- Create Button -->
+  <div class="button-section">
+    <ion-button 
+      expand="block" 
+      (click)="createPoll()"
+      [disabled]="!isValid()">
+      Create Poll
+    </ion-button>
+  </div>
+
+</ion-content>

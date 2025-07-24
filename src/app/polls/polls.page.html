@@ -1,0 +1,83 @@
+<!-- polls.page.html -->
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Polls</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="polls-content">
+  
+  <!-- Poll Card -->
+  <div class="poll-card">
+    
+    <!-- Poll Question -->
+    <div class="poll-question">
+      <h2>{{ pollData.question }}</h2>
+    </div>
+    
+    <!-- Poll Options -->
+    <div class="poll-options">
+      <div 
+        class="poll-option" 
+        *ngFor="let option of pollData.options; let i = index"
+        (click)="selectOption(i)"
+        [class.selected]="selectedOptions.includes(i)">
+        
+        <!-- Radio/Checkbox -->
+        <div class="option-selector">
+          <ion-radio-group *ngIf="!pollData.allowMultiple" [(ngModel)]="selectedOption">
+            <ion-radio [value]="i"></ion-radio>
+          </ion-radio-group>
+          
+          <ion-checkbox 
+            *ngIf="pollData.allowMultiple" 
+            [(ngModel)]="option.selected">
+          </ion-checkbox>
+        </div>
+        
+        <!-- Option Text -->
+        <div class="option-content">
+          <span class="option-text">{{ option.text }}</span>
+          
+          <!-- Vote Count -->
+          <div class="vote-count">{{ option.votes || 0 }}</div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="vote-progress">
+          <div 
+            class="progress-bar" 
+            [style.width.%]="getVotePercentage(option.votes || 0)">
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <!-- View Votes Button -->
+    <div class="poll-actions">
+      <ion-button 
+        fill="clear" 
+        class="view-votes-btn"
+        (click)="viewVotes()">
+        View votes
+      </ion-button>
+    </div>
+    
+  </div>
+  
+  <!-- Vote Button (if not voted) -->
+  <div class="vote-button-container" *ngIf="!hasVoted">
+    <ion-button 
+      expand="block" 
+      class="vote-btn"
+      (click)="submitVote()"
+      [disabled]="!canVote()">
+      Vote
+    </ion-button>
+  </div>
+
+</ion-content>

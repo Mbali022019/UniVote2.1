@@ -1,0 +1,93 @@
+<!-- vote.page.html -->
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>CAST YOUR VOTE!</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="vote-content">
+  
+  <!-- Instructions -->
+  <div class="instructions">
+    <p>
+      Click on the checkbox next to your preferred candidate to cast your vote.
+      Confirmation of Selection: Once you click the checkbox, an "X" will appear next
+      to your chosen candidate. Review Your Selection: Please ensure you are satisfied with your selection before
+      Review Your Vote: Ensure the "X" is displayed next to your chosen party before
+      submitting your vote.
+    </p>
+  </div>
+
+  <!-- Political Parties Section -->
+  <div class="section">
+    <h2 class="section-title">Political Parties</h2>
+    
+    <div class="voting-options">
+      <div 
+        class="vote-option party-option" 
+        *ngFor="let party of politicalParties; let i = index"
+        (click)="selectParty(i)"
+        [class.selected]="selectedParty === i">
+        
+        <div class="option-content">
+          <div class="party-logo">
+            <img [src]="party.logo" [alt]="party.name + ' logo'">
+          </div>
+          <span class="option-name">{{ party.name }}</span>
+        </div>
+        
+        <div class="checkbox-container">
+          <ion-checkbox 
+            [checked]="selectedParty === i"
+            (ionChange)="selectParty(i)">
+          </ion-checkbox>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Individual Candidates Section -->
+  <div class="section">
+    <h2 class="section-title">Individual Candidates</h2>
+    <p class="section-subtitle">Select a maximum of 2 candidates</p>
+    
+    <div class="voting-options">
+      <div 
+        class="vote-option candidate-option" 
+        *ngFor="let candidate of individualCandidates; let i = index"
+        (click)="selectCandidate(i)"
+        [class.selected]="selectedCandidates.includes(i)">
+        
+        <div class="option-content">
+          <div class="candidate-photo">
+            <img [src]="candidate.photo" [alt]="candidate.name + ' photo'">
+          </div>
+          <span class="option-name">{{ candidate.name }}</span>
+        </div>
+        
+        <div class="checkbox-container">
+          <ion-checkbox 
+            [checked]="selectedCandidates.includes(i)"
+            [disabled]="!selectedCandidates.includes(i) && selectedCandidates.length >= 2"
+            (ionChange)="selectCandidate(i)">
+          </ion-checkbox>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vote Button -->
+  <div class="vote-button-container">
+    <ion-button 
+      expand="block" 
+      class="vote-btn"
+      (click)="submitVote()"
+      [disabled]="!canSubmitVote()">
+      VOTE
+    </ion-button>
+  </div>
+
+</ion-content>

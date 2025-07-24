@@ -1,0 +1,81 @@
+<!-- menu.page.html -->
+<ion-header>
+  <ion-toolbar color="light">
+    <!-- Top Navigation Tabs -->
+    <div class="top-nav">
+      <div class="nav-item" (click)="goToProfile()">
+        <div class="nav-icon profile-icon">
+          <ion-icon name="person"></ion-icon>
+        </div>
+        <span class="nav-label">Profile</span>
+      </div>
+      
+      <div class="nav-item active" (click)="goToNotifications()">
+        <div class="nav-icon notifications-icon">
+          <ion-icon name="notifications"></ion-icon>
+        </div>
+        <span class="nav-label">Notifications</span>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="menu-content">
+  
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <h1 class="welcome-title">WELCOME</h1>
+  </div>
+
+  <!-- Menu Grid -->
+  <div class="menu-grid">
+    
+    <!-- Vote Card -->
+    <div class="menu-card vote-card" (click)="goToVote()">
+      <div class="card-icon">
+        <div class="vote-icon">
+          <div class="vote-button">VOTE</div>
+          <div class="hand-pointer">👆</div>
+        </div>
+      </div>
+      <h3 class="card-title">VOTE</h3>
+    </div>
+
+    <!-- Surveys Card -->
+    <div class="menu-card surveys-card" (click)="goToSurveys()">
+      <div class="card-icon">
+        <ion-icon name="clipboard-outline"></ion-icon>
+      </div>
+      <h3 class="card-title">SURVEYS</h3>
+    </div>
+
+    <!-- Results Card -->
+    <div class="menu-card results-card" (click)="goToResults()">
+      <div class="card-icon">
+        <div class="results-icon">
+          <ion-icon name="trophy-outline"></ion-icon>
+          <div class="people-icons">
+            <ion-icon name="person"></ion-icon>
+            <ion-icon name="person"></ion-icon>
+            <ion-icon name="person"></ion-icon>
+          </div>
+        </div>
+      </div>
+      <h3 class="card-title">RESULTS</h3>
+    </div>
+
+    <!-- Polls Card -->
+    <div class="menu-card polls-card" (click)="goToPolls()">
+      <div class="card-icon">
+        <div class="polls-icon">
+          <div class="poll-item"></div>
+          <div class="poll-item"></div>
+          <div class="poll-item"></div>
+        </div>
+      </div>
+      <h3 class="card-title">POLLS</h3>
+    </div>
+
+  </div>
+
+</ion-content>

@@ -1,0 +1,125 @@
+<!-- results.page.html -->
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>RESULTS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="results-content">
+  
+  <!-- Countdown Timer -->
+  <div class="countdown-section">
+    <div class="countdown-card">
+      Count down {{ countdownTime }}
+    </div>
+  </div>
+
+  <!-- Top Candidates -->
+  <div class="top-candidates-section">
+    <div class="candidates-row">
+      <!-- Winner/Top Candidate -->
+      <div class="candidate-card winner">
+        <div class="candidate-image">
+          <img src="https://via.placeholder.com/80x80/4CAF50/FFFFFF?text=A" alt="Amahle Mncwa">
+        </div>
+        <div class="candidate-info">
+          <div class="candidate-name">Amahle Mncwa</div>
+          <div class="candidate-votes">{{ topCandidates[0].votes }}</div>
+          <div class="candidate-party">{{ topCandidates[0].party }}</div>
+        </div>
+      </div>
+
+      <!-- Second Place -->
+      <div class="candidate-card second">
+        <div class="candidate-image">
+          <img src="https://via.placeholder.com/60x60/FF9800/FFFFFF?text=W" alt="Winnie Poe">
+        </div>
+        <div class="candidate-info">
+          <div class="candidate-name">Winnie Poe</div>
+          <div class="candidate-votes">{{ topCandidates[1].votes }}</div>
+          <div class="candidate-party">{{ topCandidates[1].party }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voting Statistics -->
+  <div class="stats-section">
+    <div class="stats-row">
+      <!-- Pie Chart -->
+      <div class="pie-chart-container">
+        <canvas #pieChart width="120" height="120"></canvas>
+        <div class="chart-labels">
+          <div class="chart-label">
+            <span class="label-text">Not voted {{ votingStats.notVotedPercent }}%</span>
+          </div>
+          <div class="chart-label">
+            <span class="label-text">Votes casted {{ votingStats.votedPercent }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vote Statistics -->
+      <div class="vote-stats">
+        <div class="stat-item">
+          <ion-icon name="star" class="stat-icon"></ion-icon>
+          <span class="stat-label">Voter roll</span>
+          <span class="stat-value">{{ votingStats.voterRoll }}</span>
+        </div>
+        <div class="stat-item">
+          <ion-icon name="star" class="stat-icon"></ion-icon>
+          <span class="stat-label">Votes casted</span>
+          <span class="stat-value">{{ votingStats.votesCasted }}</span>
+        </div>
+        <div class="stat-item">
+          <ion-icon name="star" class="stat-icon"></ion-icon>
+          <span class="stat-label">Not voted</span>
+          <span class="stat-value">{{ votingStats.notVoted }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Faculty Participation Chart -->
+  <div class="faculty-section">
+    <h3 class="section-title">Voting Participation by Faculty</h3>
+    
+    <div class="faculty-chart">
+      <div class="chart-container">
+        <div class="faculty-bar" *ngFor="let faculty of facultyData">
+          <div class="faculty-name">{{ faculty.name }}</div>
+          <div class="bars-container">
+            <div class="bar-group">
+              <div 
+                class="bar votes-casted" 
+                [style.height.%]="faculty.votedPercent">
+                <span class="bar-value">{{ faculty.votedPercent }}%</span>
+              </div>
+              <div 
+                class="bar not-voted" 
+                [style.height.%]="faculty.notVotedPercent">
+                <span class="bar-value">{{ faculty.notVotedPercent }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color votes-casted-color"></div>
+        <span class="legend-label">Votes casted</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color not-voted-color"></div>
+        <span class="legend-label">Not voted</span>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

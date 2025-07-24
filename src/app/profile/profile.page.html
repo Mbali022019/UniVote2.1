@@ -1,0 +1,187 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Profile</ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="!isEditing" (click)="toggleEdit()">
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="isEditing" (click)="saveProfile()">
+        <ion-icon name="checkmark"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="isEditing" (click)="toggleEdit()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Profile</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="avatar-container">
+      <ion-avatar class="profile-avatar" (click)="changeAvatar()">
+        <img [src]="avatarUrl" alt="Profile Avatar">
+        <div class="avatar-overlay">
+          <ion-icon name="camera"></ion-icon>
+        </div>
+      </ion-avatar>
+      <div class="profile-info">
+        <h2>{{ userProfile.firstName }} {{ userProfile.lastName }}</h2>
+        <p>{{ userProfile.studentId }}</p>
+        <ion-chip color="primary">
+          <ion-label>{{ userProfile.department }}</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Form -->
+  <div class="profile-content">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Personal Information</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Name Fields -->
+        <ion-row>
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">First Name</ion-label>
+              <ion-input 
+                [(ngModel)]="userProfile.firstName"
+                [readonly]="!isEditing"
+                type="text"
+                placeholder="Enter first name">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">Last Name</ion-label>
+              <ion-input 
+                [(ngModel)]="userProfile.lastName"
+                [readonly]="!isEditing"
+                type="text"
+                placeholder="Enter last name">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <!-- Email -->
+        <ion-item>
+          <ion-label position="stacked">Email Address</ion-label>
+          <ion-input 
+            [(ngModel)]="userProfile.email"
+            [readonly]="!isEditing"
+            type="email"
+            placeholder="Enter email address">
+          </ion-input>
+          <ion-icon name="mail" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <!-- Phone Number -->
+        <ion-item>
+          <ion-label position="stacked">Phone Number</ion-label>
+          <ion-input 
+            [(ngModel)]="userProfile.phone"
+            [readonly]="!isEditing"
+            type="tel"
+            placeholder="Enter phone number">
+          </ion-input>
+          <ion-icon name="call" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <!-- Date of Birth -->
+        <ion-item>
+          <ion-label position="stacked">Date of Birth</ion-label>
+          <ion-datetime 
+            [(ngModel)]="userProfile.dateOfBirth"
+            [disabled]="!isEditing"
+            display-format="DD/MM/YYYY"
+            picker-format="DD/MM/YYYY"
+            placeholder="Select date of birth">
+          </ion-datetime>
+          <ion-icon name="calendar" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <!-- Address -->
+        <ion-item>
+          <ion-label position="stacked">Address</ion-label>
+          <ion-textarea 
+            [(ngModel)]="userProfile.address"
+            [readonly]="!isEditing"
+            rows="2"
+            placeholder="Enter your address">
+          </ion-textarea>
+          <ion-icon name="location" slot="end" color="medium"></ion-icon>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Academic Information -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Academic Information</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Student ID -->
+        <ion-item>
+          <ion-label position="stacked">Student ID</ion-label>
+          <ion-input 
+            [(ngModel)]="userProfile.studentId"
+            [readonly]="!isEditing"
+            type="text"
+            placeholder="Enter student ID">
+          </ion-input>
+          <ion-icon name="card" slot="end" color="medium"></ion-icon>
+        </ion-item>
+
+        <!-- Department -->
+        <ion-item>
+          <ion-label position="stacked">Department</ion-label>
+          <ion-select 
+            [(ngModel)]="userProfile.department"
+            [disabled]="!isEditing"
+            placeholder="Select your department">
+            <ion-select-option *ngFor="let dept of departments" [value]="dept">
+              {{ dept }}
+            </ion-select-option>
+          </ion-select>
+          <ion-icon name="school" slot="end" color="medium"></ion-icon>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Action Buttons (only show when editing) -->
+    <div class="action-buttons" *ngIf="isEditing">
+      <ion-button 
+        expand="block" 
+        color="success" 
+        (click)="saveProfile()">
+        <ion-icon name="checkmark" slot="start"></ion-icon>
+        Save Changes
+      </ion-button>
+      
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        color="medium" 
+        (click)="toggleEdit()">
+        <ion-icon name="close" slot="start"></ion-icon>
+        Cancel
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

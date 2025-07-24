@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniVote - Register</title>
+    <link rel="stylesheet" href="register.scss">
+</head>
+<body>
+    <div class="header">
+        <h1>Register</h1>
+        <p>skip the line, vote online</p>
+    </div>
+
+    <div class="main-content">
+        <div class="form-row">
+            <div class="form-card">
+                <div class="form-group">
+                    <label for="surname">Surname & Initials :</label>
+                    <input type="text" id="surname" name="surname" placeholder="Value">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone No :</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Value">
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="form-group">
+                    <label for="course">Course :</label>
+                    <input type="text" id="course" name="course" placeholder="Value">
+                </div>
+                <div class="form-group">
+                    <label for="year">Year :</label>
+                    <input type="number" id="year" name="year" placeholder="Value">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card full-width">
+            <div class="form-group">
+                <label for="faculty">Faculty :</label>
+                <input type="text" id="faculty" name="faculty" placeholder="Value">
+            </div>
+            <button type="submit" class="add-button">Add</button>
+        </div>
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+        <div class="form-card full-width">
+            <div class="upload-section">
+                <h3>Upload Spreadsheet</h3>
+                <p>Import multiple registrations from Excel or CSV file</p>
+                <input type="file" id="spreadsheet" name="spreadsheet" accept=".xlsx,.xls,.csv" class="file-input">
+                <label for="spreadsheet" class="upload-button">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z" fill="currentColor"/>
+                        <path d="M8 12H16V14H8V12ZM8 16H13V18H8V16Z" fill="currentColor"/>
+                    </svg>
+                    Choose Spreadsheet File
+                </label>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <span id="fileName"></span>
+                    <button type="button" class="remove-file" onclick="removeFile()">×</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

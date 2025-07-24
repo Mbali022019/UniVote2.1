@@ -1,0 +1,113 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Available Surveys</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Available Surveys</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Search and Filter Section -->
+  <div class="search-filter-container">
+    <ion-searchbar 
+      [(ngModel)]="searchTerm" 
+      (ionInput)="onSearchChange()"
+      placeholder="Search surveys..."
+      debounce="300">
+    </ion-searchbar>
+    
+    <ion-item>
+      <ion-select 
+        [(ngModel)]="selectedCategory" 
+        (ionChange)="onCategoryChange()"
+        placeholder="Select Category"
+        interface="popover">
+        <ion-select-option 
+          *ngFor="let category of categories" 
+          [value]="category.value">
+          {{ category.label }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading surveys...</p>
+  </div>
+
+  <!-- Surveys List -->
+  <div *ngIf="!isLoading">
+    <!-- Pull to Refresh -->
+    <ion-refresher slot="fixed" (ionRefresh)="refreshSurveys($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <!-- No Surveys Found -->
+    <div *ngIf="filteredSurveys.length === 0" class="empty-state">
+      <ion-icon name="document-text-outline" size="large"></ion-icon>
+      <h3>No surveys found</h3>
+      <p>Try adjusting your search or filter criteria</p>
+    </div>
+
+    <!-- Survey Cards -->
+    <div class="surveys-container" *ngIf="filteredSurveys.length > 0">
+      <ion-card 
+        *ngFor="let survey of filteredSurveys" 
+        [class.completed]="survey.isCompleted"
+        (click)="takeSurvey(survey)">
+        
+        <ion-card-header>
+          <div class="card-header-content">
+            <ion-card-title>{{ survey.title }}</ion-card-title>
+            <ion-chip 
+              [color]="getCategoryColor(survey.category)" 
+              size="small">
+              {{ getCategoryLabel(survey.category) }}
+            </ion-chip>
+          </div>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="survey-meta">
+            <div class="meta-item">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ survey.estimatedTime }} min</span>
+            </div>
+            <div class="meta-item">
+              <ion-icon name="people-outline"></ion-icon>
+              <span>{{ survey.responseCount }} responses</span>
+            </div>
+            <div class="meta-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ formatDate(survey.createdDate) }}</span>
+            </div>
+          </div>
+
+          <div class="survey-questions-preview">
+            <p>{{ survey.questions.length }} question{{ survey.questions.length !== 1 ? 's' : '' }}</p>
+          </div>
+
+          <div class="survey-status" *ngIf="survey.isCompleted">
+            <ion-chip color="success" size="small">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <ion-label>Completed</ion-label>
+            </ion-chip>
+          </div>
+        </ion-card-content>
+
+        <div class="card-action" *ngIf="!survey.isCompleted">
+          <ion-button fill="clear" size="small">
+            <ion-icon name="arrow-forward" slot="end"></ion-icon>
+            Take Survey
+          </ion-button>
+        </div>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

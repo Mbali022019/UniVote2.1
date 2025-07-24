@@ -1,0 +1,420 @@
+/* results.page.scss */
+
+// Variables
+$primary-blue: #4A90C2;
+$countdown-blue: #5B9BD5;
+$background-gray: #F5F5F5;
+$white: #FFFFFF;
+$dark-text: #333333;
+$light-text: #666666;
+$yellow: #FFC107;
+$blue: #2196F3;
+$green: #4CAF50;
+$sasco-yellow: #FFD700;
+
+// Header
+ion-header {
+  ion-toolbar {
+    --background: #{$primary-blue};
+    --color: #{$white};
+    
+    ion-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+    
+    ion-back-button {
+      --color: #{$white};
+    }
+  }
+}
+
+// Content
+.results-content {
+  --background: #{$background-gray};
+  padding: 20px 16px;
+  
+  // Countdown Section
+  .countdown-section {
+    margin-bottom: 24px;
+    
+    .countdown-card {
+      background: #{$countdown-blue};
+      color: #{$white};
+      padding: 16px 24px;
+      border-radius: 25px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba($countdown-blue, 0.3);
+    }
+  }
+  
+  // Top Candidates Section
+  .top-candidates-section {
+    margin-bottom: 32px;
+    
+    .candidates-row {
+      display: flex;
+      gap: 16px;
+      align-items: flex-end;
+      
+      .candidate-card {
+        background: #{$white};
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        
+        &.winner {
+          flex: 1.2;
+          border: 3px solid #{$green};
+          
+          .candidate-image {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 12px auto;
+            
+            img {
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+              object-fit: cover;
+              border: 3px solid #{$sasco-yellow};
+            }
+          }
+        }
+        
+        &.second {
+          flex: 1;
+          
+          .candidate-image {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 12px auto;
+            
+            img {
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+              object-fit: cover;
+            }
+          }
+        }
+        
+        .candidate-info {
+          .candidate-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #{$dark-text};
+            margin-bottom: 4px;
+          }
+          
+          .candidate-votes {
+            font-size: 18px;
+            font-weight: 700;
+            color: #{$dark-text};
+            margin-bottom: 4px;
+          }
+          
+          .candidate-party {
+            font-size: 12px;
+            color: #{$light-text};
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+  
+  // Statistics Section
+  .stats-section {
+    margin-bottom: 32px;
+    
+    .stats-row {
+      display: flex;
+      gap: 20px;
+      background: #{$white};
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      
+      .pie-chart-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        
+        canvas {
+          margin-bottom: 12px;
+        }
+        
+        .chart-labels {
+          text-align: center;
+          
+          .chart-label {
+            margin-bottom: 4px;
+            
+            .label-text {
+              font-size: 12px;
+              color: #{$dark-text};
+              font-weight: 500;
+            }
+          }
+        }
+      }
+      
+      .vote-stats {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 12px;
+        
+        .stat-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          
+          .stat-icon {
+            color: #{$primary-blue};
+            font-size: 16px;
+          }
+          
+          .stat-label {
+            font-size: 14px;
+            color: #{$dark-text};
+            flex: 1;
+          }
+          
+          .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #{$dark-text};
+          }
+        }
+      }
+    }
+  }
+  
+  // Faculty Section
+  .faculty-section {
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #{$dark-text};
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .faculty-chart {
+      background: #{$white};
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      
+      .chart-container {
+        display: flex;
+        gap: 16px;
+        align-items: flex-end;
+        height: 200px;
+        
+        .faculty-bar {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          height: 100%;
+          
+          .faculty-name {
+            font-size: 11px;
+            color: #{$dark-text};
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+          }
+          
+          .bars-container {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            width: 100%;
+            
+            .bar-group {
+              display: flex;
+              gap: 4px;
+              width: 100%;
+              height: 150px;
+              align-items: flex-end;
+              
+              .bar {
+                flex: 1;
+                min-height: 10px;
+                border-radius: 4px 4px 0 0;
+                position: relative;
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+                padding-top: 4px;
+                
+                &.votes-casted {
+                  background: #{$yellow};
+                }
+                
+                &.not-voted {
+                  background: #{$blue};
+                }
+                
+                .bar-value {
+                  font-size: 10px;
+                  font-weight: 600;
+                  color: #{$white};
+                  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      background: #{$white};
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        .legend-color {
+          width: 16px;
+          height: 16px;
+          border-radius: 2px;
+          
+          &.votes-casted-color {
+            background: #{$yellow};
+          }
+          
+          &.not-voted-color {
+            background: #{$blue};
+          }
+        }
+        
+        .legend-label {
+          font-size: 14px;
+          color: #{$dark-text};
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .results-content {
+    padding: 16px 12px;
+    
+    .top-candidates-section {
+      .candidates-row {
+        gap: 12px;
+        
+        .candidate-card {
+          padding: 12px;
+          
+          &.winner .candidate-image {
+            width: 60px;
+            height: 60px;
+          }
+          
+          &.second .candidate-image {
+            width: 50px;
+            height: 50px;
+          }
+          
+          .candidate-info {
+            .candidate-name {
+              font-size: 12px;
+            }
+            
+            .candidate-votes {
+              font-size: 16px;
+            }
+            
+            .candidate-party {
+              font-size: 11px;
+            }
+          }
+        }
+      }
+    }
+    
+    .stats-section {
+      .stats-row {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+      }
+    }
+    
+    .faculty-section {
+      .faculty-chart {
+        padding: 16px;
+        
+        .chart-container {
+          gap: 8px;
+          height: 160px;
+          
+          .faculty-bar {
+            .faculty-name {
+              font-size: 10px;
+              min-height: 28px;
+            }
+            
+            .bars-container .bar-group {
+              height: 120px;
+              
+              .bar .bar-value {
+                font-size: 9px;
+              }
+            }
+          }
+        }
+      }
+      
+      .legend {
+        gap: 16px;
+        
+        .legend-item .legend-label {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes barGrow {
+  from {
+    height: 0%;
+  }
+  to {
+    height: var(--target-height);
+  }
+}
+
+.bar {
+  animation: barGrow 1s ease-out;
+}

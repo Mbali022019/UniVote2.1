@@ -1,0 +1,287 @@
+/* vote.page.scss */
+
+// Variables
+$background-gray: #F5F5F5;
+$card-gray: #E8E8E8;
+$dark-text: #333333;
+$green-vote: #7CB342;
+$white: #FFFFFF;
+$border-gray: #CCCCCC;
+$selected-border: #4CAF50;
+
+// Header
+ion-header {
+  ion-toolbar {
+    --background: #{$background-gray};
+    --color: #{$dark-text};
+    --border-width: 0 0 1px 0;
+    --border-color: #{$border-gray};
+    
+    ion-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+    
+    ion-back-button {
+      --color: #{$dark-text};
+    }
+  }
+}
+
+// Content
+.vote-content {
+  --background: #{$background-gray};
+  padding: 20px 16px;
+  
+  .instructions {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #{$white};
+    border-radius: 8px;
+    border: 1px solid #{$border-gray};
+    
+    p {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #{$dark-text};
+      margin: 0;
+    }
+  }
+  
+  .section {
+    margin-bottom: 32px;
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #{$dark-text};
+      margin: 0 0 8px 0;
+      letter-spacing: 0.3px;
+    }
+    
+    .section-subtitle {
+      font-size: 14px;
+      color: #666;
+      margin: 0 0 16px 0;
+      font-style: italic;
+    }
+    
+    .voting-options {
+      .vote-option {
+        background: #{$card-gray};
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+        
+        &:hover {
+          background: darken($card-gray, 5%);
+        }
+        
+        &.selected {
+          border-color: #{$selected-border};
+          background: lighten($selected-border, 45%);
+        }
+        
+        .option-content {
+          display: flex;
+          align-items: center;
+          flex: 1;
+          
+          .party-logo,
+          .candidate-photo {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #{$white};
+            border: 1px solid #{$border-gray};
+            
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
+          
+          .candidate-photo {
+            border-radius: 50%;
+          }
+          
+          .option-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #{$dark-text};
+            flex: 1;
+          }
+        }
+        
+        .checkbox-container {
+          margin-left: 16px;
+          
+          ion-checkbox {
+            --size: 24px;
+            --color: #{$green-vote};
+            --color-checked: #{$green-vote};
+            --checkmark-color: #{$white};
+            --border-radius: 4px;
+            --border-width: 2px;
+            --border-color: #{$border-gray};
+            --border-color-checked: #{$green-vote};
+            
+            &.checkbox-disabled {
+              --color: #ccc;
+              --border-color: #ccc;
+              opacity: 0.5;
+            }
+          }
+        }
+        
+        // Special styling for party options
+        &.party-option {
+          .party-logo {
+            &.effsc {
+              background: #FFD700;
+            }
+            
+            &.sasco {
+              background: #00A651;
+            }
+            
+            &.sadesmo {
+              background: #FF6B35;
+            }
+            
+            &.da {
+              background: #005BA6;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .vote-button-container {
+    margin-top: 40px;
+    padding: 0 20px;
+    
+    .vote-btn {
+      --background: #{$green-vote};
+      --background-hover: darken($green-vote, 10%);
+      --color: #{$white};
+      --border-radius: 25px;
+      --padding-top: 16px;
+      --padding-bottom: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 12px rgba($green-vote, 0.3);
+      
+      &:disabled {
+        --background: #ccc;
+        --color: #999;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 480px) {
+  .vote-content {
+    padding: 16px 12px;
+    
+    .instructions {
+      padding: 12px;
+      
+      p {
+        font-size: 13px;
+      }
+    }
+    
+    .section {
+      .voting-options {
+        .vote-option {
+          padding: 12px;
+          
+          .option-content {
+            .party-logo,
+            .candidate-photo {
+              width: 40px;
+              height: 40px;
+              margin-right: 12px;
+            }
+            
+            .option-name {
+              font-size: 15px;
+            }
+          }
+          
+          .checkbox-container {
+            ion-checkbox {
+              --size: 20px;
+            }
+          }
+        }
+      }
+    }
+    
+    .vote-button-container {
+      padding: 0 16px;
+      
+      .vote-btn {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+// Animation for selection
+@keyframes selectOption {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.vote-option.selected {
+  animation: selectOption 0.3s ease;
+}
+
+// Custom scrollbar
+.vote-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.vote-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.vote-content::-webkit-scrollbar-thumb {
+  background: rgba($green-vote, 0.3);
+  border-radius: 2px;
+}
+
+.vote-content::-webkit-scrollbar-thumb:hover {
+  background: rgba($green-vote, 0.5);
+}

@@ -1,13 +1,247 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>admin</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>CREATE SURVEY</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">admin</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="create-survey-content">
+  <form (ngSubmit)="createSurvey()" #surveyForm="ngForm">
+    
+    <!-- Survey Title Section -->
+    <div class="form-section">
+      <ion-label class="section-label">ADD TITLE OF THE SURVEY</ion-label>
+      <ion-item class="custom-item">
+        <ion-input
+          [(ngModel)]="survey.title"
+          name="title"
+          placeholder="Enter survey title..."
+          required
+          #titleInput="ngModel">
+        </ion-input>
+      </ion-item>
+      <div class="error-message" *ngIf="titleInput.invalid && titleInput.touched">
+        Survey title is required
+      </div>
+    </div>
+
+    <!-- Category Selection -->
+    <div class="form-section">
+      <ion-item class="custom-item">
+        <ion-select
+          [(ngModel)]="survey.category"
+          name="category"
+          placeholder="CATEGORY"
+          interface="popover"
+          required
+          #categorySelect="ngModel">
+          <ion-select-option value="politics">Politics</ion-select-option>
+          <ion-select-option value="education">Education</ion-select-option>
+          <ion-select-option value="healthcare">Healthcare</ion-select-option>
+          <ion-select-option value="environment">Environment</ion-select-option>
+          <ion-select-option value="technology">Technology</ion-select-option>
+          <ion-select-option value="social">Social Issues</ion-select-option>
+          <ion-select-option value="economy">Economy</ion-select-option>
+          <ion-select-option value="other">Other</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <!-- Estimated Time -->
+    <div class="form-section">
+      <ion-label class="section-label">ESTIMATED TIME (MINUTES)</ion-label>
+      <ion-item class="custom-item">
+        <ion-input
+          type="number"
+          [(ngModel)]="survey.estimatedTime"
+          name="estimatedTime"
+          placeholder="e.g., 5"
+          min="1"
+          max="60"
+          required>
+        </ion-input>
+      </ion-item>
+    </div>
+
+    <!-- Questions Section -->
+    <div class="form-section">
+      <div class="questions-header">
+        <ion-label class="section-label">SURVEY QUESTIONS</ion-label>
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          color="primary"
+          (click)="addQuestion()">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Add Question
+        </ion-button>
+      </div>
+
+      <!-- Question Items -->
+      <div *ngFor="let question of survey.questions; let i = index" class="question-item">
+        <div class="question-header">
+          <span class="question-number">Question {{ i + 1 }}</span>
+          <ion-button 
+            fill="clear" 
+            size="small" 
+            color="danger"
+            (click)="removeQuestion(i)"
+            *ngIf="survey.questions.length > 1">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+
+        <!-- Question Text -->
+        <ion-item class="custom-item">
+          <ion-textarea
+            [(ngModel)]="question.text"
+            [name]="'question_' + i"
+            placeholder="Write your question here..."
+            rows="2"
+            required>
+          </ion-textarea>
+        </ion-item>
+
+        <!-- Question Type -->
+        <ion-item class="custom-item">
+          <ion-select
+            [(ngModel)]="question.type"
+            [name]="'questionType_' + i"
+            placeholder="Question Type"
+            (ionChange)="onQuestionTypeChange(i)">
+            <ion-select-option value="multiple-choice">Multiple Choice</ion-select-option>
+            <ion-select-option value="text">Text Response</ion-select-option>
+            <ion-select-option value="rating">Rating Scale</ion-select-option>
+            <ion-select-option value="yes-no">Yes/No</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Options for Multiple Choice -->
+        <div *ngIf="question.type === 'multiple-choice'" class="options-section">
+          <div class="options-header">
+            <ion-label class="sub-label">ADD OPTIONS</ion-label>
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              color="primary"
+              (click)="addOption(i)">
+              <ion-icon name="add" slot="start"></ion-icon>
+              Add Option
+            </ion-button>
+          </div>
+
+          <div *ngFor="let option of question.options; let j = index" class="option-item">
+            <ion-item class="custom-item">
+              <ion-input
+                [(ngModel)]="question.options[j]"
+                [name]="'option_' + i + '_' + j"
+                [placeholder]="'Option ' + (j + 1)"
+                required>
+              </ion-input>
+              <ion-button 
+                slot="end" 
+                fill="clear" 
+                size="small" 
+                color="danger"
+                (click)="removeOption(i, j)"
+                *ngIf="question.options.length > 2">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </div>
+
+          <!-- Allow Multiple Answers Toggle -->
+          <ion-item class="custom-item toggle-item">
+            <ion-label>ALLOW MULTIPLE ANSWERS</ion-label>
+            <ion-toggle
+              [(ngModel)]="question.allowMultiple"
+              [name]="'allowMultiple_' + i"
+              slot="end">
+            </ion-toggle>
+          </ion-item>
+        </div>
+
+        <!-- Rating Scale Configuration -->
+        <div *ngIf="question.type === 'rating'" class="rating-section">
+          <ion-item class="custom-item">
+            <ion-label position="stacked">Scale Range</ion-label>
+            <ion-select
+              [(ngModel)]="question.ratingScale"
+              [name]="'ratingScale_' + i">
+              <ion-select-option value="1-5">1 to 5</ion-select-option>
+              <ion-select-option value="1-10">1 to 10</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <!-- Required Question Toggle -->
+        <ion-item class="custom-item toggle-item">
+          <ion-label>REQUIRED QUESTION</ion-label>
+          <ion-toggle
+            [(ngModel)]="question.required"
+            [name]="'required_' + i"
+            slot="end">
+          </ion-toggle>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- Survey Settings -->
+    <div class="form-section">
+      <ion-label class="section-label">SURVEY SETTINGS</ion-label>
+      
+      <ion-item class="custom-item toggle-item">
+        <ion-label>ALLOW ANONYMOUS RESPONSES</ion-label>
+        <ion-toggle
+          [(ngModel)]="survey.allowAnonymous"
+          name="allowAnonymous"
+          slot="end">
+        </ion-toggle>
+      </ion-item>
+
+      <ion-item class="custom-item toggle-item">
+        <ion-label>ACTIVE SURVEY</ion-label>
+        <ion-toggle
+          [(ngModel)]="survey.isActive"
+          name="isActive"
+          slot="end">
+        </ion-toggle>
+      </ion-item>
+
+      <!-- End Date -->
+      <ion-item class="custom-item">
+        <ion-label position="stacked">End Date (Optional)</ion-label>
+        <ion-datetime
+          [(ngModel)]="survey.endDate"
+          name="endDate"
+          presentation="date"
+          [min]="getCurrentDate()">
+        </ion-datetime>
+      </ion-item>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        color="medium"
+        (click)="saveDraft()"
+        [disabled]="isSubmitting">
+        <ion-icon name="bookmark-outline" slot="start"></ion-icon>
+        Save as Draft
+      </ion-button>
+
+      <ion-button 
+        expand="block" 
+        type="submit"
+        class="create-button"
+        [disabled]="surveyForm.invalid || isSubmitting">
+        <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+        <span *ngIf="!isSubmitting">CREATE SURVEY</span>
+      </ion-button>
+    </div>
+  </form>
 </ion-content>

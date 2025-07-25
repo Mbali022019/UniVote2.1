@@ -1,61 +1,201 @@
-<ion-content class="ion-padding">
-  
-  <!-- Question Section -->
-  <div class="question-section">
-    <ion-item>
-      <ion-label position="stacked">Question</ion-label>
-      <ion-input 
-        [(ngModel)]="question" 
-        placeholder="What's your question?"
-        type="text">
-      </ion-input>
-    </ion-item>
-  </div>
-
-  <!-- Options Section -->
-  <div class="options-section">
-    <ion-item *ngFor="let option of options; let i = index">
-      <ion-label position="stacked">Option {{i + 1}}</ion-label>
-      <ion-input 
-        [(ngModel)]="option.text" 
-        placeholder="Enter option"
-        type="text">
-      </ion-input>
-      <ion-button 
-        fill="clear" 
-        slot="end" 
-        (click)="removeOption(i)"
-        *ngIf="options.length > 2">
-        <ion-icon name="trash"></ion-icon>
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Manage Polls</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openCreateModal()">
+        <ion-icon name="add" slot="icon-only"></ion-icon>
       </ion-button>
-    </ion-item>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-    <ion-button 
-      fill="outline" 
-      size="small" 
-      (click)="addOption()"
-      *ngIf="options.length < 5">
-      <ion-icon name="add" slot="start"></ion-icon>
-      Add Option
-    </ion-button>
+<ion-content [fullscreen]="true">
+  <!-- Stats Section -->
+  <div class="stats-grid">
+    <ion-card class="stat-card">
+      <ion-card-content>
+        <div class="stat-content">
+          <ion-icon name="bar-chart" color="primary"></ion-icon>
+          <div>
+            <h2>{{totalPolls}}</h2>
+            <p>Total Polls</p>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="stat-card">
+      <ion-card-content>
+        <div class="stat-content">
+          <ion-icon name="people" color="success"></ion-icon>
+          <div>
+            <h2>{{totalVotes}}</h2>
+            <p>Total Votes</p>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="stat-card">
+      <ion-card-content>
+        <div class="stat-content">
+          <ion-icon name="checkmark-circle" color="tertiary"></ion-icon>
+          <div>
+            <h2>{{activePolls}}</h2>
+            <p>Active</p>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
 
-  <!-- Settings -->
-  <div class="settings-section">
-    <ion-item>
-      <ion-checkbox [(ngModel)]="allowMultiple"></ion-checkbox>
-      <ion-label class="ion-margin-start">Allow multiple answers</ion-label>
-    </ion-item>
+  <!-- Search Bar -->
+  <div class="search-section">
+    <ion-searchbar 
+      [(ngModel)]="searchText" 
+      (ionInput)="filterPolls()" 
+      placeholder="Search polls...">
+    </ion-searchbar>
   </div>
 
-  <!-- Create Button -->
-  <div class="button-section">
-    <ion-button 
-      expand="block" 
-      (click)="createPoll()"
-      [disabled]="!isValid()">
-      Create Poll
-    </ion-button>
+  <!-- Filter Tabs -->
+  <ion-segment [(ngModel)]="selectedFilter" (ionChange)="filterPolls()">
+    <ion-segment-button value="all">
+      <ion-label>All</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="active">
+      <ion-label>Active</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="closed">
+      <ion-label>Closed</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Polls List -->
+  <div class="polls-list">
+    <ion-card *ngFor="let poll of displayedPolls" class="poll-card">
+      <ion-card-header>
+        <div class="poll-header">
+          <ion-card-title>{{poll.title}}</ion-card-title>
+          <ion-badge [color]="poll.isActive ? 'success' : 'medium'">
+            {{poll.isActive ? 'Active' : 'Closed'}}
+          </ion-badge>
+        </div>
+        <ion-card-subtitle>{{poll.description}}</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="poll-info">
+          <div class="info-item">
+            <ion-icon name="people-outline"></ion-icon>
+            <span>{{poll.votes}} votes</span>
+          </div>
+          <div class="info-item">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{poll.createdDate}}</span>
+          </div>
+        </div>
+
+        <div class="poll-actions">
+          <ion-button fill="outline" size="small" (click)="viewPollResults(poll)">
+            <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+            Results
+          </ion-button>
+          <ion-button fill="outline" size="small" (click)="editPoll(poll)">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Edit
+          </ion-button>
+          <ion-button fill="outline" size="small" (click)="deletePoll(poll.id)">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Delete
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="displayedPolls.length === 0">
+      <ion-icon name="clipboard-outline" size="large"></ion-icon>
+      <h3>No polls found</h3>
+      <p>Create your first poll to get started!</p>
+      <ion-button (click)="openCreateModal()" expand="block">
+        Create Poll
+      </ion-button>
+    </div>
   </div>
 
+  <!-- FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="openCreateModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
+
+<!-- Create Poll Modal -->
+<ion-modal [isOpen]="showCreateModal" (didDismiss)="closeCreateModal()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Create New Poll</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeCreateModal()">
+            <ion-icon name="close" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <div class="modal-content">
+        <ion-item>
+          <ion-label position="stacked">Poll Title *</ion-label>
+          <ion-input [(ngModel)]="newPoll.title" placeholder="Enter poll title"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Description</ion-label>
+          <ion-textarea [(ngModel)]="newPoll.description" placeholder="Enter description (optional)" rows="3"></ion-textarea>
+        </ion-item>
+
+        <div class="options-section">
+          <ion-item>
+            <ion-label><strong>Options</strong></ion-label>
+          </ion-item>
+
+          <ion-item *ngFor="let option of newPoll.options; let i = index">
+            <ion-label position="stacked">Option {{i + 1}} *</ion-label>
+            <ion-input [(ngModel)]="option.text" placeholder="Enter option"></ion-input>
+            <ion-button fill="clear" slot="end" (click)="removeOption(i)" *ngIf="newPoll.options.length > 2">
+              <ion-icon name="trash-outline" color="danger"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <ion-button fill="clear" expand="block" (click)="addOption()" *ngIf="newPoll.options.length < 6">
+            <ion-icon name="add" slot="start"></ion-icon>
+            Add Option
+          </ion-button>
+        </div>
+
+        <ion-item>
+          <ion-checkbox [(ngModel)]="newPoll.allowMultiple"></ion-checkbox>
+          <ion-label class="ion-margin-start">Allow multiple answers</ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-checkbox [(ngModel)]="newPoll.isAnonymous"></ion-checkbox>
+          <ion-label class="ion-margin-start">Anonymous voting</ion-label>
+        </ion-item>
+
+        <div class="modal-actions">
+          <ion-button expand="block" (click)="createPoll()" [disabled]="!canCreatePoll()">
+            Create Poll
+          </ion-button>
+        </div>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>

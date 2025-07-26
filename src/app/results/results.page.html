@@ -1,6 +1,5 @@
-<!-- results.page.html -->
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -9,21 +8,28 @@
 </ion-header>
 
 <ion-content class="results-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Election Results</h1>
+    <p class="page-subtitle">Live voting statistics and candidate standings</p>
+  </div>
   
   <!-- Countdown Timer -->
   <div class="countdown-section">
     <div class="countdown-card">
-      Count down {{ countdownTime }}
+      🕐 Count down {{ countdownTime }}
     </div>
   </div>
 
   <!-- Top Candidates -->
   <div class="top-candidates-section">
+    <h2 class="section-title">Leading Candidates</h2>
     <div class="candidates-row">
       <!-- Winner/Top Candidate -->
       <div class="candidate-card winner">
         <div class="candidate-image">
-          <img src="https://via.placeholder.com/80x80/4CAF50/FFFFFF?text=A" alt="Amahle Mncwa">
+          <img src="https://via.placeholder.com/90x90/4CAF50/FFFFFF?text=A" alt="Amahle Mncwa">
         </div>
         <div class="candidate-info">
           <div class="candidate-name">Amahle Mncwa</div>
@@ -35,7 +41,7 @@
       <!-- Second Place -->
       <div class="candidate-card second">
         <div class="candidate-image">
-          <img src="https://via.placeholder.com/60x60/FF9800/FFFFFF?text=W" alt="Winnie Poe">
+          <img src="https://via.placeholder.com/70x70/FF9800/FFFFFF?text=W" alt="Winnie Poe">
         </div>
         <div class="candidate-info">
           <div class="candidate-name">Winnie Poe</div>
@@ -48,16 +54,17 @@
 
   <!-- Voting Statistics -->
   <div class="stats-section">
+    <h2 class="section-title">Voting Statistics</h2>
     <div class="stats-row">
       <!-- Pie Chart -->
       <div class="pie-chart-container">
-        <canvas #pieChart width="120" height="120"></canvas>
+        <canvas #pieChart width="140" height="140"></canvas>
         <div class="chart-labels">
           <div class="chart-label">
-            <span class="label-text">Not voted {{ votingStats.notVotedPercent }}%</span>
+            <span class="label-text">📊 Not voted {{ votingStats.notVotedPercent }}%</span>
           </div>
           <div class="chart-label">
-            <span class="label-text">Votes casted {{ votingStats.votedPercent }}%</span>
+            <span class="label-text">✅ Votes casted {{ votingStats.votedPercent }}%</span>
           </div>
         </div>
       </div>
@@ -65,17 +72,17 @@
       <!-- Vote Statistics -->
       <div class="vote-stats">
         <div class="stat-item">
-          <ion-icon name="star" class="stat-icon"></ion-icon>
+          <ion-icon name="people" class="stat-icon"></ion-icon>
           <span class="stat-label">Voter roll</span>
           <span class="stat-value">{{ votingStats.voterRoll }}</span>
         </div>
         <div class="stat-item">
-          <ion-icon name="star" class="stat-icon"></ion-icon>
+          <ion-icon name="checkmark-circle" class="stat-icon"></ion-icon>
           <span class="stat-label">Votes casted</span>
           <span class="stat-value">{{ votingStats.votesCasted }}</span>
         </div>
         <div class="stat-item">
-          <ion-icon name="star" class="stat-icon"></ion-icon>
+          <ion-icon name="time" class="stat-icon"></ion-icon>
           <span class="stat-label">Not voted</span>
           <span class="stat-value">{{ votingStats.notVoted }}</span>
         </div>
@@ -85,7 +92,7 @@
 
   <!-- Faculty Participation Chart -->
   <div class="faculty-section">
-    <h3 class="section-title">Voting Participation by Faculty</h3>
+    <h2 class="section-title">📈 Voting Participation by Faculty</h2>
     
     <div class="faculty-chart">
       <div class="chart-container">
@@ -95,12 +102,14 @@
             <div class="bar-group">
               <div 
                 class="bar votes-casted" 
-                [style.height.%]="faculty.votedPercent">
+                [style.height.%]="faculty.votedPercent"
+                [style.--target-height]="faculty.votedPercent + '%'">
                 <span class="bar-value">{{ faculty.votedPercent }}%</span>
               </div>
               <div 
                 class="bar not-voted" 
-                [style.height.%]="faculty.notVotedPercent">
+                [style.height.%]="faculty.notVotedPercent"
+                [style.--target-height]="faculty.notVotedPercent + '%'">
                 <span class="bar-value">{{ faculty.notVotedPercent }}%</span>
               </div>
             </div>
@@ -113,11 +122,11 @@
     <div class="legend">
       <div class="legend-item">
         <div class="legend-color votes-casted-color"></div>
-        <span class="legend-label">Votes casted</span>
+        <span class="legend-label">✅ Votes casted</span>
       </div>
       <div class="legend-item">
         <div class="legend-color not-voted-color"></div>
-        <span class="legend-label">Not voted</span>
+        <span class="legend-label">⏳ Not voted</span>
       </div>
     </div>
   </div>

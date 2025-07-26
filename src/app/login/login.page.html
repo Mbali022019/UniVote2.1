@@ -1,39 +1,82 @@
+
 <ion-content class="login-content">
-  <div class="header-section">
-    <div class="sign-in-box">
-      <h1>Sign In</h1>
-      <p>skip the line, vote online</p>
-    </div>
+  <!-- Animated background particles -->
+  <div class="bg-particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
   </div>
-  
-  <div class="form-section">
-    <div class="login-form">
-      <div class="input-group">
-        <ion-label>Email</ion-label>
-        <ion-input
-          type="email"
-          placeholder="Value"
-          [(ngModel)]="email"
-          class="custom-input">
-        </ion-input>
+
+  <div class="login-container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="sign-in-box">
+        <h1>Sign In</h1>
+        <p>skip the line, vote online</p>
       </div>
-      
-      <div class="input-group">
-        <ion-label>Password</ion-label>
-        <ion-input
-          type="password"
-          placeholder="Value"
-          [(ngModel)]="password"
-          class="custom-input">
-        </ion-input>
-      </div>
-      
-      <ion-button 
-        expand="block" 
-        class="enter-button"
-        (click)="login()">
-        ENTER
-      </ion-button>
+    </div>
+    
+    <!-- Form Section -->
+    <div class="form-section">
+      <form class="login-form" (ngSubmit)="login()" #loginForm="ngForm">
+        <div class="input-group">
+          <ion-label class="input-label">Email</ion-label>
+          <div class="input-wrapper">
+            <ion-input
+              type="email"
+              placeholder="Enter your email address"
+              [(ngModel)]="email"
+              name="email"
+              class="custom-input"
+              required
+              #emailInput="ngModel">
+            </ion-input>
+            <div class="input-icon">✉</div>
+          </div>
+          <div class="error-message" *ngIf="emailInput.invalid && emailInput.touched">
+            Please enter a valid email address
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <ion-label class="input-label">Password</ion-label>
+          <div class="input-wrapper">
+            <ion-input
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Enter your password"
+              [(ngModel)]="password"
+              name="password"
+              class="custom-input"
+              required
+              #passwordInput="ngModel">
+            </ion-input>
+            <!-- Simple button approach for better click handling -->
+            <button 
+              type="button" 
+              class="password-toggle-btn" 
+              (click)="togglePassword()"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+              {{ showPassword ? '🔓' : '🔒' }}
+            </button>
+          </div>
+          <div class="error-message" *ngIf="passwordInput.invalid && passwordInput.touched">
+            Password is required
+          </div>
+        </div>
+        
+        <ion-button 
+          type="submit"
+          expand="block" 
+          class="enter-button"
+          [disabled]="loginForm.invalid || isLoading">
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          {{ isLoading ? 'Signing In...' : 'ENTER' }}
+        </ion-button>
+
+        <div class="forgot-password">
+          <a (click)="forgotPassword()">Forgot your password?</a>
+        </div>
+      </form>
     </div>
   </div>
 </ion-content>

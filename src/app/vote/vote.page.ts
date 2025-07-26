@@ -7,6 +7,7 @@ interface PoliticalParty {
   id: string;
   name: string;
   logo: string;
+  logoClass: string;
 }
 
 interface IndividualCandidate {
@@ -28,22 +29,26 @@ export class VotePage implements OnInit {
     {
       id: 'effsc',
       name: 'EFFSC',
-      logo: 'assets/images/parties/effsc-logo.png'
+      logo: 'assets/images/parties/effsc-logo.png',
+      logoClass: 'effsc'
     },
     {
       id: 'sasco',
       name: 'SASCO',
-      logo: 'assets/images/parties/sasco-logo.png'
+      logo: 'assets/images/parties/sasco-logo.png',
+      logoClass: 'sasco'
     },
     {
       id: 'sadesmo',
       name: 'SADESMO',
-      logo: 'assets/images/parties/sadesmo-logo.png'
+      logo: 'assets/images/parties/sadesmo-logo.png',
+      logoClass: 'sadesmo'
     },
     {
       id: 'da',
       name: 'DA',
-      logo: 'assets/images/parties/da-logo.png'
+      logo: 'assets/images/parties/da-logo.png',
+      logoClass: 'da'
     }
   ];
 
@@ -97,6 +102,7 @@ export class VotePage implements OnInit {
   selectedParty: number | null = null;
   selectedCandidates: number[] = [];
   maxCandidates: number = 2;
+  isSubmitting: boolean = false;
 
   constructor(
     private router: Router,
@@ -129,29 +135,32 @@ export class VotePage implements OnInit {
       if (this.selectedCandidates.length < this.maxCandidates) {
         this.selectedCandidates.push(index);
       } else {
-        this.showMaxCandidatesAlert();
+        this.showToast(`You can only select a maximum of ${this.maxCandidates} candidates`, 'warning');
       }
     }
   }
 
+  // UPDATED: Now requires a political party to be selected
   canSubmitVote(): boolean {
-    return this.selectedParty !== null || this.selectedCandidates.length > 0;
+    return this.selectedParty !== null;
   }
 
   async submitVote() {
     if (!this.canSubmitVote()) {
-      await this.showToast('Please make at least one selection before voting.', 'warning');
+      await this.showToast('Please select a political party before voting', 'warning');
       return;
     }
 
+    // Show confirmation dialog
     const alert = await this.alertController.create({
       header: 'Confirm Your Vote',
-      message: this.getConfirmationMessage(),
+      message: this.getVoteConfirmationMessage(),
+      cssClass: 'glass-alert',
       buttons: [
         {
           text: 'Cancel',
           role: 'cancel',
-          cssClass: 'secondary'
+          cssClass: 'secondary',
         },
         {
           text: 'Confirm Vote',
@@ -165,80 +174,136 @@ export class VotePage implements OnInit {
     await alert.present();
   }
 
-  private getConfirmationMessage(): string {
-    let message = 'You are about to submit your vote for:\n\n';
+  private getVoteConfirmationMessage(): string {
+    let message = 'You are about to submit your vote with the following selections:';
     
     if (this.selectedParty !== null) {
-      message += `Political Party: ${this.politicalParties[this.selectedParty].name}\n`;
+      message += ` Political Party: ${this.politicalParties[this.selectedParty].name}.`;
     }
     
     if (this.selectedCandidates.length > 0) {
-      message += 'Individual Candidates:\n';
-      this.selectedCandidates.forEach(index => {
-        message += `• ${this.individualCandidates[index].name}\n`;
-      });
+      message += ` Individual Candidates: `;
+      const candidateNames = this.selectedCandidates.map(index => this.individualCandidates[index].name);
+      message += candidateNames.join(', ') + '.';
     }
     
-    message += '\nThis action cannot be undone. Are you sure?';
+    message += ' Once submitted, your vote cannot be changed. Are you sure you want to proceed?';
+    
     return message;
   }
 
   private async processVote() {
+    this.isSubmitting = true;
+
+    // Show loading
     const loading = await this.loadingController.create({
       message: 'Submitting your vote...',
-      spinner: 'crescent'
+      spinner: 'crescent',
+      cssClass: 'glass-loading'
     });
     await loading.present();
 
     try {
+      // Create vote data object
       const voteData = {
         partyId: this.selectedParty !== null ? this.politicalParties[this.selectedParty].id : null,
+        partyName: this.selectedParty !== null ? this.politicalParties[this.selectedParty].name : null,
         candidateIds: this.selectedCandidates.map(index => this.individualCandidates[index].id),
+        candidateNames: this.selectedCandidates.map(index => this.individualCandidates[index].name),
         timestamp: new Date().toISOString(),
-        voterId: 'current-user-id' // Replace with actual user ID
+        voterId: this.generateVoterId(),
+        voteId: this.generateVoteId()
       };
 
-      // Here you would submit to your backend
-      // await this.voteService.submitVote(voteData);
+      // Simulate API call to submit vote
+      await this.simulateVoteSubmission(voteData);
       
-      console.log('Vote submitted:', voteData);
-      
+      // Hide loading
       await loading.dismiss();
-      await this.showToast('Your vote has been submitted successfully!', 'success');
       
-      // Navigate to confirmation or results page
-      this.router.navigate(['/vote-confirmation']);
+      // Show success message
+      await this.showVoteSuccessAlert(voteData.voteId);
       
     } catch (error) {
+      // Hide loading
       await loading.dismiss();
+      
+      // Show error message
       console.error('Error submitting vote:', error);
       await this.showToast('Failed to submit vote. Please try again.', 'danger');
+      
+    } finally {
+      this.isSubmitting = false;
     }
   }
 
-  private async showMaxCandidatesAlert() {
+  private simulateVoteSubmission(voteData: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Log the vote data for debugging
+      console.log('Vote submitted:', voteData);
+      
+      // Simulate network delay
+      setTimeout(() => {
+        // Simulate 95% success rate
+        if (Math.random() > 0.05) {
+          resolve();
+        } else {
+          reject(new Error('Network error'));
+        }
+      }, 2000);
+    });
+  }
+
+  private async showVoteSuccessAlert(voteId: string) {
     const alert = await this.alertController.create({
-      header: 'Maximum Candidates Selected',
-      message: `You can only select a maximum of ${this.maxCandidates} candidates. Please deselect a candidate first.`,
-      buttons: ['OK']
+      header: 'Vote Submitted Successfully!',
+      message: `Your vote has been recorded! Thank you for participating in the democratic process. Your vote has been securely submitted and will be counted. Vote ID: ${voteId}`,
+      cssClass: 'glass-success-alert',
+      buttons: [
+        {
+          text: 'Continue',
+          handler: () => {
+            this.navigateToResults();
+          }
+        }
+      ]
     });
 
     await alert.present();
   }
 
-  private async showToast(message: string, color: string = 'primary') {
+  private generateVoteId(): string {
+    const timestamp = Date.now().toString(36);
+    const randomStr = Math.random().toString(36).substring(2, 8);
+    return `VOTE-${timestamp}-${randomStr}`.toUpperCase();
+  }
+
+  private generateVoterId(): string {
+    // In a real app, this would come from user authentication
+    return `VOTER-${Date.now().toString(36).toUpperCase()}`;
+  }
+
+  private navigateToResults() {
+    // Navigate to menu page after successful vote
+    this.router.navigate(['/menu']);
+  }
+
+  private async showToast(message: string, color: 'success' | 'warning' | 'danger' = 'success') {
     const toast = await this.toastController.create({
       message: message,
       duration: 3000,
-      color: color,
       position: 'top',
+      color: color,
+      cssClass: 'glass-toast',
       buttons: [
         {
-          text: 'Dismiss',
+          side: 'end',
+          icon: 'close',
           role: 'cancel'
         }
       ]
     });
+
     await toast.present();
   }
 
@@ -246,15 +311,30 @@ export class VotePage implements OnInit {
     // Set placeholder images if actual images don't exist
     this.politicalParties.forEach(party => {
       if (!party.logo || party.logo.includes('assets/')) {
-        party.logo = `https://via.placeholder.com/48x48/4CAF50/FFFFFF?text=${party.name.charAt(0)}`;
+        party.logo = `https://via.placeholder.com/56x56/4CAF50/FFFFFF?text=${party.name.charAt(0)}`;
       }
     });
 
     this.individualCandidates.forEach((candidate, index) => {
       if (!candidate.photo || candidate.photo.includes('assets/')) {
-        candidate.photo = `https://via.placeholder.com/48x48/2196F3/FFFFFF?text=${index + 1}`;
+        const initials = candidate.name.split(' ').map(n => n.charAt(0)).join('').substring(0, 2);
+        candidate.photo = `https://via.placeholder.com/56x56/2196F3/FFFFFF?text=${initials}`;
       }
     });
+  }
+
+  // Additional helper methods
+  getSelectedPartyName(): string {
+    return this.selectedParty !== null ? this.politicalParties[this.selectedParty].name : '';
+  }
+
+  getSelectedCandidateNames(): string[] {
+    return this.selectedCandidates.map(index => this.individualCandidates[index].name);
+  }
+
+  clearAllSelections() {
+    this.selectedParty = null;
+    this.selectedCandidates = [];
   }
 
   // Method to reset selections (for testing/admin purposes)
@@ -263,4 +343,57 @@ export class VotePage implements OnInit {
     this.selectedCandidates = [];
   }
 
+  // Method to handle back button confirmation
+  async canLeave(): Promise<boolean> {
+    if (this.selectedParty !== null || this.selectedCandidates.length > 0) {
+      const alert = await this.alertController.create({
+        header: 'Unsaved Changes',
+        message: 'You have made selections that haven\'t been submitted. Are you sure you want to leave?',
+        cssClass: 'glass-alert',
+        buttons: [
+          {
+            text: 'Stay',
+            role: 'cancel'
+          },
+          {
+            text: 'Leave',
+            handler: () => {
+              return true;
+            }
+          }
+        ]
+      });
+
+      await alert.present();
+      const result = await alert.onDidDismiss();
+      return result.role !== 'cancel';
+    }
+    return true;
+  }
+
+  // Method to get vote summary for confirmation
+  getVoteSummary(): any {
+    return {
+      hasPartySelection: this.selectedParty !== null,
+      hasCandidateSelection: this.selectedCandidates.length > 0,
+      selectedPartyName: this.getSelectedPartyName(),
+      selectedCandidateNames: this.getSelectedCandidateNames(),
+      totalSelections: (this.selectedParty !== null ? 1 : 0) + this.selectedCandidates.length
+    };
+  }
+
+  // UPDATED: Method to validate selections before submission - now requires party selection
+  private validateSelections(): boolean {
+    // Must select a political party
+    if (this.selectedParty === null) {
+      return false;
+    }
+    
+    // Check candidate selection limit
+    if (this.selectedCandidates.length > this.maxCandidates) {
+      return false;
+    }
+    
+    return true;
+  }
 }

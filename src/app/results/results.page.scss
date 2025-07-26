@@ -1,128 +1,267 @@
-/* results.page.scss */
+/* Modern Glass-Style Results Page */
 
-// Variables
-$primary-blue: #4A90C2;
-$countdown-blue: #5B9BD5;
-$background-gray: #F5F5F5;
-$white: #FFFFFF;
-$dark-text: #333333;
-$light-text: #666666;
-$yellow: #FFC107;
-$blue: #2196F3;
-$green: #4CAF50;
-$sasco-yellow: #FFD700;
+// Variables with glass theme colors
+$glass-primary: #00bcd4;
+$glass-secondary: #00e5ff;
+$glass-accent: #b3e5fc;
+$glass-text: #80d8ff;
+$glass-white: #ffffff;
+$glass-success: #4CAF50;
+$glass-warning: #ffc107;
+$glass-danger: #ff4444;
+$glass-dark: #0f2027;
 
-// Header
+// Background and main content
+ion-content {
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  position: relative;
+  overflow-x: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 60%, rgba(179, 229, 252, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+// Header styling with glass effect
 ion-header {
   ion-toolbar {
-    --background: #{$primary-blue};
-    --color: #{$white};
+    --background: rgba(255, 255, 255, 0.08);
+    --color: $glass-accent;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     
     ion-title {
-      font-size: 18px;
+      color: $glass-accent;
       font-weight: 700;
-      text-align: center;
-      letter-spacing: 0.5px;
+      font-size: 20px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 20px rgba(179, 229, 252, 0.5);
     }
     
     ion-back-button {
-      --color: #{$white};
+      --color: $glass-text;
+      
+      &:hover {
+        --color: $glass-secondary;
+        transform: scale(1.05);
+      }
     }
   }
 }
 
-// Content
+// Main results content wrapper
 .results-content {
-  --background: #{$background-gray};
-  padding: 20px 16px;
+  position: relative;
+  z-index: 1;
+  padding: 24px 20px;
+  min-height: 100vh;
   
-  // Countdown Section
+  // Page header
+  .page-header {
+    text-align: center;
+    margin-bottom: 32px;
+    animation: fadeInUp 0.8s ease-out;
+    
+    .page-title {
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, $glass-accent, $glass-text, $glass-secondary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+      text-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+    }
+    
+    .page-subtitle {
+      color: $glass-text;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+  }
+  
+  // Countdown Section with glass styling
   .countdown-section {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
+    animation: fadeInUp 0.8s ease-out 0.1s both;
     
     .countdown-card {
-      background: #{$countdown-blue};
-      color: #{$white};
-      padding: 16px 24px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 229, 255, 0.2);
       border-radius: 25px;
+      padding: 20px 32px;
       text-align: center;
-      font-size: 16px;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba($countdown-blue, 0.3);
+      font-size: 18px;
+      font-weight: 700;
+      color: $glass-secondary;
+      box-shadow: 
+        0 8px 32px rgba(0, 188, 212, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: pulse 2s infinite;
+      text-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+      
+      &:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 
+          0 16px 48px rgba(0, 188, 212, 0.3),
+          0 0 0 2px rgba(0, 229, 255, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
     }
   }
   
   // Top Candidates Section
   .top-candidates-section {
-    margin-bottom: 32px;
+    margin-bottom: 40px;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+    
+    .section-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: $glass-accent;
+      margin-bottom: 24px;
+      text-shadow: 0 0 20px rgba(179, 229, 252, 0.3);
+    }
     
     .candidates-row {
       display: flex;
-      gap: 16px;
+      gap: 20px;
       align-items: flex-end;
+      justify-content: center;
       
       .candidate-card {
-        background: #{$white};
-        border-radius: 12px;
-        padding: 16px;
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        padding: 24px;
         text-align: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 
+          0 8px 32px rgba(0, 0, 0, 0.25),
+          0 0 0 1px rgba(255, 255, 255, 0.05),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        
+        &:hover {
+          transform: translateY(-8px) scale(1.05);
+          box-shadow: 
+            0 20px 60px rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
         
         &.winner {
           flex: 1.2;
-          border: 3px solid #{$green};
+          border: 2px solid rgba(76, 175, 80, 0.6);
+          background: rgba(76, 175, 80, 0.08);
+          box-shadow: 
+            0 12px 40px rgba(76, 175, 80, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          
+          &::before {
+            content: '👑';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 24px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+          }
           
           .candidate-image {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 12px auto;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 16px auto;
+            position: relative;
+            
+            &::before {
+              content: '';
+              position: absolute;
+              inset: -4px;
+              border-radius: 50%;
+              background: conic-gradient(from 0deg, #ffd700, #ffed4e, #ffd700);
+              z-index: -1;
+              animation: rotate 3s linear infinite;
+            }
             
             img {
               width: 100%;
               height: 100%;
               border-radius: 50%;
               object-fit: cover;
-              border: 3px solid #{$sasco-yellow};
+              border: 3px solid rgba(255, 215, 0, 0.8);
+              box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
             }
           }
         }
         
         &.second {
           flex: 1;
+          border: 2px solid rgba(128, 216, 255, 0.4);
           
           .candidate-image {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 12px auto;
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 16px auto;
             
             img {
               width: 100%;
               height: 100%;
               border-radius: 50%;
               object-fit: cover;
+              border: 2px solid rgba(128, 216, 255, 0.6);
+              box-shadow: 0 0 15px rgba(128, 216, 255, 0.3);
             }
           }
         }
         
         .candidate-info {
           .candidate-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #{$dark-text};
-            margin-bottom: 4px;
+            font-size: 16px;
+            font-weight: 700;
+            color: $glass-accent;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(179, 229, 252, 0.3);
           }
           
           .candidate-votes {
-            font-size: 18px;
-            font-weight: 700;
-            color: #{$dark-text};
-            margin-bottom: 4px;
+            font-size: 24px;
+            font-weight: 800;
+            color: $glass-secondary;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
           }
           
           .candidate-party {
-            font-size: 12px;
-            color: #{$light-text};
+            font-size: 13px;
+            color: $glass-text;
             font-weight: 500;
+            opacity: 0.9;
+            padding: 4px 12px;
+            background: rgba(128, 216, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(128, 216, 255, 0.2);
           }
         }
       }
@@ -131,15 +270,40 @@ ion-header {
   
   // Statistics Section
   .stats-section {
-    margin-bottom: 32px;
+    margin-bottom: 40px;
+    animation: fadeInUp 0.8s ease-out 0.3s both;
+    
+    .section-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: $glass-accent;
+      margin-bottom: 24px;
+      text-shadow: 0 0 15px rgba(179, 229, 252, 0.3);
+    }
     
     .stats-row {
       display: flex;
-      gap: 20px;
-      background: #{$white};
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      gap: 24px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 
+          0 16px 48px rgba(0, 0, 0, 0.3),
+          0 0 0 1px rgba(255, 255, 255, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
       
       .pie-chart-container {
         flex: 1;
@@ -148,19 +312,21 @@ ion-header {
         align-items: center;
         
         canvas {
-          margin-bottom: 12px;
+          margin-bottom: 16px;
+          filter: drop-shadow(0 4px 20px rgba(0, 229, 255, 0.2));
         }
         
         .chart-labels {
           text-align: center;
           
           .chart-label {
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             
             .label-text {
-              font-size: 12px;
-              color: #{$dark-text};
-              font-weight: 500;
+              font-size: 14px;
+              color: $glass-text;
+              font-weight: 600;
+              text-shadow: 0 0 10px rgba(128, 216, 255, 0.3);
             }
           }
         }
@@ -171,28 +337,43 @@ ion-header {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        gap: 12px;
+        gap: 16px;
         
         .stat-item {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 12px;
+          padding: 12px 16px;
+          background: rgba(255, 255, 255, 0.04);
+          border-radius: 12px;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          transition: all 0.3s ease;
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 229, 255, 0.2);
+            transform: translateX(4px);
+          }
           
           .stat-icon {
-            color: #{$primary-blue};
-            font-size: 16px;
+            color: $glass-secondary;
+            font-size: 18px;
+            filter: drop-shadow(0 0 8px currentColor);
           }
           
           .stat-label {
             font-size: 14px;
-            color: #{$dark-text};
+            color: $glass-text;
             flex: 1;
+            font-weight: 500;
           }
           
           .stat-value {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
-            color: #{$dark-text};
+            color: $glass-accent;
+            text-shadow: 0 0 10px rgba(179, 229, 252, 0.3);
           }
         }
       }
@@ -201,26 +382,44 @@ ion-header {
   
   // Faculty Section
   .faculty-section {
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+    
     .section-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #{$dark-text};
-      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: 700;
+      color: $glass-accent;
+      margin-bottom: 24px;
       text-align: center;
+      text-shadow: 0 0 15px rgba(179, 229, 252, 0.3);
     }
     
     .faculty-chart {
-      background: #{$white};
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 20px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 
+          0 16px 48px rgba(0, 0, 0, 0.3),
+          0 0 0 1px rgba(255, 255, 255, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
       
       .chart-container {
         display: flex;
-        gap: 16px;
+        gap: 20px;
         align-items: flex-end;
-        height: 200px;
+        height: 220px;
         
         .faculty-bar {
           flex: 1;
@@ -230,14 +429,16 @@ ion-header {
           height: 100%;
           
           .faculty-name {
-            font-size: 11px;
-            color: #{$dark-text};
+            font-size: 12px;
+            color: $glass-text;
             text-align: center;
-            margin-bottom: 8px;
-            line-height: 1.2;
-            min-height: 32px;
+            margin-bottom: 12px;
+            line-height: 1.3;
+            min-height: 36px;
             display: flex;
             align-items: center;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(128, 216, 255, 0.2);
           }
           
           .bars-container {
@@ -248,34 +449,54 @@ ion-header {
             
             .bar-group {
               display: flex;
-              gap: 4px;
+              gap: 6px;
               width: 100%;
-              height: 150px;
+              height: 160px;
               align-items: flex-end;
               
               .bar {
                 flex: 1;
-                min-height: 10px;
-                border-radius: 4px 4px 0 0;
+                min-height: 15px;
+                border-radius: 8px 8px 0 0;
                 position: relative;
                 display: flex;
                 align-items: flex-start;
                 justify-content: center;
-                padding-top: 4px;
+                padding-top: 6px;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+                animation: barGrow 1.2s ease-out;
+                
+                &:hover {
+                  transform: scaleY(1.05);
+                  filter: brightness(1.2);
+                }
                 
                 &.votes-casted {
-                  background: #{$yellow};
+                  background: linear-gradient(180deg, rgba(255, 193, 7, 0.9) 0%, rgba(255, 193, 7, 0.7) 100%);
+                  border: 1px solid rgba(255, 193, 7, 0.5);
+                  box-shadow: 
+                    0 -4px 20px rgba(255, 193, 7, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
                 }
                 
                 &.not-voted {
-                  background: #{$blue};
+                  background: linear-gradient(180deg, rgba(33, 150, 243, 0.9) 0%, rgba(33, 150, 243, 0.7) 100%);
+                  border: 1px solid rgba(33, 150, 243, 0.5);
+                  box-shadow: 
+                    0 -4px 20px rgba(33, 150, 243, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
                 }
                 
                 .bar-value {
-                  font-size: 10px;
-                  font-weight: 600;
-                  color: #{$white};
-                  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+                  font-size: 11px;
+                  font-weight: 700;
+                  color: $glass-white;
+                  text-shadow: 
+                    1px 1px 2px rgba(0, 0, 0, 0.8),
+                    0 0 10px rgba(255, 255, 255, 0.3);
                 }
               }
             }
@@ -287,74 +508,145 @@ ion-header {
     .legend {
       display: flex;
       justify-content: center;
-      gap: 24px;
-      background: #{$white};
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      gap: 32px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 24px;
+      border-radius: 16px;
+      box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
       
       .legend-item {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
         
         .legend-color {
-          width: 16px;
-          height: 16px;
-          border-radius: 2px;
+          width: 20px;
+          height: 20px;
+          border-radius: 6px;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
           
           &.votes-casted-color {
-            background: #{$yellow};
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(255, 193, 7, 0.7));
+            border: 1px solid rgba(255, 193, 7, 0.5);
           }
           
           &.not-voted-color {
-            background: #{$blue};
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.9), rgba(33, 150, 243, 0.7));
+            border: 1px solid rgba(33, 150, 243, 0.5);
           }
         }
         
         .legend-label {
           font-size: 14px;
-          color: #{$dark-text};
-          font-weight: 500;
+          color: $glass-text;
+          font-weight: 600;
+          text-shadow: 0 0 8px rgba(128, 216, 255, 0.2);
         }
       }
     }
   }
 }
 
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes barGrow {
+  from {
+    height: 0%;
+    transform: scaleY(0);
+  }
+  to {
+    height: var(--target-height);
+    transform: scaleY(1);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 // Responsive Design
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .results-content {
-    padding: 16px 12px;
+    padding: 20px 16px;
+    
+    .page-header .page-title {
+      font-size: 24px;
+    }
+    
+    .countdown-section .countdown-card {
+      padding: 16px 24px;
+      font-size: 16px;
+    }
     
     .top-candidates-section {
       .candidates-row {
-        gap: 12px;
+        gap: 16px;
         
         .candidate-card {
-          padding: 12px;
+          padding: 20px;
           
-          &.winner .candidate-image {
-            width: 60px;
-            height: 60px;
+          &.winner {
+            .candidate-image {
+              width: 70px;
+              height: 70px;
+            }
           }
           
-          &.second .candidate-image {
-            width: 50px;
-            height: 50px;
+          &.second {
+            .candidate-image {
+              width: 60px;
+              height: 60px;
+            }
           }
           
           .candidate-info {
             .candidate-name {
-              font-size: 12px;
+              font-size: 14px;
             }
             
             .candidate-votes {
-              font-size: 16px;
+              font-size: 20px;
             }
             
             .candidate-party {
-              font-size: 11px;
+              font-size: 12px;
             }
           }
         }
@@ -364,14 +656,63 @@ ion-header {
     .stats-section {
       .stats-row {
         flex-direction: column;
-        gap: 16px;
-        padding: 16px;
+        gap: 20px;
+        padding: 24px;
       }
     }
     
     .faculty-section {
       .faculty-chart {
-        padding: 16px;
+        padding: 24px;
+        
+        .chart-container {
+          gap: 12px;
+          height: 180px;
+          
+          .faculty-bar {
+            .faculty-name {
+              font-size: 11px;
+              min-height: 32px;
+            }
+            
+            .bars-container .bar-group {
+              height: 130px;
+              gap: 4px;
+              
+              .bar .bar-value {
+                font-size: 10px;
+              }
+            }
+          }
+        }
+      }
+      
+      .legend {
+        gap: 20px;
+        
+        .legend-item .legend-label {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .results-content {
+    padding: 16px 12px;
+    
+    .page-header .page-title {
+      font-size: 20px;
+    }
+    
+    .stats-section .stats-row {
+      padding: 20px;
+    }
+    
+    .faculty-section {
+      .faculty-chart {
+        padding: 20px;
         
         .chart-container {
           gap: 8px;
@@ -384,7 +725,7 @@ ion-header {
             }
             
             .bars-container .bar-group {
-              height: 120px;
+              height: 110px;
               
               .bar .bar-value {
                 font-size: 9px;
@@ -396,25 +737,19 @@ ion-header {
       
       .legend {
         gap: 16px;
+        padding: 12px 16px;
         
-        .legend-item .legend-label {
-          font-size: 12px;
+        .legend-item {
+          .legend-color {
+            width: 16px;
+            height: 16px;
+          }
+          
+          .legend-label {
+            font-size: 12px;
+          }
         }
       }
     }
   }
-}
-
-// Animations
-@keyframes barGrow {
-  from {
-    height: 0%;
-  }
-  to {
-    height: var(--target-height);
-  }
-}
-
-.bar {
-  animation: barGrow 1s ease-out;
 }

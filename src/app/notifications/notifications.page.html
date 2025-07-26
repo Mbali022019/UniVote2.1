@@ -1,5 +1,5 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="goBack()">
         <ion-icon name="arrow-back"></ion-icon>
@@ -15,16 +15,17 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Notifications</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="notifications-wrapper">
+    
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Notifications</h1>
+      <p class="page-subtitle">Stay updated with the latest alerts and updates</p>
+    </div>
 
-  <!-- Summary Cards -->
-  <div class="summary-container">
-    <ion-card class="summary-card">
-      <ion-card-content>
+    <!-- Summary Cards -->
+    <div class="summary-container">
+      <div class="summary-card">
         <div class="summary-item">
           <ion-icon name="notifications" color="primary"></ion-icon>
           <div class="summary-text">
@@ -32,11 +33,9 @@
             <p>Unread</p>
           </div>
         </div>
-      </ion-card-content>
-    </ion-card>
+      </div>
 
-    <ion-card class="summary-card urgent">
-      <ion-card-content>
+      <div class="summary-card urgent">
         <div class="summary-item">
           <ion-icon name="alert-circle" color="danger"></ion-icon>
           <div class="summary-text">
@@ -44,124 +43,123 @@
             <p>Urgent</p>
           </div>
         </div>
-      </ion-card-content>
-    </ion-card>
-  </div>
-
-  <!-- Filter Chips -->
-  <div class="filter-container">
-    <ion-chip 
-      [color]="selectedFilter === 'all' ? 'primary' : 'medium'" 
-      (click)="filterNotifications('all')"
-      [outline]="selectedFilter !== 'all'">
-      <ion-label>All</ion-label>
-    </ion-chip>
-    
-    <ion-chip 
-      [color]="selectedFilter === 'unread' ? 'primary' : 'medium'" 
-      (click)="filterNotifications('unread')"
-      [outline]="selectedFilter !== 'unread'">
-      <ion-label>Unread</ion-label>
-    </ion-chip>
-    
-    <ion-chip 
-      [color]="selectedFilter === 'urgent' ? 'danger' : 'medium'" 
-      (click)="filterNotifications('urgent')"
-      [outline]="selectedFilter !== 'urgent'">
-      <ion-label>Urgent</ion-label>
-    </ion-chip>
-    
-    <ion-chip 
-      [color]="selectedFilter === 'voting' ? 'primary' : 'medium'" 
-      (click)="filterNotifications('voting')"
-      [outline]="selectedFilter !== 'voting'">
-      <ion-label>Voting</ion-label>
-    </ion-chip>
-    
-    <ion-chip 
-      [color]="selectedFilter === 'poll' ? 'success' : 'medium'" 
-      (click)="filterNotifications('poll')"
-      [outline]="selectedFilter !== 'poll'">
-      <ion-label>Polls</ion-label>
-    </ion-chip>
-  </div>
-
-  <!-- Notifications List -->
-  <div class="notifications-container">
-    <ion-card 
-      *ngFor="let notification of filteredNotifications; trackBy: trackByFn" 
-      class="notification-card"
-      [class.unread]="!notification.isRead"
-      [class.urgent]="notification.priority === 'high'"
-      (click)="onNotificationClick(notification)">
-      
-      <ion-card-content>
-        <div class="notification-header">
-          <div class="notification-icon">
-            <ion-icon 
-              [name]="notification.icon" 
-              [color]="notification.color">
-            </ion-icon>
-          </div>
-          
-          <div class="notification-meta">
-            <ion-badge 
-              [color]="notification.color" 
-              class="type-badge">
-              {{ notification.type | titlecase }}
-            </ion-badge>
-            <span class="timestamp">{{ formatTimestamp(notification.timestamp) }}</span>
-          </div>
-          
-          <ion-button 
-            fill="clear" 
-            size="small" 
-            (click)="deleteNotification(notification.id); $event.stopPropagation()">
-            <ion-icon name="close" slot="icon-only"></ion-icon>
-          </ion-button>
-        </div>
-
-        <div class="notification-content">
-          <h3 class="notification-title">{{ notification.title }}</h3>
-          <p class="notification-message">{{ notification.message }}</p>
-          
-          <!-- Countdown Timer -->
-          <div 
-            *ngIf="notification.countdown && notification.countdown > 0" 
-            class="countdown-container">
-            <ion-chip color="warning" class="countdown-chip">
-              <ion-icon name="time" slot="start"></ion-icon>
-              <ion-label>{{ formatCountdown(notification.countdown) }}</ion-label>
-            </ion-chip>
-          </div>
-          
-          <!-- Action Required Badge -->
-          <div 
-            *ngIf="notification.actionRequired" 
-            class="action-container">
-            <ion-chip color="tertiary" class="action-chip">
-              <ion-icon name="hand-right" slot="start"></ion-icon>
-              <ion-label>Action Required</ion-label>
-            </ion-chip>
-          </div>
-        </div>
-
-        <!-- Unread Indicator -->
-        <div *ngIf="!notification.isRead" class="unread-indicator"></div>
-        
-        <!-- Priority Indicator -->
-        <div 
-          *ngIf="notification.priority === 'high'" 
-          class="priority-indicator">
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Empty State -->
-    <div *ngIf="filteredNotifications.length === 0" class="empty-state">
-      <ion-icon name="notifications-off" color="medium"></ion-icon>
-      <h3>No notifications found</h3>
-      <p>You're all caught up! Check back later for updates.</p>
+      </div>
     </div>
+
+    <!-- Filter Chips -->
+    <div class="filter-container">
+      <ion-chip 
+        [color]="selectedFilter === 'all' ? 'primary' : 'medium'" 
+        (click)="filterNotifications('all')"
+        [outline]="selectedFilter !== 'all'">
+        <ion-label>All</ion-label>
+      </ion-chip>
+      
+      <ion-chip 
+        [color]="selectedFilter === 'unread' ? 'primary' : 'medium'" 
+        (click)="filterNotifications('unread')"
+        [outline]="selectedFilter !== 'unread'">
+        <ion-label>Unread</ion-label>
+      </ion-chip>
+      
+      <ion-chip 
+        [color]="selectedFilter === 'urgent' ? 'danger' : 'medium'" 
+        (click)="filterNotifications('urgent')"
+        [outline]="selectedFilter !== 'urgent'">
+        <ion-label>Urgent</ion-label>
+      </ion-chip>
+      
+      <ion-chip 
+        [color]="selectedFilter === 'voting' ? 'primary' : 'medium'" 
+        (click)="filterNotifications('voting')"
+        [outline]="selectedFilter !== 'voting'">
+        <ion-label>Voting</ion-label>
+      </ion-chip>
+      
+      <ion-chip 
+        [color]="selectedFilter === 'poll' ? 'success' : 'medium'" 
+        (click)="filterNotifications('poll')"
+        [outline]="selectedFilter !== 'poll'">
+        <ion-label>Polls</ion-label>
+      </ion-chip>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="notifications-container">
+      <div 
+        *ngFor="let notification of filteredNotifications; trackBy: trackByFn" 
+        class="notification-card"
+        [class.unread]="!notification.isRead"
+        [class.urgent]="notification.priority === 'high'"
+        (click)="onNotificationClick(notification)">
+        
+        <ion-card-content>
+          <div class="notification-header">
+            <div class="notification-icon">
+              <ion-icon 
+                [name]="notification.icon" 
+                [color]="notification.color">
+              </ion-icon>
+            </div>
+            
+            <div class="notification-meta">
+              <div class="type-badge">
+                {{ notification.type | titlecase }}
+              </div>
+              <span class="timestamp">{{ formatTimestamp(notification.timestamp) }}</span>
+            </div>
+            
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              (click)="deleteNotification(notification.id); $event.stopPropagation()">
+              <ion-icon name="close" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+
+          <div class="notification-content">
+            <h3 class="notification-title">{{ notification.title }}</h3>
+            <p class="notification-message">{{ notification.message }}</p>
+            
+            <!-- Countdown Timer -->
+            <div 
+              *ngIf="notification.countdown && notification.countdown > 0" 
+              class="countdown-container">
+              <ion-chip class="countdown-chip">
+                <ion-icon name="time" slot="start"></ion-icon>
+                <ion-label>{{ formatCountdown(notification.countdown) }}</ion-label>
+              </ion-chip>
+            </div>
+            
+            <!-- Action Required Badge -->
+            <div 
+              *ngIf="notification.actionRequired" 
+              class="action-container">
+              <ion-chip class="action-chip">
+                <ion-icon name="hand-right" slot="start"></ion-icon>
+                <ion-label>Action Required</ion-label>
+              </ion-chip>
+            </div>
+          </div>
+
+          <!-- Unread Indicator -->
+          <div *ngIf="!notification.isRead" class="unread-indicator"></div>
+          
+          <!-- Priority Indicator -->
+          <div 
+            *ngIf="notification.priority === 'high'" 
+            class="priority-indicator">
+          </div>
+        </ion-card-content>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="filteredNotifications.length === 0" class="empty-state">
+        <ion-icon name="notifications-off"></ion-icon>
+        <h3>No notifications found</h3>
+        <p>You're all caught up! Check back later for updates.</p>
+      </div>
+    </div>
+    
   </div>
 </ion-content>

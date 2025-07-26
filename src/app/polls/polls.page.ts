@@ -11,6 +11,8 @@ interface PollOption {
 interface Poll {
   id: string;
   question: string;
+  createdAt: Date | string; // Add createdAt property
+  description?: string;     // Add description property (optional)
   options: PollOption[];
   allowMultiple: boolean;
   totalVotes: number;
@@ -27,6 +29,8 @@ export class PollsPage implements OnInit {
   pollData: Poll = {
     id: '1',
     question: 'Who do you vote for to be the IT class representative in 2025?',
+    createdAt: new Date(), // Add createdAt
+    description: 'Select your preferred candidate for the IT class representative position', // Add description
     allowMultiple: false,
     totalVotes: 0,
     options: [
@@ -95,6 +99,11 @@ export class PollsPage implements OnInit {
 
     // Optional: Show success message
     // this.showToast('Vote submitted successfully!');
+
+    // Navigate to menu page after successful vote submission
+    setTimeout(() => {
+      this.router.navigate(['/menu']); // Change '/menu' to your actual menu route
+    }, 1500); // Wait 1.5 seconds to show the results briefly before navigating
   }
 
   calculateTotalVotes() {
@@ -103,9 +112,14 @@ export class PollsPage implements OnInit {
     );
   }
 
+  // Add the missing getTotalVotes method (used in template)
+  getTotalVotes(): number {
+    return this.pollData.totalVotes;
+  }
+
   getVotePercentage(votes: number): number {
     if (this.pollData.totalVotes === 0) return 0;
-    return (votes / this.pollData.totalVotes) * 100;
+    return Math.round((votes / this.pollData.totalVotes) * 100);
   }
 
   viewVotes() {

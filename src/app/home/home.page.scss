@@ -1,45 +1,174 @@
+/* Background and centering for full screen */
 .home-bg {
-  background: #001f33;
-  color: #ffffff;
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; // Use min-height instead of height for better mobile support
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+  overflow: hidden;
+  position: relative; // Ensure proper positioning
+}
+
+/* Inner container perfectly centered */
+.center-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+  align-items: center;
+  justify-content: center;
+  max-width: 800px; // Increased for desktop
+  width: 100%;
+  gap: 40px; // Increased spacing for desktop
+  animation: fadeIn 1.2s ease-in-out;
+  margin: auto; // Additional centering help
+  position: relative;
+  z-index: 1;
+}
+
+/* Logo clean and centered */
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  .logo-image {
+    width: 240px; // Larger for desktop
+    height: auto;
+    object-fit: contain;
+    animation: fadeIn 1.2s ease-in-out;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+/* Glass card for welcome section */
+.glass-card {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 32px; // Increased padding for desktop
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 191, 255, 0.08);
+  width: 100%;
   text-align: center;
 }
 
-.logo-container {
-  margin-top: 50px;
-
-  .title {
-    font-size: 36px;
+/* Welcome text styles */
+.welcome-card {
+  .main-title {
+    font-size: 42px; // Larger for desktop
     font-weight: bold;
     color: #b3e5fc;
+    margin-bottom: 12px;
+    text-align: center;
   }
 
-  .subtitle {
-    font-size: 16px;
+  .tagline {
+    font-size: 20px; // Larger for desktop
     color: #80d8ff;
+    text-align: center;
   }
 }
 
-.image-container {
-  margin: 30px auto;
-  max-width: 80%;
-  img {
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 0 25px #00bcd4;
-  }
-}
+/* Button container */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; // Increased spacing
+  width: 100%;
+  align-items: center;
 
-.button-container {
-  margin: 30px;
   ion-button {
-    --background: #0288d1;
-    --color: white;
     font-weight: bold;
-    letter-spacing: 1px;
-    border-radius: 12px;
+    letter-spacing: 0.5px;
+    --border-radius: 12px;
+    width: 100%;
+    max-width: 400px; // Wider buttons for desktop
+    height: 56px; // Taller buttons
+    font-size: 16px; // Larger text
+  }
+
+  /* Solid neon-style button */
+  .neon-button {
+    --background: #00bcd4;
+    --color: white;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      transform: scale(1.02);
+      --background: #00e5ff;
+    }
+  }
+
+  /* Outline button with hover glow */
+  .neon-button-outline {
+    --color: #80d8ff;
+    --border-color: #00e5ff;
+    --background-hover: rgba(0, 229, 255, 0.06);
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      transform: scale(1.02);
+      --color: white;
+      --border-color: white;
+    }
   }
 }
+
+/* Entry animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .center-container {
+    max-width: 90%;
+    gap: 20px;
+  }
+  
+  .welcome-card .main-title {
+    font-size: 28px;
+  }
+  
+  .logo-wrapper .logo-image {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-bg {
+    padding: 16px;
+  }
+  
+  .center-container {
+    gap: 16px;
+  }
+  
+  .welcome-card .main-title {
+    font-size: 24px;
+  }
+  
+  .logo-wrapper .logo-image {
+    width: 120px;
+  }
+}
+
+/* Ensure ion-content doesn't add extra padding */
+ion-content.home-bg {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+

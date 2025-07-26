@@ -4,19 +4,25 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="surveys-page-content">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Available Surveys</ion-title>
     </ion-toolbar>
   </ion-header>
 
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">📋 Available Surveys</h1>
+    <p class="page-subtitle">Share your thoughts and help shape the future</p>
+  </div>
+
   <!-- Search and Filter Section -->
   <div class="search-filter-container">
     <ion-searchbar 
       [(ngModel)]="searchTerm" 
       (ionInput)="onSearchChange()"
-      placeholder="Search surveys..."
+      placeholder="🔍 Search surveys..."
       debounce="300">
     </ion-searchbar>
     
@@ -24,7 +30,7 @@
       <ion-select 
         [(ngModel)]="selectedCategory" 
         (ionChange)="onCategoryChange()"
-        placeholder="Select Category"
+        placeholder="📂 Select Category"
         interface="popover">
         <ion-select-option 
           *ngFor="let category of categories" 
@@ -38,27 +44,32 @@
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
-    <p>Loading surveys...</p>
+    <p>✨ Loading surveys...</p>
   </div>
 
   <!-- Surveys List -->
   <div *ngIf="!isLoading">
     <!-- Pull to Refresh -->
     <ion-refresher slot="fixed" (ionRefresh)="refreshSurveys($event)">
-      <ion-refresher-content></ion-refresher-content>
+      <ion-refresher-content
+        pullingIcon="chevron-down-circle-outline"
+        pullingText="Pull to refresh"
+        refreshingSpinner="circles"
+        refreshingText="Refreshing...">
+      </ion-refresher-content>
     </ion-refresher>
 
     <!-- No Surveys Found -->
     <div *ngIf="filteredSurveys.length === 0" class="empty-state">
-      <ion-icon name="document-text-outline" size="large"></ion-icon>
+      <ion-icon name="document-text-outline"></ion-icon>
       <h3>No surveys found</h3>
-      <p>Try adjusting your search or filter criteria</p>
+      <p>🔄 Try adjusting your search or filter criteria</p>
     </div>
 
     <!-- Survey Cards -->
     <div class="surveys-container" *ngIf="filteredSurveys.length > 0">
       <ion-card 
-        *ngFor="let survey of filteredSurveys" 
+        *ngFor="let survey of filteredSurveys; trackBy: trackBySurveyId" 
         [class.completed]="survey.isCompleted"
         (click)="takeSurvey(survey)">
         
@@ -90,7 +101,7 @@
           </div>
 
           <div class="survey-questions-preview">
-            <p>{{ survey.questions.length }} question{{ survey.questions.length !== 1 ? 's' : '' }}</p>
+            <p>📝 {{ survey.questions.length }} question{{ survey.questions.length !== 1 ? 's' : '' }}</p>
           </div>
 
           <div class="survey-status" *ngIf="survey.isCompleted">

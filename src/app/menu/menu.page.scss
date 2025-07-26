@@ -1,133 +1,346 @@
-/* menu.page.scss */
+/// Glass theme variables matching login page
+$glass-primary: #00bcd4;
+$glass-secondary: #00e5ff;
+$glass-accent: #b3e5fc;
+$glass-text-light: #80d8ff;
+$glass-white: #ffffff;
+$glass-dark: rgba(0, 0, 0, 0.2);
 
-// Variables
-$primary-blue: #4A90C2;
-$secondary-blue: #5B9BD5;
-$teal: #26C6DA;
-$light-gray: #F5F5F5;
-$dark-gray: #333;
-$white: #FFFFFF;
-
-// Header Styles
-ion-header {
+// Header Styles with glassmorphism
+.glass-header {
   ion-toolbar {
-    --background: #{$light-gray};
-    --color: #{$dark-gray};
-    --border-width: 0 0 2px 0;
-    --border-color: #{$primary-blue};
+    --background: rgba(255, 255, 255, 0.08);
+    --color: #{$glass-white};
+    --border-width: 0 0 1px 0;
+    --border-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: relative;
+    
+    .header-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+    
+    .header-particle {
+      position: absolute;
+      background: rgba(0, 191, 255, 0.1);
+      border-radius: 50%;
+      animation: headerFloat 4s ease-in-out infinite;
+      
+      &:nth-child(1) {
+        width: 30px;
+        height: 30px;
+        top: 20%;
+        left: 20%;
+        animation-delay: 0s;
+      }
+      
+      &:nth-child(2) {
+        width: 40px;
+        height: 40px;
+        top: 60%;
+        right: 20%;
+        animation-delay: 2s;
+      }
+    }
+    
+    @keyframes headerFloat {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.1;
+      }
+      50% {
+        transform: translateY(-10px) rotate(90deg);
+        opacity: 0.3;
+      }
+    }
     
     .top-nav {
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 8px 0;
+      padding: 12px 0;
+      position: relative;
+      z-index: 1;
       
       .nav-item {
         display: flex;
         flex-direction: column;
         align-items: center;
         cursor: pointer;
-        padding: 8px 16px;
+        padding: 12px 20px;
         transition: all 0.3s ease;
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          transform: translateY(-2px);
+        }
         
         .nav-icon {
-          width: 40px;
-          height: 40px;
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: 4px;
+          margin-bottom: 8px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+          position: relative;
+          overflow: hidden;
+          
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+          }
+          
+          &:hover::before {
+            left: 100%;
+          }
           
           ion-icon {
-            font-size: 20px;
+            font-size: 24px;
             color: white;
+            z-index: 1;
           }
           
           &.profile-icon {
-            background: #{$teal};
+            background: linear-gradient(135deg, #26C6DA, #00e5ff);
           }
           
           &.notifications-icon {
-            background: #{$primary-blue};
+            background: linear-gradient(135deg, #00bcd4, #4A90C2);
           }
         }
         
         .nav-label {
           font-size: 12px;
-          font-weight: 500;
-          color: #{$dark-gray};
+          font-weight: 600;
+          color: #{$glass-accent};
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
         
         &.active {
           .nav-label {
-            color: #{$primary-blue};
-            font-weight: 600;
+            color: #{$glass-secondary};
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
           }
-        }
-        
-        &:hover {
-          opacity: 0.8;
+          
+          .nav-icon {
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+          }
         }
       }
     }
   }
 }
 
-// Content Styles
+// Content Styles with glassmorphism
 .menu-content {
-  --background: #{$light-gray};
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  position: relative;
+  overflow: hidden;
+  
+  // Remove default ionic padding
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  
+  .bg-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+  }
+  
+  .particle {
+    position: absolute;
+    background: rgba(0, 191, 255, 0.08);
+    border-radius: 50%;
+    animation: float 8s ease-in-out infinite;
+  }
+  
+  .particle:nth-child(1) {
+    width: 100px;
+    height: 100px;
+    top: 15%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+  
+  .particle:nth-child(2) {
+    width: 150px;
+    height: 150px;
+    top: 50%;
+    right: 15%;
+    animation-delay: 3s;
+  }
+  
+  .particle:nth-child(3) {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 6s;
+  }
+  
+  .particle:nth-child(4) {
+    width: 120px;
+    height: 120px;
+    top: 70%;
+    right: 40%;
+    animation-delay: 1s;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.05;
+    }
+    50% {
+      transform: translateY(-30px) rotate(180deg);
+      opacity: 0.15;
+    }
+  }
   
   .welcome-section {
-    padding: 32px 20px 24px 20px;
+    padding: 40px 20px 32px 20px;
+    position: relative;
+    z-index: 1;
     
-    .welcome-title {
-      font-size: 32px;
-      font-weight: 700;
-      color: #{$dark-gray};
-      margin: 0;
-      letter-spacing: 1px;
+    .welcome-glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -50%;
+        width: 200%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.4), transparent);
+        animation: shimmer 4s infinite;
+      }
+      
+      @keyframes shimmer {
+        0% { left: -50%; }
+        100% { left: 150%; }
+      }
+      
+      .welcome-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #{$glass-white};
+        margin: 0 0 8px 0;
+        letter-spacing: 2px;
+        text-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+      }
+      
+      .welcome-subtitle {
+        font-size: 1rem;
+        color: #{$glass-accent};
+        font-weight: 300;
+        letter-spacing: 0.5px;
+      }
     }
   }
   
   .menu-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    padding: 0 20px 40px 20px;
+    gap: 20px;
+    padding: 0 20px 50px 20px;
+    position: relative;
+    z-index: 1;
     
     .menu-card {
-      background: #{$secondary-blue};
-      border-radius: 16px;
-      padding: 32px 16px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 32px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 140px;
+      min-height: 160px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      
+      .card-glow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
       
       &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 
+          0 15px 40px rgba(0, 188, 212, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        border-color: rgba(0, 229, 255, 0.3);
+        
+        .card-glow {
+          opacity: 1;
+        }
       }
       
       &:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px) scale(1.01);
       }
       
       .card-icon {
-        margin-bottom: 16px;
+        margin-bottom: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: all 0.3s ease;
         
         ion-icon {
-          font-size: 40px;
-          color: #{$dark-gray};
+          font-size: 48px;
+          color: #{$glass-secondary};
+          filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.3));
         }
         
         .vote-icon {
@@ -136,36 +349,39 @@ ion-header {
           align-items: center;
           
           .vote-button {
-            background: #{$dark-gray};
+            background: linear-gradient(135deg, #{$glass-primary}, #{$glass-secondary});
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
             font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 4px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
           }
           
           .hand-pointer {
-            font-size: 24px;
+            font-size: 28px;
+            filter: drop-shadow(0 0 5px rgba(0, 229, 255, 0.2));
           }
         }
         
         .results-icon {
-          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
           
           > ion-icon {
-            margin-bottom: 8px;
+            margin-bottom: 12px;
           }
           
           .people-icons {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             
             ion-icon {
-              font-size: 16px;
+              font-size: 18px;
+              color: #{$glass-accent};
             }
           }
         }
@@ -173,37 +389,38 @@ ion-header {
         .polls-icon {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 6px;
           
           .poll-item {
-            width: 40px;
-            height: 8px;
-            background: #{$dark-gray};
-            border-radius: 4px;
+            height: 10px;
+            background: linear-gradient(90deg, #{$glass-primary}, #{$glass-secondary});
+            border-radius: 5px;
             position: relative;
+            box-shadow: 0 2px 8px rgba(0, 188, 212, 0.2);
             
             &:nth-child(1) {
-              width: 40px;
+              width: 45px;
             }
             
             &:nth-child(2) {
-              width: 32px;
+              width: 35px;
             }
             
             &:nth-child(3) {
-              width: 36px;
+              width: 40px;
             }
             
-            &::before {
+            &::after {
               content: '';
               position: absolute;
-              right: -8px;
+              right: -10px;
               top: 50%;
               transform: translateY(-50%);
-              width: 6px;
-              height: 6px;
-              background: #{$dark-gray};
+              width: 8px;
+              height: 8px;
+              background: #{$glass-secondary};
               border-radius: 50%;
+              box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
             }
           }
         }
@@ -212,30 +429,51 @@ ion-header {
       .card-title {
         font-size: 16px;
         font-weight: 700;
-        color: #{$dark-gray};
+        color: #{$glass-white};
         margin: 0;
         text-align: center;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+      }
+      
+      &:hover {
+        .card-icon {
+          transform: scale(1.1);
+          
+          ion-icon {
+            color: #{$glass-white};
+            filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.5));
+          }
+        }
       }
     }
   }
 }
 
 // Responsive Design
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .menu-grid {
-    gap: 12px;
-    padding: 0 16px 32px 16px;
+    gap: 16px;
+    padding: 0 16px 40px 16px;
     
     .menu-card {
-      padding: 24px 12px;
-      min-height: 120px;
+      padding: 28px 16px;
+      min-height: 140px;
       
       .card-icon {
-        margin-bottom: 12px;
+        margin-bottom: 16px;
         
         ion-icon {
-          font-size: 32px;
+          font-size: 40px;
+        }
+        
+        .vote-icon .vote-button {
+          padding: 8px 16px;
+          font-size: 11px;
+        }
+        
+        .vote-icon .hand-pointer {
+          font-size: 24px;
         }
       }
       
@@ -246,26 +484,41 @@ ion-header {
   }
   
   .welcome-section {
-    padding: 24px 16px 20px 16px;
+    padding: 32px 16px 24px 16px;
     
-    .welcome-title {
-      font-size: 28px;
+    .welcome-glass-card {
+      padding: 24px 20px;
+      
+      .welcome-title {
+        font-size: 2rem;
+      }
     }
   }
 }
 
-// Animation for cards
-@keyframes cardHover {
-  0% {
-    transform: translateY(0);
+@media (max-width: 480px) {
+  .welcome-section .welcome-glass-card .welcome-title {
+    font-size: 1.8rem;
   }
-  100% {
-    transform: translateY(-2px);
+  
+  .menu-grid {
+    gap: 12px;
+    padding: 0 12px 32px 12px;
+  }
+}
+
+// Enhanced animations
+@keyframes cardPulse {
+  0%, 100% {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.15);
   }
 }
 
 .menu-card {
   &:hover {
-    animation: cardHover 0.3s ease forwards;
+    animation: cardPulse 2s ease-in-out infinite;
   }
 }

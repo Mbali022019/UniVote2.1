@@ -1,187 +1,263 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+!-- profile.page.html -->
+<ion-header [translucent]="true" class="custom-header">
+  <ion-toolbar class="nav-header">
     <ion-buttons slot="start">
-      <ion-button (click)="goBack()">
-        <ion-icon name="arrow-back"></ion-icon>
+      <ion-button class="nav-back" fill="clear" (click)="goBack()">
+        <ion-icon name="arrow-back" slot="start"></ion-icon>
+        Back to Menu
       </ion-button>
     </ion-buttons>
-    <ion-title>Profile</ion-title>
+    
+    <ion-title class="nav-title">Student Profile</ion-title>
+    
     <ion-buttons slot="end">
-      <ion-button *ngIf="!isEditing" (click)="toggleEdit()">
-        <ion-icon name="create"></ion-icon>
-      </ion-button>
-      <ion-button *ngIf="isEditing" (click)="saveProfile()">
-        <ion-icon name="checkmark"></ion-icon>
-      </ion-button>
-      <ion-button *ngIf="isEditing" (click)="toggleEdit()">
-        <ion-icon name="close"></ion-icon>
+      <ion-button class="nav-edit-btn" fill="clear" (click)="toggleEditMode()" [title]="isEditing ? 'Save Changes' : 'Edit Profile'">
+        <ion-icon [name]="isEditing ? 'checkmark' : 'create'"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <!-- Profile Header -->
-  <div class="profile-header">
-    <div class="avatar-container">
-      <ion-avatar class="profile-avatar" (click)="changeAvatar()">
-        <img [src]="avatarUrl" alt="Profile Avatar">
-        <div class="avatar-overlay">
-          <ion-icon name="camera"></ion-icon>
-        </div>
-      </ion-avatar>
-      <div class="profile-info">
-        <h2>{{ userProfile.firstName }} {{ userProfile.lastName }}</h2>
-        <p>{{ userProfile.studentId }}</p>
-        <ion-chip color="primary">
-          <ion-label>{{ userProfile.department }}</ion-label>
-        </ion-chip>
-      </div>
-    </div>
+<ion-content [fullscreen]="true" class="profile-content">
+  <!-- Animated Background Particles -->
+  <div class="bg-animation">
+    <div class="particle" *ngFor="let p of particles; let i = index" [style.transform]="p.transform"></div>
   </div>
 
-  <!-- Profile Form -->
-  <div class="profile-content">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Personal Information</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <!-- Name Fields -->
-        <ion-row>
-          <ion-col size="6">
-            <ion-item>
-              <ion-label position="stacked">First Name</ion-label>
+  <div class="profile-container">
+    <div class="profile-wrapper">
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-avatar" 
+             (click)="triggerFileUpload()" 
+             (drop)="handleDrop($event)" 
+             (dragover)="handleDragOver($event)" 
+             (dragleave)="handleDragLeave($event)"
+             [class.drag-over]="isDragOver">
+          <img #avatarImage 
+               class="avatar-image" 
+               [src]="avatarUrl" 
+               [style.display]="avatarUrl ? 'block' : 'none'" 
+               alt="Profile Picture">
+          <div class="avatar-placeholder" [style.display]="!avatarUrl ? 'block' : 'none'">
+            {{getInitials()}}
+          </div>
+          <div class="avatar-overlay">
+            <ion-icon name="cloud-upload" class="upload-icon"></ion-icon>
+            <div class="upload-text">Click or drag<br>to upload photo</div>
+          </div>
+        </div>
+        <input #fileInput 
+               type="file" 
+               class="file-input" 
+               accept="image/*" 
+               (change)="handleFileSelect($event)">
+        
+        <div class="student-info">
+          <div class="student-id">{{userProfile.studentId}}</div>
+          <div class="course-name">{{userProfile.department}}</div>
+        </div>
+      </div>
+
+      <!-- Personal Information Section -->
+      <div class="form-section">
+        <h2 class="section-title">Personal Information</h2>
+        <form [formGroup]="profileForm" class="form-grid">
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">First Name</ion-label>
               <ion-input 
-                [(ngModel)]="userProfile.firstName"
-                [readonly]="!isEditing"
-                type="text"
-                placeholder="Enter first name">
+                class="form-input" 
+                formControlName="firstName" 
+                placeholder="Enter first name"
+                [readonly]="!isEditing">
               </ion-input>
-            </ion-item>
-          </ion-col>
-          <ion-col size="6">
-            <ion-item>
-              <ion-label position="stacked">Last Name</ion-label>
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">Last Name</ion-label>
               <ion-input 
-                [(ngModel)]="userProfile.lastName"
-                [readonly]="!isEditing"
-                type="text"
-                placeholder="Enter last name">
+                class="form-input" 
+                formControlName="lastName" 
+                placeholder="Enter last name"
+                [readonly]="!isEditing">
               </ion-input>
-            </ion-item>
-          </ion-col>
-        </ion-row>
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">Email Address</ion-label>
+              <ion-input 
+                class="form-input" 
+                type="email" 
+                formControlName="email" 
+                placeholder="Enter email address"
+                [readonly]="!isEditing">
+              </ion-input>
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">Phone Number</ion-label>
+              <ion-input 
+                class="form-input" 
+                type="tel" 
+                formControlName="phone" 
+                placeholder="Enter phone number"
+                [readonly]="!isEditing">
+              </ion-input>
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">Date of Birth</ion-label>
+              <ion-datetime 
+                class="date-picker" 
+                formControlName="dateOfBirth" 
+                presentation="date"
+                [disabled]="!isEditing">
+              </ion-datetime>
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">Gender</ion-label>
+              <ion-select 
+                class="form-select" 
+                formControlName="gender" 
+                placeholder="Select Gender"
+                [disabled]="!isEditing">
+                <ion-select-option value="">Select Gender</ion-select-option>
+                <ion-select-option value="male">Male</ion-select-option>
+                <ion-select-option value="female">Female</ion-select-option>
+                <ion-select-option value="other">Other</ion-select-option>
+                <ion-select-option value="prefer-not-to-say">Prefer not to say</ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+          
+          <div class="form-field full-width">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">Address</ion-label>
+              <ion-textarea 
+                class="form-textarea" 
+                formControlName="address" 
+                placeholder="Enter your full address"
+                [readonly]="!isEditing">
+              </ion-textarea>
+            </div>
+          </div>
+        </form>
+      </div>
 
-        <!-- Email -->
-        <ion-item>
-          <ion-label position="stacked">Email Address</ion-label>
-          <ion-input 
-            [(ngModel)]="userProfile.email"
-            [readonly]="!isEditing"
-            type="email"
-            placeholder="Enter email address">
-          </ion-input>
-          <ion-icon name="mail" slot="end" color="medium"></ion-icon>
-        </ion-item>
+      <!-- Academic Information Section -->
+      <div class="form-section">
+        <h2 class="section-title">Academic Information</h2>
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">Student ID</ion-label>
+              <ion-input 
+                class="form-input" 
+                formControlName="studentId" 
+                placeholder="Enter student ID"
+                [readonly]="!isEditing">
+              </ion-input>
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">Department</ion-label>
+              <ion-select 
+                class="form-select" 
+                formControlName="department" 
+                placeholder="Select Department"
+                [disabled]="!isEditing">
+                <ion-select-option value="">Select Department</ion-select-option>
+                <ion-select-option value="computer-science">Computer Science</ion-select-option>
+                <ion-select-option value="engineering">Engineering</ion-select-option>
+                <ion-select-option value="business">Business Administration</ion-select-option>
+                <ion-select-option value="psychology">Psychology</ion-select-option>
+                <ion-select-option value="medicine">Medicine</ion-select-option>
+                <ion-select-option value="law">Law</ion-select-option>
+                <ion-select-option value="arts">Arts & Literature</ion-select-option>
+                <ion-select-option value="mathematics">Mathematics</ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">Year of Study</ion-label>
+              <ion-select 
+                class="form-select" 
+                formControlName="yearOfStudy" 
+                placeholder="Select Year"
+                [disabled]="!isEditing">
+                <ion-select-option value="">Select Year</ion-select-option>
+                <ion-select-option value="1">1st Year</ion-select-option>
+                <ion-select-option value="2">2nd Year</ion-select-option>
+                <ion-select-option value="3">3rd Year</ion-select-option>
+                <ion-select-option value="4">4th Year</ion-select-option>
+                <ion-select-option value="postgrad">Postgraduate</ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <div class="input-group">
+              <ion-label class="form-label" position="floating">GPA</ion-label>
+              <ion-input 
+                class="form-input" 
+                type="number" 
+                formControlName="gpa" 
+                placeholder="Enter GPA" 
+                step="0.1" 
+                min="0" 
+                max="4"
+                [readonly]="!isEditing">
+              </ion-input>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <!-- Phone Number -->
-        <ion-item>
-          <ion-label position="stacked">Phone Number</ion-label>
-          <ion-input 
-            [(ngModel)]="userProfile.phone"
-            [readonly]="!isEditing"
-            type="tel"
-            placeholder="Enter phone number">
-          </ion-input>
-          <ion-icon name="call" slot="end" color="medium"></ion-icon>
-        </ion-item>
-
-        <!-- Date of Birth -->
-        <ion-item>
-          <ion-label position="stacked">Date of Birth</ion-label>
-          <ion-datetime 
-            [(ngModel)]="userProfile.dateOfBirth"
-            [disabled]="!isEditing"
-            display-format="DD/MM/YYYY"
-            picker-format="DD/MM/YYYY"
-            placeholder="Select date of birth">
-          </ion-datetime>
-          <ion-icon name="calendar" slot="end" color="medium"></ion-icon>
-        </ion-item>
-
-        <!-- Address -->
-        <ion-item>
-          <ion-label position="stacked">Address</ion-label>
-          <ion-textarea 
-            [(ngModel)]="userProfile.address"
-            [readonly]="!isEditing"
-            rows="2"
-            placeholder="Enter your address">
-          </ion-textarea>
-          <ion-icon name="location" slot="end" color="medium"></ion-icon>
-        </ion-item>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Academic Information -->
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Academic Information</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <!-- Student ID -->
-        <ion-item>
-          <ion-label position="stacked">Student ID</ion-label>
-          <ion-input 
-            [(ngModel)]="userProfile.studentId"
-            [readonly]="!isEditing"
-            type="text"
-            placeholder="Enter student ID">
-          </ion-input>
-          <ion-icon name="card" slot="end" color="medium"></ion-icon>
-        </ion-item>
-
-        <!-- Department -->
-        <ion-item>
-          <ion-label position="stacked">Department</ion-label>
-          <ion-select 
-            [(ngModel)]="userProfile.department"
-            [disabled]="!isEditing"
-            placeholder="Select your department">
-            <ion-select-option *ngFor="let dept of departments" [value]="dept">
-              {{ dept }}
-            </ion-select-option>
-          </ion-select>
-          <ion-icon name="school" slot="end" color="medium"></ion-icon>
-        </ion-item>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Action Buttons (only show when editing) -->
-    <div class="action-buttons" *ngIf="isEditing">
-      <ion-button 
-        expand="block" 
-        color="success" 
-        (click)="saveProfile()">
-        <ion-icon name="checkmark" slot="start"></ion-icon>
-        Save Changes
-      </ion-button>
-      
-      <ion-button 
-        expand="block" 
-        fill="outline" 
-        color="medium" 
-        (click)="toggleEdit()">
-        <ion-icon name="close" slot="start"></ion-icon>
-        Cancel
-      </ion-button>
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <ion-button 
+          class="action-btn btn-primary" 
+          expand="block" 
+          (click)="saveProfile()"
+          [disabled]="!isEditing || profileForm.invalid">
+          <ion-icon name="save" slot="start"></ion-icon>
+          Save Changes
+        </ion-button>
+        
+        <ion-button 
+          class="action-btn btn-secondary" 
+          expand="block" 
+          fill="outline" 
+          (click)="resetForm()">
+          <ion-icon name="refresh" slot="start"></ion-icon>
+          Reset Form
+        </ion-button>
+        
+        <ion-button 
+          class="action-btn btn-secondary" 
+          expand="block" 
+          fill="outline" 
+          (click)="removeProfilePicture()">
+          <ion-icon name="trash" slot="start"></ion-icon>
+          Remove Photo
+        </ion-button>
+      </div>
     </div>
   </div>
 </ion-content>

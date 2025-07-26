@@ -156,6 +156,11 @@ export class SurveysPage implements OnInit {
     ];
   }
 
+  // TrackBy function for ngFor optimization
+  trackBySurveyId(index: number, survey: Survey): string {
+    return survey.id;
+  }
+
   filterSurveys() {
     this.filteredSurveys = this.surveys.filter(survey => {
       const matchesCategory = this.selectedCategory === 'all' || survey.category === this.selectedCategory;

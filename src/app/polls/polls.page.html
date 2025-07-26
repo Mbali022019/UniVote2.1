@@ -1,83 +1,116 @@
 <!-- polls.page.html -->
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Polls</ion-title>
+    <ion-title>Student Poll</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="polls-content">
-  
-  <!-- Poll Card -->
-  <div class="poll-card">
+<ion-content class="polls-bg">
+  <div class="polls-container">
     
-    <!-- Poll Question -->
-    <div class="poll-question">
-      <h2>{{ pollData.question }}</h2>
-    </div>
-    
-    <!-- Poll Options -->
-    <div class="poll-options">
-      <div 
-        class="poll-option" 
-        *ngFor="let option of pollData.options; let i = index"
-        (click)="selectOption(i)"
-        [class.selected]="selectedOptions.includes(i)">
-        
-        <!-- Radio/Checkbox -->
-        <div class="option-selector">
-          <ion-radio-group *ngIf="!pollData.allowMultiple" [(ngModel)]="selectedOption">
-            <ion-radio [value]="i"></ion-radio>
-          </ion-radio-group>
-          
-          <ion-checkbox 
-            *ngIf="pollData.allowMultiple" 
-            [(ngModel)]="option.selected">
-          </ion-checkbox>
+    <!-- Poll Card -->
+    <div class="glass-card poll-card">
+      
+      <!-- Poll Header -->
+      <div class="poll-header">
+        <div class="poll-avatar">
+          <img src="assets/images/poll-avatar.jpg" alt="Poll Creator" />
         </div>
-        
-        <!-- Option Text -->
-        <div class="option-content">
-          <span class="option-text">{{ option.text }}</span>
-          
-          <!-- Vote Count -->
-          <div class="vote-count">{{ option.votes || 0 }}</div>
+        <div class="poll-meta">
+          <h3 class="poll-creator">Student Council</h3>
+          <p class="poll-time">{{ pollData.createdAt | date:'MMM d, h:mm a' }}</p>
         </div>
-        
-        <!-- Progress Bar -->
-        <div class="vote-progress">
-          <div 
-            class="progress-bar" 
-            [style.width.%]="getVotePercentage(option.votes || 0)">
-          </div>
-        </div>
-        
       </div>
+
+      <!-- Poll Question -->
+      <div class="poll-question">
+        <h2>{{ pollData.question }}</h2>
+        <p class="poll-description" *ngIf="pollData.description">
+          {{ pollData.description }}
+        </p>
+      </div>
+
+      <!-- Poll Options with Radio Buttons -->
+      <div class="poll-options">
+        <div 
+          class="poll-option"
+          *ngFor="let option of pollData.options; let i = index"
+          (click)="selectOption(i)"
+          [class.selected]="selectedOptions.includes(i)"
+          [class.voted]="hasVoted">
+          
+          <!-- Radio Button Section -->
+          <div class="option-header">
+            <div class="radio-container">
+              <input 
+                type="radio" 
+                [id]="'option-' + i"
+                name="poll-option"
+                [checked]="selectedOptions.includes(i)"
+                (change)="selectOption(i)"
+                [disabled]="hasVoted">
+              <label [for]="'option-' + i" class="radio-label">
+                <span class="radio-button"></span>
+              </label>
+            </div>
+            
+            <div class="option-content">
+              <div class="option-text">{{ option.text }}</div>
+              
+              <!-- Vote Count (only shown after voting) -->
+              <div class="vote-count" *ngIf="hasVoted">
+                {{ option.votes || 0 }} {{ (option.votes || 0) === 1 ? 'vote' : 'votes' }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Bar (always visible, fills after voting) -->
+          <div class="vote-progress">
+            <div 
+              class="progress-bar"
+              [style.width.%]="hasVoted ? getVotePercentage(option.votes || 0) : (selectedOptions.includes(i) ? 20 : 0)"
+              [class.selected-bar]="selectedOptions.includes(i)"
+              [class.preview-bar]="!hasVoted && selectedOptions.includes(i)">
+            </div>
+            <div class="percentage-text" *ngIf="hasVoted">
+              {{ getVotePercentage(option.votes || 0) }}%
+            </div>
+            <div class="preview-text" *ngIf="!hasVoted && selectedOptions.includes(i)">
+              Selected
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- Poll Stats (shown after voting) -->
+      <div class="poll-stats" *ngIf="hasVoted">
+        <div class="total-votes">
+          <ion-icon name="people-outline"></ion-icon>
+          {{ getTotalVotes() }} {{ getTotalVotes() === 1 ? 'person' : 'people' }} voted
+        </div>
+        <div class="poll-type" *ngIf="pollData.allowMultiple">
+          <ion-icon name="checkbox-outline"></ion-icon>
+          Multiple answers allowed
+        </div>
+      </div>
+
     </div>
-    
-    <!-- View Votes Button -->
-    <div class="poll-actions">
+
+    <!-- Vote Button (if not voted) -->
+    <div class="vote-button-container" *ngIf="!hasVoted">
       <ion-button 
-        fill="clear" 
-        class="view-votes-btn"
-        (click)="viewVotes()">
-        View votes
+        expand="block"
+        class="neon-button vote-btn"
+        (click)="submitVote()"
+        [disabled]="!canVote()">
+        <ion-icon name="send-outline" slot="start"></ion-icon>
+        Submit Vote
       </ion-button>
     </div>
-    
-  </div>
-  
-  <!-- Vote Button (if not voted) -->
-  <div class="vote-button-container" *ngIf="!hasVoted">
-    <ion-button 
-      expand="block" 
-      class="vote-btn"
-      (click)="submitVote()"
-      [disabled]="!canVote()">
-      Vote
-    </ion-button>
-  </div>
 
+  </div>
 </ion-content>

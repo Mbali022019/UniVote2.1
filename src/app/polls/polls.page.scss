@@ -1,0 +1,650 @@
+/* polls.page.scss - Enhanced with Radio Buttons and Full Screen */
+
+// Glass theme variables
+$glass-primary: #00bcd4;
+$glass-secondary: #00e5ff;
+$glass-accent: #b3e5fc;
+$glass-text: #80d8ff;
+$glass-white: #ffffff;
+$glass-success: #4CAF50;
+$glass-warning: #ffc107;
+$glass-danger: #ff4444;
+$glass-dark: #0f2027;
+
+// Header styling with glass effect
+ion-header {
+  ion-toolbar {
+    --background: rgba(255, 255, 255, 0.08);
+    --color: $glass-accent;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    
+    ion-title {
+      color: $glass-accent;
+      font-weight: 700;
+      font-size: 20px;
+      text-shadow: 0 0 20px rgba(179, 229, 252, 0.5);
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    
+    ion-back-button {
+      --color: $glass-secondary;
+      filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.4));
+    }
+  }
+}
+
+// Full screen background
+.polls-bg {
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  height: 100vh;
+  width: 100vw;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 60%, rgba(179, 229, 252, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+// Container for polls content - full desktop width
+.polls-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+// Glass card for poll content
+.glass-card {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 24px;
+  padding: 48px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  width: 100%;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+// Poll card specific styles
+.poll-card {
+  .poll-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    
+    .poll-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(0, 229, 255, 0.3);
+      margin-right: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      &:empty::before {
+        content: '👥';
+        font-size: 32px;
+      }
+    }
+    
+    .poll-meta {
+      flex: 1;
+      
+      .poll-creator {
+        font-size: 22px;
+        font-weight: 700;
+        color: $glass-accent;
+        margin: 0 0 6px 0;
+        text-shadow: 0 0 10px rgba(179, 229, 252, 0.3);
+      }
+      
+      .poll-time {
+        font-size: 16px;
+        color: rgba(128, 216, 255, 0.7);
+        margin: 0;
+      }
+    }
+  }
+  
+  .poll-question {
+    margin-bottom: 40px;
+    
+    h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: $glass-white;
+      margin: 0 0 16px 0;
+      line-height: 1.3;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+    
+    .poll-description {
+      font-size: 18px;
+      color: $glass-text;
+      margin: 0;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+  }
+  
+  .poll-options {
+    margin-bottom: 32px;
+    
+    .poll-option {
+      background: rgba(255, 255, 255, 0.04);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.1), transparent);
+        transition: left 0.6s ease;
+      }
+      
+      &:hover {
+        transform: translateY(-3px);
+        border-color: rgba(0, 229, 255, 0.3);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 12px 32px rgba(0, 229, 255, 0.15);
+        
+        &::before {
+          left: 100%;
+        }
+      }
+      
+      &.selected:not(.voted) {
+        border-color: rgba(0, 229, 255, 0.6);
+        background: rgba(0, 229, 255, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 
+          0 12px 32px rgba(0, 229, 255, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        animation: selectPulse 0.6s ease;
+      }
+      
+      &.voted {
+        cursor: default;
+        
+        &:hover {
+          transform: none;
+        }
+        
+        &.selected {
+          border-color: rgba(76, 175, 80, 0.6);
+          background: rgba(76, 175, 80, 0.1);
+        }
+      }
+      
+      .option-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        
+        .radio-container {
+          position: relative;
+          margin-right: 16px;
+          
+          input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+          }
+          
+          .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            
+            .radio-button {
+              width: 24px;
+              height: 24px;
+              border: 2px solid rgba(128, 216, 255, 0.5);
+              border-radius: 50%;
+              position: relative;
+              display: inline-block;
+              transition: all 0.2s ease;
+              background: rgba(255, 255, 255, 0.05);
+              
+              &::after {
+                content: '';
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: $glass-secondary;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0);
+                transition: transform 0.2s ease;
+                box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+              }
+            }
+          }
+          
+          input[type="radio"]:checked + .radio-label .radio-button {
+            border-color: $glass-secondary;
+            background: rgba(0, 229, 255, 0.1);
+            
+            &::after {
+              transform: translate(-50%, -50%) scale(1);
+            }
+          }
+          
+          input[type="radio"]:disabled + .radio-label {
+            cursor: not-allowed;
+            opacity: 0.6;
+          }
+        }
+        
+        .option-content {
+          flex: 1;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          
+          .option-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: $glass-white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+          }
+          
+          .vote-count {
+            font-size: 16px;
+            color: $glass-text;
+            font-weight: 500;
+            opacity: 0.8;
+          }
+        }
+      }
+      
+      .vote-progress {
+        position: relative;
+        height: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        overflow: hidden;
+        
+        .progress-bar {
+          height: 100%;
+          border-radius: 6px;
+          transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          
+          &.selected-bar {
+            background: linear-gradient(90deg, $glass-success, #66bb6a);
+            box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
+          }
+          
+          &.preview-bar {
+            background: linear-gradient(90deg, $glass-primary, $glass-secondary);
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+            animation: previewPulse 2s infinite;
+          }
+          
+          &:not(.preview-bar):not(.selected-bar) {
+            background: linear-gradient(90deg, $glass-primary, $glass-secondary);
+          }
+          
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+          }
+        }
+        
+        .percentage-text,
+        .preview-text {
+          position: absolute;
+          right: 8px;
+          top: -24px;
+          font-size: 14px;
+          color: $glass-text;
+          font-weight: 600;
+        }
+        
+        .preview-text {
+          color: $glass-secondary;
+          animation: previewTextPulse 2s infinite;
+        }
+      }
+    }
+  }
+  
+  .poll-stats {
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .total-votes,
+    .poll-type {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      color: $glass-text;
+      opacity: 0.8;
+      
+      ion-icon {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+// Button containers
+.vote-button-container,
+.action-button-container {
+  display: flex;
+  justify-content: center;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+  
+  .vote-btn,
+  .results-btn {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    --border-radius: 20px;
+    --padding-top: 20px;
+    --padding-bottom: 20px;
+    --padding-start: 48px;
+    --padding-end: 48px;
+    font-size: 20px;
+    min-width: 280px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    transition: all 0.3s ease-in-out;
+    
+    ion-icon {
+      margin-right: 12px;
+    }
+  }
+  
+  .neon-button {
+    --background: $glass-primary;
+    --color: white;
+    border: 1px solid rgba(0, 188, 212, 0.5);
+    box-shadow: 
+      0 8px 24px rgba(0, 188, 212, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    
+    &:hover:not([disabled]) {
+      transform: translateY(-3px) scale(1.02);
+      --background: $glass-secondary;
+      box-shadow: 
+        0 16px 40px rgba(0, 229, 255, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    
+    &:disabled {
+      --background: rgba(255, 255, 255, 0.1);
+      --color: rgba(255, 255, 255, 0.4);
+      box-shadow: none;
+      border-color: rgba(255, 255, 255, 0.1);
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+  
+  .neon-button-outline {
+    --color: $glass-text;
+    --border-color: $glass-secondary;
+    --background: transparent;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 229, 255, 0.1);
+    
+    &:hover {
+      transform: translateY(-3px) scale(1.02);
+      --color: white;
+      --border-color: white;
+      --background: rgba(0, 229, 255, 0.06);
+      box-shadow: 0 12px 32px rgba(0, 229, 255, 0.2);
+    }
+  }
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes selectPulse {
+  0% {
+    box-shadow: 
+      0 12px 32px rgba(0, 229, 255, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 16px 40px rgba(0, 229, 255, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow: 
+      0 12px 32px rgba(0, 229, 255, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+@keyframes previewPulse {
+  0%, 100% {
+    opacity: 0.8;
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.6);
+  }
+}
+
+@keyframes previewTextPulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// Responsive design
+@media (max-width: 1200px) {
+  .polls-container {
+    max-width: 900px;
+    padding: 32px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .polls-container {
+    padding: 24px 12px;
+  }
+  
+  .glass-card {
+    padding: 32px 24px;
+  }
+  
+  .poll-card {
+    .poll-header {
+      .poll-avatar {
+        width: 48px;
+        height: 48px;
+      }
+      
+      .poll-meta {
+        .poll-creator {
+          font-size: 18px;
+        }
+        
+        .poll-time {
+          font-size: 14px;
+        }
+      }
+    }
+    
+    .poll-question {
+      h2 {
+        font-size: 24px;
+      }
+      
+      .poll-description {
+        font-size: 16px;
+      }
+    }
+    
+    .poll-options {
+      .poll-option {
+        padding: 20px;
+        
+        .option-header {
+          .option-content {
+            .option-text {
+              font-size: 18px;
+            }
+            
+            .vote-count {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .vote-button-container,
+  .action-button-container {
+    .vote-btn,
+    .results-btn {
+      font-size: 18px;
+      --padding-top: 16px;
+      --padding-bottom: 16px;
+      --padding-start: 32px;
+      --padding-end: 32px;
+      min-width: 240px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .glass-card {
+    padding: 24px 16px;
+  }
+  
+  .poll-card {
+    .poll-question {
+      h2 {
+        font-size: 20px;
+      }
+      
+      .poll-description {
+        font-size: 14px;
+      }
+    }
+    
+    .poll-options {
+      .poll-option {
+        padding: 16px;
+        
+        .option-header {
+          .radio-container {
+            .radio-label .radio-button {
+              width: 20px;
+              height: 20px;
+              
+              &::after {
+                width: 10px;
+                height: 10px;
+              }
+            }
+          }
+          
+          .option-content {
+            .option-text {
+              font-size: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .vote-button-container,
+  .action-button-container {
+    .vote-btn,
+    .results-btn {
+      font-size: 16px;
+      min-width: 200px;
+    }
+  }
+}

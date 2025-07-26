@@ -1,7 +1,0 @@
-{
-  "name": "UniVote2.1",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}

@@ -1,6 +1,11 @@
-<!-- menu.page.html -->
-<ion-header>
-  <ion-toolbar color="light">
+<ion-header class="glass-header">
+  <ion-toolbar>
+    <!-- Animated background particles for header -->
+    <div class="header-particles">
+      <div class="header-particle"></div>
+      <div class="header-particle"></div>
+    </div>
+    
     <!-- Top Navigation Tabs -->
     <div class="top-nav">
       <div class="nav-item" (click)="goToProfile()">
@@ -21,10 +26,20 @@
 </ion-header>
 
 <ion-content class="menu-content">
+  <!-- Animated background particles -->
+  <div class="bg-particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
   
   <!-- Welcome Section -->
   <div class="welcome-section">
-    <h1 class="welcome-title">WELCOME</h1>
+    <div class="welcome-glass-card">
+      <h1 class="welcome-title">WELCOME</h1>
+      <div class="welcome-subtitle">Choose your action</div>
+    </div>
   </div>
 
   <!-- Menu Grid -->
@@ -32,6 +47,7 @@
     
     <!-- Vote Card -->
     <div class="menu-card vote-card" (click)="goToVote()">
+      <div class="card-glow"></div>
       <div class="card-icon">
         <div class="vote-icon">
           <div class="vote-button">VOTE</div>
@@ -43,6 +59,7 @@
 
     <!-- Surveys Card -->
     <div class="menu-card surveys-card" (click)="goToSurveys()">
+      <div class="card-glow"></div>
       <div class="card-icon">
         <ion-icon name="clipboard-outline"></ion-icon>
       </div>
@@ -51,6 +68,7 @@
 
     <!-- Results Card -->
     <div class="menu-card results-card" (click)="goToResults()">
+      <div class="card-glow"></div>
       <div class="card-icon">
         <div class="results-icon">
           <ion-icon name="trophy-outline"></ion-icon>
@@ -66,6 +84,7 @@
 
     <!-- Polls Card -->
     <div class="menu-card polls-card" (click)="goToPolls()">
+      <div class="card-glow"></div>
       <div class="card-icon">
         <div class="polls-icon">
           <div class="poll-item"></div>

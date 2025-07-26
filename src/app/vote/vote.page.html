@@ -1,6 +1,5 @@
-<!-- vote.page.html -->
-<ion-header>
-  <ion-toolbar color="light">
+<<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -9,7 +8,6 @@
 </ion-header>
 
 <ion-content class="vote-content">
-  
   <!-- Instructions -->
   <div class="instructions">
     <p>
@@ -27,23 +25,22 @@
     
     <div class="voting-options">
       <div 
-        class="vote-option party-option" 
+        class="vote-option party-option"
         *ngFor="let party of politicalParties; let i = index"
         (click)="selectParty(i)"
         [class.selected]="selectedParty === i">
         
         <div class="option-content">
-          <div class="party-logo">
+          <div class="party-logo" [class]="party.logoClass">
             <img [src]="party.logo" [alt]="party.name + ' logo'">
           </div>
           <span class="option-name">{{ party.name }}</span>
         </div>
         
         <div class="checkbox-container">
-          <ion-checkbox 
-            [checked]="selectedParty === i"
-            (ionChange)="selectParty(i)">
-          </ion-checkbox>
+          <div class="custom-checkbox" [class.checked]="selectedParty === i">
+            <span class="x-mark" *ngIf="selectedParty === i">✕</span>
+          </div>
         </div>
       </div>
     </div>
@@ -56,7 +53,7 @@
     
     <div class="voting-options">
       <div 
-        class="vote-option candidate-option" 
+        class="vote-option candidate-option"
         *ngFor="let candidate of individualCandidates; let i = index"
         (click)="selectCandidate(i)"
         [class.selected]="selectedCandidates.includes(i)">
@@ -69,11 +66,11 @@
         </div>
         
         <div class="checkbox-container">
-          <ion-checkbox 
-            [checked]="selectedCandidates.includes(i)"
-            [disabled]="!selectedCandidates.includes(i) && selectedCandidates.length >= 2"
-            (ionChange)="selectCandidate(i)">
-          </ion-checkbox>
+          <div class="custom-checkbox" 
+               [class.checked]="selectedCandidates.includes(i)"
+               [class.disabled]="!selectedCandidates.includes(i) && selectedCandidates.length >= 2">
+            <span class="x-mark" *ngIf="selectedCandidates.includes(i)">✕</span>
+          </div>
         </div>
       </div>
     </div>
@@ -82,12 +79,13 @@
   <!-- Vote Button -->
   <div class="vote-button-container">
     <ion-button 
-      expand="block" 
+      expand="block"
       class="vote-btn"
       (click)="submitVote()"
       [disabled]="!canSubmitVote()">
-      VOTE
+      <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+      <span *ngIf="!isSubmitting">VOTE</span>
+      <span *ngIf="isSubmitting">SUBMITTING...</span>
     </ion-button>
   </div>
-
 </ion-content>

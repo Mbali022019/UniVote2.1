@@ -1,139 +1,454 @@
-.search-filter-container {
-  padding: 16px;
-  background: var(--ion-color-light);
+/* Modern Glass-Style Surveys Page */
+
+// Variables with glass theme colors
+$glass-primary: #00bcd4;
+$glass-secondary: #00e5ff;
+$glass-accent: #b3e5fc;
+$glass-text: #80d8ff;
+$glass-white: #ffffff;
+$glass-success: #4CAF50;
+$glass-warning: #ffc107;
+$glass-danger: #ff4444;
+$glass-dark: #0f2027;
+
+// Background and main content
+ion-content {
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  position: relative;
+  overflow-x: hidden;
   
-  ion-item {
-    margin-top: 8px;
-    --background: var(--ion-color-white);
-    --border-radius: 8px;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 60%, rgba(179, 229, 252, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
   }
 }
 
+// Header styling with glass effect
+ion-header {
+  ion-toolbar {
+    --background: rgba(255, 255, 255, 0.08);
+    --color: $glass-accent;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    
+    ion-title {
+      color: $glass-accent;
+      font-weight: 700;
+      font-size: 20px;
+      text-shadow: 0 0 20px rgba(179, 229, 252, 0.5);
+    }
+  }
+}
+
+// Main content wrapper
+.surveys-page-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+// Page header
+.page-header {
+  text-align: center;
+  padding: 24px 20px 16px;
+  animation: fadeInUp 0.8s ease-out;
+  
+  .page-title {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, $glass-accent, $glass-text, $glass-secondary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+  }
+  
+  .page-subtitle {
+    color: $glass-text;
+    font-size: 16px;
+    opacity: 0.9;
+  }
+}
+
+// Search and Filter Section
+.search-filter-container {
+  padding: 20px;
+  margin-bottom: 8px;
+  animation: fadeInUp 0.8s ease-out 0.1s both;
+  
+  ion-searchbar {
+    --background: rgba(255, 255, 255, 0.08);
+    --color: $glass-text;
+    --placeholder-color: rgba(128, 216, 255, 0.6);
+    --icon-color: $glass-secondary;
+    --clear-button-color: $glass-secondary;
+    border-radius: 16px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      border-color: rgba(0, 229, 255, 0.3);
+      box-shadow: 
+        0 6px 30px rgba(0, 229, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+  }
+  
+  ion-item {
+    --background: rgba(255, 255, 255, 0.08);
+    --color: $glass-text;
+    --border-radius: 16px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    margin-top: 12px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      border-color: rgba(0, 229, 255, 0.3);
+      box-shadow: 
+        0 6px 30px rgba(0, 229, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    
+    ion-select {
+      --color: $glass-text;
+      --placeholder-color: rgba(128, 216, 255, 0.6);
+      font-weight: 500;
+    }
+  }
+}
+
+// Loading container
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 200px;
-  color: var(--ion-color-medium);
+  color: $glass-text;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 20px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.8s ease-out 0.2s both;
   
   ion-spinner {
     margin-bottom: 16px;
+    --color: $glass-secondary;
+    filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.5));
+  }
+  
+  p {
+    font-size: 16px;
+    font-weight: 500;
+    text-shadow: 0 0 10px rgba(128, 216, 255, 0.3);
   }
 }
 
+// Empty state
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: 60px 32px;
   text-align: center;
-  color: var(--ion-color-medium);
+  color: $glass-text;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 20px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.8s ease-out 0.2s both;
   
   ion-icon {
-    margin-bottom: 16px;
-    opacity: 0.5;
+    margin-bottom: 20px;
+    opacity: 0.6;
+    font-size: 80px;
+    color: $glass-secondary;
+    filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.4));
   }
   
   h3 {
-    margin: 0 0 8px 0;
-    color: var(--ion-color-dark);
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: $glass-accent;
+    text-shadow: 0 0 15px rgba(179, 229, 252, 0.3);
+  }
+  
+  p {
+    margin: 0;
+    font-size: 16px;
+    opacity: 0.8;
+    font-weight: 500;
   }
 }
 
+// Surveys container
 .surveys-container {
-  padding: 16px;
-}
-
-ion-card {
-  margin-bottom: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
+  padding: 0 20px 32px;
   
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  }
-  
-  &.completed {
-    opacity: 0.7;
+  ion-card {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out both;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+    &:nth-child(5) { animation-delay: 0.5s; }
     
     &:hover {
-      transform: none;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      cursor: default;
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-color: rgba(0, 229, 255, 0.3);
+    }
+    
+    &.completed {
+      opacity: 0.7;
+      border-color: rgba(76, 175, 80, 0.4);
+      background: rgba(76, 175, 80, 0.05);
+      
+      &:hover {
+        transform: none;
+        box-shadow: 
+          0 8px 32px rgba(76, 175, 80, 0.2),
+          0 0 0 1px rgba(255, 255, 255, 0.05),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        cursor: default;
+      }
+      
+      &::after {
+        content: '✓';
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        font-size: 24px;
+        color: $glass-success;
+        font-weight: bold;
+        filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.6));
+      }
     }
   }
 }
 
+// Card header content
 .card-header-content {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 16px;
   
   ion-card-title {
     flex: 1;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
     line-height: 1.3;
+    color: $glass-accent;
+    text-shadow: 0 0 15px rgba(179, 229, 252, 0.3);
   }
   
   ion-chip {
     flex-shrink: 0;
+    background: rgba(0, 229, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 16px;
+    font-weight: 600;
+    color: $glass-secondary;
+    box-shadow: 0 4px 16px rgba(0, 229, 255, 0.2);
+    
+    &[color="primary"] {
+      background: rgba(0, 188, 212, 0.2);
+      border-color: rgba(0, 229, 255, 0.4);
+      color: $glass-secondary;
+    }
+    
+    &[color="success"] {
+      background: rgba(76, 175, 80, 0.2);
+      border-color: rgba(76, 175, 80, 0.4);
+      color: #81c784;
+    }
+    
+    &[color="warning"] {
+      background: rgba(255, 193, 7, 0.2);
+      border-color: rgba(255, 193, 7, 0.4);
+      color: #ffc107;
+    }
   }
 }
 
+// Survey metadata
 .survey-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 12px;
+  gap: 20px;
+  margin-bottom: 16px;
   
   .meta-item {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 0.9rem;
-    color: var(--ion-color-medium);
+    gap: 6px;
+    font-size: 14px;
+    color: $glass-text;
+    font-weight: 500;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(0, 229, 255, 0.2);
+      transform: translateY(-1px);
+    }
     
     ion-icon {
-      font-size: 1rem;
+      font-size: 16px;
+      color: $glass-secondary;
+      filter: drop-shadow(0 0 6px currentColor);
     }
   }
 }
 
+// Survey questions preview
 .survey-questions-preview {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   
   p {
     margin: 0;
-    font-size: 0.9rem;
-    color: var(--ion-color-medium);
+    font-size: 14px;
+    color: $glass-text;
+    font-weight: 500;
+    opacity: 0.9;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 }
 
+// Survey status
 .survey-status {
-  margin-top: 8px;
+  margin-top: 12px;
   
   ion-chip {
+    background: rgba(76, 175, 80, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 16px;
+    color: $glass-success;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(76, 175, 80, 0.2);
+    
     ion-icon {
-      margin-right: 4px;
-      font-size: 0.9rem;
+      margin-right: 6px;
+      font-size: 14px;
+      filter: drop-shadow(0 0 6px currentColor);
     }
   }
 }
 
+// Card action
 .card-action {
-  padding: 0 16px 16px 16px;
+  padding: 0 20px 20px 20px;
   
   ion-button {
-    margin: 0;
-    --color: var(--ion-color-primary);
-    font-weight: 500;
+    --background: rgba(0, 229, 255, 0.1);
+    --color: $glass-secondary;
+    --border-radius: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 229, 255, 0.15);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      --background: rgba(0, 229, 255, 0.2);
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 8px 24px rgba(0, 229, 255, 0.25);
+    }
+    
+    ion-icon {
+      filter: drop-shadow(0 0 6px currentColor);
+    }
+  }
+}
+
+// Card header and content styling
+ion-card-header {
+  background: transparent;
+  padding: 20px 20px 0 20px;
+}
+
+ion-card-content {
+  background: transparent;
+  padding: 16px 20px 0 20px;
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -141,37 +456,83 @@ ion-card {
 @media (min-width: 768px) {
   .surveys-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 20px;
+    padding: 0 24px 40px;
   }
   
   ion-card {
     margin-bottom: 0;
     height: fit-content;
   }
+  
+  .page-header {
+    padding: 32px 24px 20px;
+  }
+  
+  .search-filter-container {
+    padding: 24px;
+  }
 }
 
 @media (min-width: 1200px) {
   .surveys-container {
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 24px;
+    padding: 0 32px 48px;
+  }
+  
+  .page-header {
+    padding: 40px 32px 24px;
+    
+    .page-title {
+      font-size: 36px;
+    }
+  }
+  
+  .search-filter-container {
+    padding: 32px;
   }
 }
 
-// Dark mode support
-@media (prefers-color-scheme: dark) {
-  .search-filter-container {
-    background: var(--ion-color-dark);
+@media (max-width: 480px) {
+  .surveys-container {
+    padding: 0 16px 24px;
   }
   
-  ion-card {
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+  .page-header {
+    padding: 20px 16px 12px;
     
-    &:hover {
-      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.15);
+    .page-title {
+      font-size: 24px;
     }
+  }
+  
+  .search-filter-container {
+    padding: 16px;
+  }
+  
+  .survey-meta {
+    gap: 12px;
     
-    &.completed:hover {
-      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+    .meta-item {
+      font-size: 13px;
+      padding: 5px 10px;
     }
+  }
+  
+  .card-header-content {
+    gap: 12px;
+    
+    ion-card-title {
+      font-size: 18px;
+    }
+  }
+}
+
+// Pull to refresh styling
+ion-refresher {
+  ion-refresher-content {
+    --color: $glass-secondary;
   }
 }

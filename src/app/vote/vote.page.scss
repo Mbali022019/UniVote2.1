@@ -1,97 +1,186 @@
-/* vote.page.scss */
+/* vote.page.scss - Modern Glass Theme - Fixed for Full Desktop Screen */
 
-// Variables
-$background-gray: #F5F5F5;
-$card-gray: #E8E8E8;
-$dark-text: #333333;
-$green-vote: #7CB342;
-$white: #FFFFFF;
-$border-gray: #CCCCCC;
-$selected-border: #4CAF50;
+// Glass theme variables
+$glass-primary: #00bcd4;
+$glass-secondary: #00e5ff;
+$glass-accent: #b3e5fc;
+$glass-text: #80d8ff;
+$glass-white: #ffffff;
+$glass-success: #4CAF50;
+$glass-warning: #ffc107;
+$glass-danger: #ff4444;
+$glass-dark: #0f2027;
 
-// Header
+// Background and main content
+ion-content {
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto; // Ensure vertical scrolling is enabled
+  height: 100vh; // Full viewport height
+  
+  &::before {
+    content: '';
+    position: fixed; // Changed from absolute to fixed
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 60%, rgba(179, 229, 252, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+// Header styling with glass effect
 ion-header {
+  position: sticky; // Ensure header stays at top when scrolling
+  top: 0;
+  z-index: 100;
+  
   ion-toolbar {
-    --background: #{$background-gray};
-    --color: #{$dark-text};
-    --border-width: 0 0 1px 0;
-    --border-color: #{$border-gray};
+    --background: rgba(255, 255, 255, 0.08);
+    --color: $glass-accent;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     
     ion-title {
-      font-size: 18px;
+      color: $glass-accent;
       font-weight: 700;
+      font-size: 20px;
+      text-shadow: 0 0 20px rgba(179, 229, 252, 0.5);
       text-align: center;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
     }
     
     ion-back-button {
-      --color: #{$dark-text};
+      --color: $glass-secondary;
+      filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.4));
     }
   }
 }
 
-// Content
+// Main content wrapper - FIXED for full desktop screen
 .vote-content {
-  --background: #{$background-gray};
-  padding: 20px 16px;
+  position: relative;
+  z-index: 1;
+  padding: 32px;
+  animation: fadeInUp 0.8s ease-out;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  // Removed min-height: 100vh to allow natural content flow
   
   .instructions {
-    margin-bottom: 24px;
-    padding: 16px;
-    background: #{$white};
-    border-radius: 8px;
-    border: 1px solid #{$border-gray};
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 40px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: fadeInUp 0.8s ease-out 0.1s both;
     
     p {
-      font-size: 14px;
-      line-height: 1.5;
-      color: #{$dark-text};
+      font-size: 18px;
+      line-height: 1.6;
+      color: $glass-text;
       margin: 0;
+      font-weight: 500;
+      text-shadow: 0 0 10px rgba(128, 216, 255, 0.2);
     }
   }
   
   .section {
-    margin-bottom: 32px;
+    margin-bottom: 50px;
+    animation: fadeInUp 0.8s ease-out both;
+    
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
     
     .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #{$dark-text};
-      margin: 0 0 8px 0;
-      letter-spacing: 0.3px;
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, $glass-accent, $glass-text, $glass-secondary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0 0 16px 0;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
     }
     
     .section-subtitle {
-      font-size: 14px;
-      color: #666;
-      margin: 0 0 16px 0;
+      font-size: 20px;
+      color: $glass-text;
+      margin: 0 0 24px 0;
       font-style: italic;
+      opacity: 0.9;
+      font-weight: 500;
     }
     
     .voting-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 24px;
+      
       .vote-option {
-        background: #{$card-gray};
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 12px;
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        padding: 28px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         cursor: pointer;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 
+          0 8px 32px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+        min-height: 120px;
         
-        &:last-child {
-          margin-bottom: 0;
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.1), transparent);
+          transition: left 0.6s ease;
         }
         
         &:hover {
-          background: darken($card-gray, 5%);
+          transform: translateY(-4px) scale(1.02);
+          border-color: rgba(0, 229, 255, 0.3);
+          box-shadow: 
+            0 16px 48px rgba(0, 229, 255, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          
+          &::before {
+            left: 100%;
+          }
         }
         
         &.selected {
-          border-color: #{$selected-border};
-          background: lighten($selected-border, 45%);
+          border-color: rgba(0, 229, 255, 0.5);
+          background: rgba(0, 229, 255, 0.08);
+          transform: translateY(-2px);
+          box-shadow: 
+            0 12px 40px rgba(0, 229, 255, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          animation: selectPulse 0.6s ease;
         }
         
         .option-content {
@@ -101,21 +190,25 @@ ion-header {
           
           .party-logo,
           .candidate-photo {
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
             overflow: hidden;
-            margin-right: 16px;
+            margin-right: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #{$white};
-            border: 1px solid #{$border-gray};
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
             
             img {
               width: 100%;
               height: 100%;
               object-fit: cover;
+              filter: brightness(1.1) contrast(1.1);
             }
           }
           
@@ -124,51 +217,85 @@ ion-header {
           }
           
           .option-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: #{$dark-text};
+            font-size: 22px;
+            font-weight: 700;
+            color: $glass-accent;
             flex: 1;
+            text-shadow: 0 0 15px rgba(179, 229, 252, 0.3);
+            letter-spacing: 0.3px;
+            line-height: 1.3;
           }
         }
         
         .checkbox-container {
-          margin-left: 16px;
+          margin-left: 24px;
           
-          ion-checkbox {
-            --size: 24px;
-            --color: #{$green-vote};
-            --color-checked: #{$green-vote};
-            --checkmark-color: #{$white};
-            --border-radius: 4px;
-            --border-width: 2px;
-            --border-color: #{$border-gray};
-            --border-color-checked: #{$green-vote};
+          .custom-checkbox {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
             
-            &.checkbox-disabled {
-              --color: #ccc;
-              --border-color: #ccc;
+            .x-mark {
+              font-size: 26px;
+              font-weight: bold;
+              color: $glass-white;
+              text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+              animation: xMarkAppear 0.3s ease;
+            }
+            
+            &.checked {
+              background: $glass-secondary;
+              border-color: $glass-secondary;
+              box-shadow: 
+                0 0 16px rgba(0, 229, 255, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+              transform: scale(1.1);
+            }
+            
+            &.disabled {
+              border-color: rgba(255, 255, 255, 0.15);
+              background: rgba(255, 255, 255, 0.02);
               opacity: 0.5;
+              cursor: not-allowed;
+            }
+            
+            &:hover:not(.disabled) {
+              transform: scale(1.1);
+              border-color: rgba(0, 229, 255, 0.6);
+              box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
             }
           }
         }
         
-        // Special styling for party options
+        // Enhanced party-specific styling
         &.party-option {
           .party-logo {
             &.effsc {
-              background: #FFD700;
+              background: linear-gradient(135deg, #FFD700, #FFA500);
+              border-color: rgba(255, 215, 0, 0.4);
             }
             
             &.sasco {
-              background: #00A651;
+              background: linear-gradient(135deg, #00A651, #4CAF50);
+              border-color: rgba(0, 166, 81, 0.4);
             }
             
             &.sadesmo {
-              background: #FF6B35;
+              background: linear-gradient(135deg, #FF6B35, #FF8A65);
+              border-color: rgba(255, 107, 53, 0.4);
             }
             
             &.da {
-              background: #005BA6;
+              background: linear-gradient(135deg, #005BA6, #2196F3);
+              border-color: rgba(0, 91, 166, 0.4);
             }
           }
         }
@@ -177,64 +304,169 @@ ion-header {
   }
   
   .vote-button-container {
-    margin-top: 40px;
-    padding: 0 20px;
+    margin-top: 60px;
+    margin-bottom: 40px; // Added bottom margin for spacing
+    padding: 0 40px;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+    display: flex;
+    justify-content: center;
     
     .vote-btn {
-      --background: #{$green-vote};
-      --background-hover: darken($green-vote, 10%);
-      --color: #{$white};
+      --background: linear-gradient(135deg, $glass-primary, $glass-secondary);
+      --color: $glass-white;
       --border-radius: 25px;
-      --padding-top: 16px;
-      --padding-bottom: 16px;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 12px rgba($green-vote, 0.3);
+      --padding-top: 24px;
+      --padding-bottom: 24px;
+      --padding-start: 60px;
+      --padding-end: 60px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      box-shadow: 
+        0 8px 32px rgba(0, 229, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      min-width: 200px;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s ease;
+      }
+      
+      &:hover:not([disabled]) {
+        transform: translateY(-4px) scale(1.05);
+        --background: linear-gradient(135deg, #00e5ff, #40c4ff);
+        box-shadow: 
+          0 16px 48px rgba(0, 229, 255, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        
+        &::before {
+          left: 100%;
+        }
+      }
       
       &:disabled {
-        --background: #ccc;
-        --color: #999;
+        --background: rgba(255, 255, 255, 0.1);
+        --color: rgba(255, 255, 255, 0.4);
         box-shadow: none;
+        border-color: rgba(255, 255, 255, 0.1);
+        transform: none;
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      
+      ion-spinner {
+        margin-right: 12px;
+        --color: $glass-white;
       }
     }
   }
 }
 
-// Responsive Design
-@media (max-width: 480px) {
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes selectPulse {
+  0% {
+    box-shadow: 
+      0 12px 40px rgba(0, 229, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 16px 48px rgba(0, 229, 255, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    box-shadow: 
+      0 12px 40px rgba(0, 229, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+}
+
+@keyframes xMarkAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(180deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+// IMPROVED Responsive design for better desktop experience
+@media (min-width: 1400px) {
   .vote-content {
-    padding: 16px 12px;
+    padding: 60px 80px;
+    max-width: 1600px; // Increased max-width for larger screens
     
     .instructions {
-      padding: 12px;
+      padding: 40px;
       
       p {
-        font-size: 13px;
+        font-size: 22px;
       }
     }
     
     .section {
+      .section-title {
+        font-size: 42px;
+      }
+      
+      .section-subtitle {
+        font-size: 24px;
+      }
+      
       .voting-options {
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 32px;
+        
         .vote-option {
-          padding: 12px;
+          padding: 36px;
+          min-height: 160px;
           
           .option-content {
             .party-logo,
             .candidate-photo {
-              width: 40px;
-              height: 40px;
-              margin-right: 12px;
+              width: 100px;
+              height: 100px;
+              margin-right: 32px;
             }
             
             .option-name {
-              font-size: 15px;
+              font-size: 26px;
             }
           }
           
           .checkbox-container {
-            ion-checkbox {
-              --size: 20px;
+            .custom-checkbox {
+              width: 48px;
+              height: 48px;
+              
+              .x-mark {
+                font-size: 30px;
+              }
             }
           }
         }
@@ -242,46 +474,248 @@ ion-header {
     }
     
     .vote-button-container {
-      padding: 0 16px;
+      margin-top: 80px;
+      margin-bottom: 60px;
       
       .vote-btn {
-        font-size: 16px;
+        font-size: 28px;
+        --padding-top: 32px;
+        --padding-bottom: 32px;
+        --padding-start: 100px;
+        --padding-end: 100px;
+        min-width: 300px;
       }
     }
   }
 }
 
-// Animation for selection
-@keyframes selectOption {
-  0% {
-    transform: scale(1);
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .vote-content {
+    padding: 40px 60px;
+    
+    .instructions {
+      padding: 32px;
+      
+      p {
+        font-size: 20px;
+      }
+    }
+    
+    .section {
+      .section-title {
+        font-size: 36px;
+      }
+      
+      .section-subtitle {
+        font-size: 22px;
+      }
+      
+      .voting-options {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 28px;
+        
+        .vote-option {
+          padding: 32px;
+          min-height: 140px;
+          
+          .option-content {
+            .party-logo,
+            .candidate-photo {
+              width: 90px;
+              height: 90px;
+              margin-right: 28px;
+            }
+            
+            .option-name {
+              font-size: 24px;
+            }
+          }
+          
+          .checkbox-container {
+            .custom-checkbox {
+              width: 44px;
+              height: 44px;
+              
+              .x-mark {
+                font-size: 28px;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .vote-button-container {
+      padding: 0 60px;
+      
+      .vote-btn {
+        font-size: 26px;
+        --padding-top: 28px;
+        --padding-bottom: 28px;
+        --padding-start: 80px;
+        --padding-end: 80px;
+        min-width: 250px;
+      }
+    }
   }
-  50% {
-    transform: scale(1.02);
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .vote-content {
+    padding: 36px 40px;
+    
+    .instructions {
+      padding: 28px;
+      
+      p {
+        font-size: 18px;
+      }
+    }
+    
+    .section {
+      .section-title {
+        font-size: 30px;
+      }
+      
+      .voting-options {
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 26px;
+        
+        .vote-option {
+          padding: 30px;
+          
+          .option-content {
+            .party-logo,
+            .candidate-photo {
+              width: 75px;
+              height: 75px;
+              margin-right: 26px;
+            }
+            
+            .option-name {
+              font-size: 20px;
+            }
+          }
+          
+          .checkbox-container {
+            .custom-checkbox {
+              width: 38px;
+              height: 38px;
+              
+              .x-mark {
+                font-size: 24px;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .vote-button-container {
+      .vote-btn {
+        font-size: 22px;
+        --padding-top: 22px;
+        --padding-bottom: 22px;
+        --padding-start: 50px;
+        --padding-end: 50px;
+      }
+    }
   }
-  100% {
-    transform: scale(1);
+}
+
+@media (max-width: 480px) {
+  .vote-content {
+    padding: 20px 16px;
+    
+    .instructions {
+      padding: 16px;
+      
+      p {
+        font-size: 14px;
+      }
+    }
+    
+    .section {
+      margin-bottom: 32px;
+      
+      .section-title {
+        font-size: 20px;
+      }
+      
+      .voting-options {
+        .vote-option {
+          padding: 16px;
+          
+          .option-content {
+            .party-logo,
+            .candidate-photo {
+              width: 48px;
+              height: 48px;
+              margin-right: 16px;
+            }
+            
+            .option-name {
+              font-size: 16px;
+            }
+          }
+          
+          .checkbox-container {
+            margin-left: 16px;
+            
+            .custom-checkbox {
+              width: 28px;
+              height: 28px;
+              
+              .x-mark {
+                font-size: 18px;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    .vote-button-container {
+      padding: 0 20px;
+      
+      .vote-btn {
+        font-size: 18px;
+        --padding-top: 18px;
+        --padding-bottom: 18px;
+      }
+    }
   }
 }
 
-.vote-option.selected {
-  animation: selectOption 0.3s ease;
+// Enhanced custom scrollbar with glass theme
+ion-content::-webkit-scrollbar {
+  width: 8px;
 }
 
-// Custom scrollbar
-.vote-content::-webkit-scrollbar {
-  width: 4px;
+ion-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
 }
 
-.vote-content::-webkit-scrollbar-track {
-  background: transparent;
+ion-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.3), rgba(0, 188, 212, 0.5));
+  border-radius: 4px;
+  backdrop-filter: blur(10px);
 }
 
-.vote-content::-webkit-scrollbar-thumb {
-  background: rgba($green-vote, 0.3);
-  border-radius: 2px;
+ion-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.5), rgba(0, 188, 212, 0.7));
 }
 
-.vote-content::-webkit-scrollbar-thumb:hover {
-  background: rgba($green-vote, 0.5);
+// Ensure proper scrolling behavior
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+// Fix for potential iOS Safari issues
+.ios {
+  ion-content {
+    --overflow: auto;
+  }
 }

@@ -1,130 +1,300 @@
+// Modern Glass-Style Notification Page
 ion-content {
-  --background: #f8f9fa;
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  position: relative;
+  overflow-x: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 60%, rgba(179, 229, 252, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
-// Summary Cards Section
+// Header styling with glass effect
+ion-header {
+  ion-toolbar {
+    --background: rgba(255, 255, 255, 0.08);
+    --color: #b3e5fc;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    
+    ion-title {
+      color: #b3e5fc;
+      font-weight: 700;
+      font-size: 20px;
+    }
+    
+    ion-button {
+      --color: #80d8ff;
+      
+      &:hover {
+        --color: #00e5ff;
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
+// Main container with proper z-index
+.notifications-wrapper {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+// Page title with elegant styling
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+  animation: fadeInUp 0.8s ease-out;
+  
+  .page-title {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #b3e5fc, #80d8ff, #00e5ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+  }
+  
+  .page-subtitle {
+    color: #80d8ff;
+    font-size: 16px;
+    opacity: 0.9;
+  }
+}
+
+// Summary Cards with Glass Effect
 .summary-container {
   display: flex;
-  gap: 12px;
-  padding: 16px;
-  margin-bottom: 8px;
+  gap: 16px;
+  margin-bottom: 32px;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
 
   .summary-card {
     flex: 1;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    padding: 24px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
     margin: 0;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-color: rgba(0, 229, 255, 0.3);
     }
 
     &.urgent {
-      border-left: 4px solid var(--ion-color-danger);
-    }
-
-    ion-card-content {
-      padding: 16px;
+      border-left: 4px solid #ff4444;
+      box-shadow: 
+        0 8px 32px rgba(255, 68, 68, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        
+      &:hover {
+        box-shadow: 
+          0 20px 40px rgba(255, 68, 68, 0.3),
+          0 0 0 1px rgba(255, 68, 68, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
     }
 
     .summary-item {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
 
       ion-icon {
-        font-size: 24px;
+        font-size: 32px;
+        filter: drop-shadow(0 0 10px currentColor);
       }
 
       .summary-text {
         h3 {
           margin: 0;
-          font-size: 24px;
-          font-weight: 700;
-          color: var(--ion-color-dark);
+          font-size: 28px;
+          font-weight: 800;
+          color: #b3e5fc;
+          text-shadow: 0 0 20px rgba(179, 229, 252, 0.5);
         }
 
         p {
           margin: 0;
           font-size: 14px;
-          color: var(--ion-color-medium);
-          font-weight: 500;
+          color: #80d8ff;
+          font-weight: 600;
+          opacity: 0.9;
         }
       }
     }
   }
 }
 
-// Filter Chips Section
+// Filter Chips with Glass Styling
 .filter-container {
   display: flex;
-  gap: 8px;
-  padding: 0 16px 16px;
+  gap: 12px;
+  margin-bottom: 32px;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  padding: 0 4px 4px;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
 
   &::-webkit-scrollbar {
     display: none;
   }
 
   ion-chip {
-    --background: var(--ion-color-light);
-    --color: var(--ion-color-dark);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 8px 16px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     
     &:hover {
-      transform: scale(1.05);
+      transform: translateY(-2px) scale(1.05);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(0, 229, 255, 0.3);
+      box-shadow: 0 8px 24px rgba(0, 229, 255, 0.2);
+    }
+    
+    &[color="primary"] {
+      background: rgba(0, 188, 212, 0.2);
+      border-color: rgba(0, 229, 255, 0.4);
+      color: #00e5ff;
+      box-shadow: 0 4px 16px rgba(0, 188, 212, 0.3);
+    }
+    
+    &[color="danger"] {
+      background: rgba(255, 68, 68, 0.2);
+      border-color: rgba(255, 68, 68, 0.4);
+      color: #ff6b6b;
+      box-shadow: 0 4px 16px rgba(255, 68, 68, 0.3);
+    }
+    
+    &[color="success"] {
+      background: rgba(76, 175, 80, 0.2);
+      border-color: rgba(76, 175, 80, 0.4);
+      color: #81c784;
+      box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
     }
   }
 }
 
 // Notifications Container
 .notifications-container {
-  padding: 0 16px 20px;
-
   .notification-card {
-    margin-bottom: 16px;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    animation: fadeInUp 0.6s ease-out both;
+
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+    &:nth-child(5) { animation-delay: 0.5s; }
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-color: rgba(0, 229, 255, 0.3);
     }
 
     &.unread {
-      border-left: 4px solid var(--ion-color-primary);
-      background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.02) 0%, transparent 100%);
+      border-left: 4px solid #00e5ff;
+      background: rgba(0, 229, 255, 0.05);
+      box-shadow: 
+        0 8px 32px rgba(0, 229, 255, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        
+      &:hover {
+        box-shadow: 
+          0 20px 60px rgba(0, 229, 255, 0.25),
+          0 0 0 1px rgba(0, 229, 255, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
     }
 
     &.urgent {
-      border-left: 4px solid var(--ion-color-danger);
-      background: linear-gradient(135deg, rgba(var(--ion-color-danger-rgb), 0.05) 0%, transparent 100%);
+      border-left: 4px solid #ff4444;
+      background: rgba(255, 68, 68, 0.05);
+      box-shadow: 
+        0 8px 32px rgba(255, 68, 68, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        
+      &:hover {
+        box-shadow: 
+          0 20px 60px rgba(255, 68, 68, 0.25),
+          0 0 0 1px rgba(255, 68, 68, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
       
-      .notification-card::before {
+      &::before {
         content: '';
         position: absolute;
         top: 0;
         right: 0;
         width: 0;
         height: 0;
-        border-left: 20px solid transparent;
-        border-top: 20px solid var(--ion-color-danger);
+        border-left: 24px solid transparent;
+        border-top: 24px solid #ff4444;
         z-index: 1;
+        filter: drop-shadow(0 0 10px rgba(255, 68, 68, 0.5));
       }
     }
 
     ion-card-content {
-      padding: 20px;
+      padding: 24px;
+      background: transparent;
     }
   }
 }
@@ -134,20 +304,25 @@ ion-content {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 
   .notification-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background: rgba(var(--ion-color-primary-rgb), 0.1);
-    margin-right: 12px;
+    background: rgba(0, 229, 255, 0.15);
+    margin-right: 16px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 229, 255, 0.2);
 
     ion-icon {
-      font-size: 20px;
+      font-size: 24px;
+      filter: drop-shadow(0 0 8px currentColor);
     }
   }
 
@@ -155,20 +330,42 @@ ion-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 
     .type-badge {
       align-self: flex-start;
+      background: rgba(0, 229, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      border-radius: 12px;
+      padding: 4px 12px;
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      color: #00e5ff;
     }
 
     .timestamp {
       font-size: 12px;
-      color: var(--ion-color-medium);
+      color: #80d8ff;
       font-weight: 500;
+      opacity: 0.8;
+    }
+  }
+
+  ion-button {
+    --background: rgba(255, 255, 255, 0.08);
+    --color: #80d8ff;
+    --border-radius: 12px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    &:hover {
+      --background: rgba(255, 68, 68, 0.15);
+      --color: #ff6b6b;
+      transform: scale(1.1);
     }
   }
 }
@@ -176,102 +373,115 @@ ion-content {
 // Notification Content
 .notification-content {
   .notification-title {
-    margin: 0 0 8px 0;
-    font-size: 18px;
+    margin: 0 0 12px 0;
+    font-size: 20px;
     font-weight: 700;
-    color: var(--ion-color-dark);
+    color: #b3e5fc;
     line-height: 1.3;
+    text-shadow: 0 0 20px rgba(179, 229, 252, 0.3);
   }
 
   .notification-message {
     margin: 0 0 16px 0;
     font-size: 15px;
-    color: var(--ion-color-step-600);
-    line-height: 1.5;
+    color: #80d8ff;
+    line-height: 1.6;
+    opacity: 0.9;
   }
 }
 
-// Countdown Container
-.countdown-container {
+// Countdown and Action Containers
+.countdown-container, .action-container {
   margin-bottom: 12px;
 
-  .countdown-chip {
-    --background: rgba(var(--ion-color-warning-rgb), 0.1);
-    --color: var(--ion-color-warning-shade);
+  ion-chip {
+    background: rgba(255, 193, 7, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    border-radius: 20px;
     font-weight: 600;
+    color: #ffc107;
     animation: pulse 2s infinite;
+    box-shadow: 0 4px 16px rgba(255, 193, 7, 0.2);
 
     ion-icon {
       font-size: 16px;
+      filter: drop-shadow(0 0 6px currentColor);
     }
   }
 }
 
-// Action Container
-.action-container {
-  .action-chip {
-    --background: rgba(var(--ion-color-tertiary-rgb), 0.1);
-    --color: var(--ion-color-tertiary-shade);
-    font-weight: 600;
-
-    ion-icon {
-      font-size: 16px;
-    }
-  }
+.action-container ion-chip {
+  background: rgba(103, 58, 183, 0.15);
+  border-color: rgba(103, 58, 183, 0.2);
+  color: #ab47bc;
+  box-shadow: 0 4px 16px rgba(103, 58, 183, 0.2);
 }
 
-// Unread Indicator
+// Unread and Priority Indicators
 .unread-indicator {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 12px;
-  height: 12px;
-  background: var(--ion-color-primary);
+  top: 20px;
+  right: 20px;
+  width: 14px;
+  height: 14px;
+  background: #00e5ff;
   border-radius: 50%;
-  box-shadow: 0 0 0 2px white;
+  box-shadow: 
+    0 0 0 3px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(0, 229, 255, 0.6);
   z-index: 2;
   animation: glow 2s infinite alternate;
 }
 
-// Priority Indicator
 .priority-indicator {
   position: absolute;
   top: 0;
   right: 0;
   width: 0;
   height: 0;
-  border-left: 24px solid transparent;
-  border-top: 24px solid var(--ion-color-danger);
+  border-left: 28px solid transparent;
+  border-top: 28px solid #ff4444;
   z-index: 1;
+  filter: drop-shadow(0 0 10px rgba(255, 68, 68, 0.5));
 
   &::after {
     content: '!';
     position: absolute;
-    top: -20px;
-    right: -8px;
+    top: -24px;
+    right: -10px;
     color: white;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
   }
 }
 
 // Empty State
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
-  color: var(--ion-color-medium);
+  padding: 80px 20px;
+  color: #80d8ff;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 20px 0;
 
   ion-icon {
-    font-size: 64px;
-    margin-bottom: 16px;
+    font-size: 80px;
+    margin-bottom: 20px;
     opacity: 0.6;
+    filter: drop-shadow(0 0 20px currentColor);
   }
 
   h3 {
-    margin: 0 0 8px 0;
-    font-size: 20px;
-    font-weight: 600;
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #b3e5fc;
   }
 
   p {
@@ -282,67 +492,84 @@ ion-content {
 }
 
 // Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
+    opacity: 1;
   }
   50% {
     transform: scale(1.05);
+    opacity: 0.8;
   }
   100% {
     transform: scale(1);
+    opacity: 1;
   }
 }
 
 @keyframes glow {
   0% {
-    box-shadow: 0 0 0 2px white, 0 0 8px rgba(var(--ion-color-primary-rgb), 0.6);
+    box-shadow: 
+      0 0 0 3px rgba(0, 0, 0, 0.2),
+      0 0 20px rgba(0, 229, 255, 0.4);
   }
   100% {
-    box-shadow: 0 0 0 2px white, 0 0 16px rgba(var(--ion-color-primary-rgb), 0.8);
+    box-shadow: 
+      0 0 0 3px rgba(0, 0, 0, 0.2),
+      0 0 30px rgba(0, 229, 255, 0.8);
   }
 }
 
 // Responsive Design
 @media (max-width: 768px) {
+  .notifications-wrapper {
+    padding: 16px;
+  }
+  
+  .page-header .page-title {
+    font-size: 28px;
+  }
+  
   .summary-container {
-    padding: 12px;
-    gap: 8px;
+    gap: 12px;
 
     .summary-card {
+      padding: 20px;
+      
       .summary-item {
-        gap: 8px;
+        gap: 12px;
 
         ion-icon {
-          font-size: 20px;
+          font-size: 28px;
         }
 
-        .summary-text {
-          h3 {
-            font-size: 20px;
-          }
-
-          p {
-            font-size: 12px;
-          }
+        .summary-text h3 {
+          font-size: 24px;
         }
       }
     }
   }
 
-  .notifications-container {
-    padding: 0 12px 20px;
-
-    .notification-card {
-      ion-card-content {
-        padding: 16px;
-      }
+  .notification-card {
+    ion-card-content {
+      padding: 20px;
     }
   }
 
   .notification-content {
     .notification-title {
-      font-size: 16px;
+      font-size: 18px;
     }
 
     .notification-message {
@@ -351,31 +578,10 @@ ion-content {
   }
 }
 
-// Dark Mode Support
-@media (prefers-color-scheme: dark) {
-  ion-content {
-    --background: #1e1e1e;
-  }
-
-  .summary-card,
-  .notification-card {
-    --background: #2d2d2d;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .notification-icon {
-    background: rgba(var(--ion-color-primary-rgb), 0.2) !important;
-  }
-
-  .unread-indicator {
-    box-shadow: 0 0 0 2px #2d2d2d;
-  }
-}
-
-// Custom scrollbar for better UX
+// Enhanced scrollbar
 ion-content {
   --scrollbar-width: 6px;
   --scrollbar-background: transparent;
-  --scrollbar-thumb-background: rgba(var(--ion-color-medium-rgb), 0.3);
-  --scrollbar-thumb-background-hover: rgba(var(--ion-color-medium-rgb), 0.5);
+  --scrollbar-thumb-background: rgba(0, 229, 255, 0.3);
+  --scrollbar-thumb-background-hover: rgba(0, 229, 255, 0.5);
 }

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController, AlertController, LoadingController } from '@ionic/angular';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Question {
   text: string;
@@ -30,8 +31,16 @@ interface Survey {
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
   standalone: false,
+  animations: [
+    trigger('fadeInUp', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('0.6s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
-export class AdminPage implements OnInit {
+export class AdminPage implements OnInit, OnDestroy {
   survey: Survey = {
     title: '',
     category: '',
@@ -54,6 +63,7 @@ export class AdminPage implements OnInit {
   };
 
   isSubmitting = false;
+  private glassItemListeners: Array<{ element: Element, mouseenter: any, mouseleave: any }> = [];
 
   constructor(
     private router: Router,
@@ -63,7 +73,72 @@ export class AdminPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Initialize with default question
+    console.log('AdminPage initialized'); // Debug log
+    // Use setTimeout to ensure DOM is ready
+    setTimeout(() => {
+      this.setupGlassEffects();
+    }, 500);
+  }
+
+  ngOnDestroy() {
+    // Clean up event listeners to prevent memory leaks
+    this.removeGlassEffects();
+  }
+
+  private setupGlassEffects() {
+    try {
+      const glassItems = document.querySelectorAll('.glass-item');
+      console.log('Found glass items:', glassItems.length); // Debug log
+      
+      glassItems.forEach(item => {
+        const hoverHandler = this.onGlassItemHover.bind(this);
+        const leaveHandler = this.onGlassItemLeave.bind(this);
+        
+        item.addEventListener('mouseenter', hoverHandler);
+        item.addEventListener('mouseleave', leaveHandler);
+        
+        // Store listeners for cleanup
+        this.glassItemListeners.push({
+          element: item,
+          mouseenter: hoverHandler,
+          mouseleave: leaveHandler
+        });
+      });
+    } catch (error) {
+      console.error('Error setting up glass effects:', error);
+    }
+  }
+
+  private removeGlassEffects() {
+    this.glassItemListeners.forEach(({ element, mouseenter, mouseleave }) => {
+      element.removeEventListener('mouseenter', mouseenter);
+      element.removeEventListener('mouseleave', mouseleave);
+    });
+    this.glassItemListeners = [];
+  }
+
+  private onGlassItemHover(event: Event) {
+    try {
+      const item = event.target as HTMLElement;
+      if (item) {
+        item.style.transform = 'translateY(-1px)';
+        item.style.boxShadow = '0 8px 32px rgba(0, 229, 255, 0.15)';
+      }
+    } catch (error) {
+      console.error('Error in hover effect:', error);
+    }
+  }
+
+  private onGlassItemLeave(event: Event) {
+    try {
+      const item = event.target as HTMLElement;
+      if (item) {
+        item.style.transform = 'translateY(0)';
+        item.style.boxShadow = '';
+      }
+    } catch (error) {
+      console.error('Error in leave effect:', error);
+    }
   }
 
   addQuestion() {
@@ -76,6 +151,12 @@ export class AdminPage implements OnInit {
       ratingScale: '1-5'
     };
     this.survey.questions.push(newQuestion);
+    
+    // Re-setup glass effects for new elements
+    setTimeout(() => {
+      this.removeGlassEffects();
+      this.setupGlassEffects();
+    }, 100);
   }
 
   removeQuestion(index: number) {
@@ -106,6 +187,12 @@ export class AdminPage implements OnInit {
 
   addOption(questionIndex: number) {
     this.survey.questions[questionIndex].options.push('');
+    
+    // Re-setup glass effects for new elements
+    setTimeout(() => {
+      this.removeGlassEffects();
+      this.setupGlassEffects();
+    }, 100);
   }
 
   removeOption(questionIndex: number, optionIndex: number) {
@@ -127,6 +214,8 @@ export class AdminPage implements OnInit {
     this.isSubmitting = true;
     const loading = await this.loadingController.create({
       message: 'Creating survey...',
+      cssClass: 'glass-loading',
+      spinner: 'crescent'
     });
     await loading.present();
 
@@ -134,14 +223,14 @@ export class AdminPage implements OnInit {
       // Generate unique ID for the survey
       this.survey.id = 'survey_' + Date.now();
       
-      // Here you would typically save to your backend/database
+      // Save survey
       await this.saveSurveyToStorage();
       
       await loading.dismiss();
       await this.showSuccessToast('Survey created successfully!');
       
-      // Navigate back to home or surveys list
-      this.router.navigate(['/surveys']);
+      // Navigate back
+      this.router.navigate(['/home']);
       
     } catch (error) {
       await loading.dismiss();
@@ -155,6 +244,8 @@ export class AdminPage implements OnInit {
   async saveDraft() {
     const loading = await this.loadingController.create({
       message: 'Saving draft...',
+      cssClass: 'glass-loading',
+      spinner: 'crescent'
     });
     await loading.present();
 
@@ -209,21 +300,26 @@ export class AdminPage implements OnInit {
     return true;
   }
 
-  private async saveSurveyToStorage(surveyData?: Survey) {
-    // This is a mock implementation. In a real app, you'd save to your backend
-    const dataToSave = surveyData || this.survey;
-    
-    // Get existing surveys from localStorage
-    const existingSurveys = JSON.parse(localStorage.getItem('surveys') || '[]');
-    
-    // Add new survey
-    existingSurveys.push(dataToSave);
-    
-    // Save back to localStorage
-    localStorage.setItem('surveys', JSON.stringify(existingSurveys));
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+  private async saveSurveyToStorage(surveyData?: Survey): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        const dataToSave = surveyData || this.survey;
+        
+        // Get existing surveys from localStorage
+        const existingSurveys = JSON.parse(localStorage.getItem('surveys') || '[]');
+        
+        // Add new survey
+        existingSurveys.push(dataToSave);
+        
+        // Save back to localStorage
+        localStorage.setItem('surveys', JSON.stringify(existingSurveys));
+        
+        // Simulate API delay
+        setTimeout(() => resolve(), 1000);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   private async showSuccessToast(message: string) {
@@ -231,7 +327,8 @@ export class AdminPage implements OnInit {
       message,
       duration: 3000,
       color: 'success',
-      position: 'top'
+      position: 'top',
+      cssClass: 'glass-toast glass-toast-success'
     });
     toast.present();
   }
@@ -239,32 +336,41 @@ export class AdminPage implements OnInit {
   private async showErrorToast(message: string) {
     const toast = await this.toastController.create({
       message,
-      duration: 3000,
+      duration: 4000,
       color: 'danger',
-      position: 'top'
+      position: 'top',
+      cssClass: 'glass-toast glass-toast-error'
     });
     toast.present();
   }
 
-  async showDiscardAlert() {
-    const alert = await this.alertController.create({
-      header: 'Discard Changes?',
-      message: 'Are you sure you want to discard all changes?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Discard',
-          role: 'destructive',
-          handler: () => {
-            this.router.navigate(['/home']);
-          }
-        }
-      ]
-    });
+  // Enhanced input interactions
+  onInputFocus(event: Event) {
+    const input = event.target as HTMLElement;
+    const parentItem = input.closest('.glass-item');
+    if (parentItem) {
+      parentItem.classList.add('glass-focused');
+    }
+  }
 
-    await alert.present();
+  onInputBlur(event: Event) {
+    const input = event.target as HTMLElement;
+    const parentItem = input.closest('.glass-item');
+    if (parentItem) {
+      parentItem.classList.remove('glass-focused');
+    }
+  }
+
+  onToggleChange(event: any) {
+    const toggle = event.target;
+    const parentItem = toggle.closest('.glass-toggle-item');
+    
+    if (parentItem) {
+      if (toggle.checked) {
+        parentItem.classList.add('glass-toggle-active');
+      } else {
+        parentItem.classList.remove('glass-toggle-active');
+      }
+    }
   }
 }

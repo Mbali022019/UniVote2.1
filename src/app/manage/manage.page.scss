@@ -1,29 +1,472 @@
-/* simple-poll.page.scss */
-
-.question-section {
-  margin-bottom: 24px;
+/* Global page background */
+ion-content {
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --color: #e3f2fd;
 }
 
-.options-section {
-  margin-bottom: 24px;
-  
-  ion-item {
+/* Header styling */
+ion-header {
+  ion-toolbar {
+    --background: rgba(255, 255, 255, 0.05);
+    --color: #b3e5fc;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    ion-title {
+      font-weight: bold;
+      font-size: 20px;
+      color: #80d8ff;
+    }
+
+    ion-button {
+      --color: #80d8ff;
+      --background-hover: rgba(0, 229, 255, 0.1);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    ion-back-button {
+      --color: #80d8ff;
+    }
+  }
+}
+
+/* Stats grid with glass cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  padding: 20px;
+  margin-bottom: 8px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 191, 255, 0.08);
+  margin: 0;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 229, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  ion-card-content {
+    padding: 20px;
+  }
+
+  .stat-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    ion-icon {
+      font-size: 32px;
+      opacity: 0.9;
+    }
+
+    div {
+      h2 {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 0;
+        color: #b3e5fc;
+        text-shadow: 0 0 10px rgba(179, 229, 252, 0.3);
+      }
+
+      p {
+        margin: 4px 0 0 0;
+        color: #80d8ff;
+        font-size: 14px;
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+/* Search section */
+.search-section {
+  padding: 0 20px 16px 20px;
+
+  ion-searchbar {
+    --background: rgba(255, 255, 255, 0.08);
+    --color: #e3f2fd;
+    --placeholder-color: #80d8ff;
+    --icon-color: #80d8ff;
+    --border-radius: 12px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 191, 255, 0.05);
+  }
+}
+
+/* Filter segment */
+ion-segment {
+  margin: 0 20px 20px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 4px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  ion-segment-button {
+    --color: #80d8ff;
+    --color-checked: #ffffff;
+    --background-checked: linear-gradient(135deg, #00bcd4, #00e5ff);
+    --border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &.segment-button-checked {
+      box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+    }
+  }
+}
+
+/* Polls list */
+.polls-list {
+  padding: 0 20px 100px 20px;
+}
+
+.poll-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 191, 255, 0.08);
+  margin-bottom: 16px;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 229, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  ion-card-header {
+    padding: 20px 20px 8px 20px;
+
+    .poll-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+
+      ion-card-title {
+        color: #b3e5fc;
+        font-size: 18px;
+        font-weight: bold;
+        flex: 1;
+        margin-right: 12px;
+      }
+
+      ion-badge {
+        --background: rgba(76, 175, 80, 0.2);
+        --color: #81c784;
+        border: 1px solid rgba(129, 199, 132, 0.3);
+        border-radius: 12px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 500;
+
+        &[color="medium"] {
+          --background: rgba(158, 158, 158, 0.2);
+          --color: #bdbdbd;
+          border-color: rgba(189, 189, 189, 0.3);
+        }
+      }
+    }
+
+    ion-card-subtitle {
+      color: #80d8ff;
+      opacity: 0.8;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+  }
+
+  ion-card-content {
+    padding: 0 20px 20px 20px;
+
+    .poll-info {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #80d8ff;
+        font-size: 14px;
+        opacity: 0.8;
+
+        ion-icon {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .poll-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      ion-button {
+        --color: #80d8ff;
+        --border-color: rgba(128, 216, 255, 0.3);
+        --background-hover: rgba(0, 229, 255, 0.08);
+        --border-radius: 8px;
+        font-size: 12px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          --color: #ffffff;
+          --border-color: #00e5ff;
+          transform: scale(1.02);
+        }
+
+        &:last-child {
+          --color: #f48fb1;
+          --border-color: rgba(244, 143, 177, 0.3);
+
+          &:hover {
+            --color: #ffffff;
+            --border-color: #f48fb1;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #80d8ff;
+
+  ion-icon {
+    opacity: 0.6;
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    color: #b3e5fc;
+    font-size: 24px;
     margin-bottom: 8px;
   }
-  
+
+  p {
+    opacity: 0.8;
+    margin-bottom: 24px;
+    font-size: 16px;
+  }
+
   ion-button {
-    margin-top: 12px;
+    --background: linear-gradient(135deg, #00bcd4, #00e5ff);
+    --color: white;
+    --border-radius: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(0, 188, 212, 0.3);
+    }
   }
 }
 
-.settings-section {
-  margin-bottom: 32px;
-  
-  ion-item {
-    --padding-start: 0;
+/* FAB button */
+ion-fab-button {
+  --background: linear-gradient(135deg, #00bcd4, #00e5ff);
+  --color: white;
+  --box-shadow: 0 8px 24px rgba(0, 188, 212, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    --box-shadow: 0 12px 32px rgba(0, 229, 255, 0.4);
   }
 }
 
-.button-section {
-  margin-top: 24px;
+/* Modal styling */
+ion-modal {
+  ion-header {
+    ion-toolbar {
+      --background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  ion-content {
+    --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  }
+
+  .modal-content {
+    padding: 20px;
+
+    ion-item {
+      --background: rgba(255, 255, 255, 0.05);
+      --color: #e3f2fd;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-radius: 12px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+
+      ion-label {
+        color: #80d8ff !important;
+        font-weight: 500;
+
+        &[position="stacked"] {
+          font-size: 14px;
+          margin-bottom: 8px;
+        }
+      }
+
+      ion-input, ion-textarea {
+        --color: #e3f2fd;
+        --placeholder-color: #80d8ff;
+      }
+
+      ion-checkbox {
+        --color: #80d8ff;
+        --color-checked: #00e5ff;
+        --checkmark-color: #ffffff;
+      }
+    }
+
+    .options-section {
+      margin: 24px 0;
+
+      ion-button[fill="clear"] {
+        --color: #80d8ff;
+        --background-hover: rgba(0, 229, 255, 0.08);
+
+        &:hover {
+          transform: scale(1.02);
+        }
+      }
+    }
+
+    .modal-actions {
+      margin-top: 32px;
+
+      ion-button {
+        --background: linear-gradient(135deg, #00bcd4, #00e5ff);
+        --color: white;
+        --border-radius: 12px;
+        font-weight: bold;
+        height: 48px;
+        transition: all 0.3s ease;
+
+        &:hover:not([disabled]) {
+          transform: scale(1.02);
+          box-shadow: 0 8px 20px rgba(0, 188, 212, 0.3);
+        }
+
+        &[disabled] {
+          --background: rgba(255, 255, 255, 0.1);
+          --color: rgba(255, 255, 255, 0.4);
+        }
+      }
+    }
+  }
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Page entry animation */
+ion-content > * {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.stats-grid .stat-card {
+  animation: slideUp 0.8s ease-in-out;
+  animation-fill-mode: both;
+}
+
+.stats-grid .stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stats-grid .stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stats-grid .stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+.poll-card {
+  animation: slideUp 0.6s ease-in-out;
+  animation-fill-mode: both;
+}
+
+.poll-card:nth-child(1) { animation-delay: 0.1s; }
+.poll-card:nth-child(2) { animation-delay: 0.2s; }
+.poll-card:nth-child(3) { animation-delay: 0.3s; }
+.poll-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .poll-actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    ion-button {
+      width: 100%;
+    }
+  }
+
+  .poll-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+
+    ion-badge {
+      margin-top: 8px;
+      align-self: flex-start;
+    }
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .glass-card, .stat-card, .poll-card {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
 }

@@ -1,9 +1,9 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="glass-header">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button defaultHref="/home" class="glass-back-button"></ion-back-button>
     </ion-buttons>
-    <ion-title>hCREATE SURVEY</ion-title>
+    <ion-title class="glass-title">CREATE SURVEY</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,25 +11,27 @@
   <form (ngSubmit)="createSurvey()" #surveyForm="ngForm">
     
     <!-- Survey Title Section -->
-    <div class="form-section">
-      <ion-label class="section-label">ADD TITLE OF THE SURVEY</ion-label>
-      <ion-item class="custom-item">
+    <div class="glass-form-section">
+      <ion-label class="glass-section-label">ADD TITLE OF THE SURVEY</ion-label>
+      <ion-item class="glass-item">
         <ion-input
           [(ngModel)]="survey.title"
           name="title"
           placeholder="Enter survey title..."
           required
-          #titleInput="ngModel">
+          #titleInput="ngModel"
+          (ionFocus)="onInputFocus($event)"
+          (ionBlur)="onInputBlur($event)">
         </ion-input>
       </ion-item>
-      <div class="error-message" *ngIf="titleInput.invalid && titleInput.touched">
+      <div class="glass-error-message" *ngIf="titleInput.invalid && titleInput.touched">
         Survey title is required
       </div>
     </div>
 
     <!-- Category Selection -->
-    <div class="form-section">
-      <ion-item class="custom-item">
+    <div class="glass-form-section">
+      <ion-item class="glass-item">
         <ion-select
           [(ngModel)]="survey.category"
           name="category"
@@ -50,9 +52,9 @@
     </div>
 
     <!-- Estimated Time -->
-    <div class="form-section">
-      <ion-label class="section-label">ESTIMATED TIME (MINUTES)</ion-label>
-      <ion-item class="custom-item">
+    <div class="glass-form-section">
+      <ion-label class="glass-section-label">ESTIMATED TIME (MINUTES)</ion-label>
+      <ion-item class="glass-item">
         <ion-input
           type="number"
           [(ngModel)]="survey.estimatedTime"
@@ -60,19 +62,21 @@
           placeholder="e.g., 5"
           min="1"
           max="60"
-          required>
+          required
+          (ionFocus)="onInputFocus($event)"
+          (ionBlur)="onInputBlur($event)">
         </ion-input>
       </ion-item>
     </div>
 
     <!-- Questions Section -->
-    <div class="form-section">
-      <div class="questions-header">
-        <ion-label class="section-label">SURVEY QUESTIONS</ion-label>
+    <div class="glass-form-section">
+      <div class="glass-questions-header">
+        <ion-label class="glass-section-label">SURVEY QUESTIONS</ion-label>
         <ion-button 
           fill="clear" 
           size="small" 
-          color="primary"
+          class="glass-add-button"
           (click)="addQuestion()">
           <ion-icon name="add" slot="start"></ion-icon>
           Add Question
@@ -80,13 +84,13 @@
       </div>
 
       <!-- Question Items -->
-      <div *ngFor="let question of survey.questions; let i = index" class="question-item">
-        <div class="question-header">
-          <span class="question-number">Question {{ i + 1 }}</span>
+      <div *ngFor="let question of survey.questions; let i = index" class="glass-question-item">
+        <div class="glass-question-header">
+          <span class="glass-question-number">Question {{ i + 1 }}</span>
           <ion-button 
             fill="clear" 
             size="small" 
-            color="danger"
+            class="glass-danger-button"
             (click)="removeQuestion(i)"
             *ngIf="survey.questions.length > 1">
             <ion-icon name="trash-outline"></ion-icon>
@@ -94,18 +98,20 @@
         </div>
 
         <!-- Question Text -->
-        <ion-item class="custom-item">
+        <ion-item class="glass-item">
           <ion-textarea
             [(ngModel)]="question.text"
             [name]="'question_' + i"
             placeholder="Write your question here..."
             rows="2"
-            required>
+            required
+            (ionFocus)="onInputFocus($event)"
+            (ionBlur)="onInputBlur($event)">
           </ion-textarea>
         </ion-item>
 
         <!-- Question Type -->
-        <ion-item class="custom-item">
+        <ion-item class="glass-item">
           <ion-select
             [(ngModel)]="question.type"
             [name]="'questionType_' + i"
@@ -119,32 +125,34 @@
         </ion-item>
 
         <!-- Options for Multiple Choice -->
-        <div *ngIf="question.type === 'multiple-choice'" class="options-section">
-          <div class="options-header">
-            <ion-label class="sub-label">ADD OPTIONS</ion-label>
+        <div *ngIf="question.type === 'multiple-choice'" class="glass-options-section">
+          <div class="glass-options-header">
+            <ion-label class="glass-sub-label">ADD OPTIONS</ion-label>
             <ion-button 
               fill="clear" 
               size="small" 
-              color="primary"
+              class="glass-add-button"
               (click)="addOption(i)">
               <ion-icon name="add" slot="start"></ion-icon>
               Add Option
             </ion-button>
           </div>
 
-          <div *ngFor="let option of question.options; let j = index" class="option-item">
-            <ion-item class="custom-item">
+          <div *ngFor="let option of question.options; let j = index" class="glass-option-item">
+            <ion-item class="glass-item">
               <ion-input
                 [(ngModel)]="question.options[j]"
                 [name]="'option_' + i + '_' + j"
                 [placeholder]="'Option ' + (j + 1)"
-                required>
+                required
+                (ionFocus)="onInputFocus($event)"
+                (ionBlur)="onInputBlur($event)">
               </ion-input>
               <ion-button 
                 slot="end" 
                 fill="clear" 
                 size="small" 
-                color="danger"
+                class="glass-danger-button glass-small"
                 (click)="removeOption(i, j)"
                 *ngIf="question.options.length > 2">
                 <ion-icon name="close"></ion-icon>
@@ -153,20 +161,22 @@
           </div>
 
           <!-- Allow Multiple Answers Toggle -->
-          <ion-item class="custom-item toggle-item">
+          <ion-item class="glass-item glass-toggle-item">
             <ion-label>ALLOW MULTIPLE ANSWERS</ion-label>
             <ion-toggle
               [(ngModel)]="question.allowMultiple"
               [name]="'allowMultiple_' + i"
-              slot="end">
+              slot="end"
+              class="glass-toggle"
+              (ionChange)="onToggleChange($event)">
             </ion-toggle>
           </ion-item>
         </div>
 
         <!-- Rating Scale Configuration -->
-        <div *ngIf="question.type === 'rating'" class="rating-section">
-          <ion-item class="custom-item">
-            <ion-label position="stacked">Scale Range</ion-label>
+        <div *ngIf="question.type === 'rating'" class="glass-rating-section">
+          <ion-item class="glass-item">
+            <ion-label position="stacked" class="glass-input-label">Scale Range</ion-label>
             <ion-select
               [(ngModel)]="question.ratingScale"
               [name]="'ratingScale_' + i">
@@ -177,57 +187,64 @@
         </div>
 
         <!-- Required Question Toggle -->
-        <ion-item class="custom-item toggle-item">
+        <ion-item class="glass-item glass-toggle-item">
           <ion-label>REQUIRED QUESTION</ion-label>
           <ion-toggle
             [(ngModel)]="question.required"
             [name]="'required_' + i"
-            slot="end">
+            slot="end"
+            class="glass-toggle"
+            (ionChange)="onToggleChange($event)">
           </ion-toggle>
         </ion-item>
       </div>
     </div>
 
     <!-- Survey Settings -->
-    <div class="form-section">
-      <ion-label class="section-label">SURVEY SETTINGS</ion-label>
+    <div class="glass-form-section">
+      <ion-label class="glass-section-label">SURVEY SETTINGS</ion-label>
       
-      <ion-item class="custom-item toggle-item">
+      <ion-item class="glass-item glass-toggle-item">
         <ion-label>ALLOW ANONYMOUS RESPONSES</ion-label>
         <ion-toggle
           [(ngModel)]="survey.allowAnonymous"
           name="allowAnonymous"
-          slot="end">
+          slot="end"
+          class="glass-toggle"
+          (ionChange)="onToggleChange($event)">
         </ion-toggle>
       </ion-item>
 
-      <ion-item class="custom-item toggle-item">
+      <ion-item class="glass-item glass-toggle-item">
         <ion-label>ACTIVE SURVEY</ion-label>
         <ion-toggle
           [(ngModel)]="survey.isActive"
           name="isActive"
-          slot="end">
+          slot="end"
+          class="glass-toggle"
+          (ionChange)="onToggleChange($event)">
         </ion-toggle>
       </ion-item>
 
       <!-- End Date -->
-      <ion-item class="custom-item">
-        <ion-label position="stacked">End Date (Optional)</ion-label>
+      <ion-item class="glass-item">
+        <ion-label position="stacked" class="glass-input-label">End Date (Optional)</ion-label>
         <ion-datetime
           [(ngModel)]="survey.endDate"
           name="endDate"
           presentation="date"
-          [min]="getCurrentDate()">
+          [min]="getCurrentDate()"
+          class="glass-datetime">
         </ion-datetime>
       </ion-item>
     </div>
 
     <!-- Action Buttons -->
-    <div class="action-buttons">
+    <div class="glass-action-buttons">
       <ion-button 
         expand="block" 
         fill="outline" 
-        color="medium"
+        class="glass-draft-button"
         (click)="saveDraft()"
         [disabled]="isSubmitting">
         <ion-icon name="bookmark-outline" slot="start"></ion-icon>
@@ -237,9 +254,9 @@
       <ion-button 
         expand="block" 
         type="submit"
-        class="create-button"
+        class="glass-create-button"
         [disabled]="surveyForm.invalid || isSubmitting">
-        <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+        <ion-spinner *ngIf="isSubmitting" name="crescent" class="glass-spinner"></ion-spinner>
         <span *ngIf="!isSubmitting">CREATE SURVEY</span>
       </ion-button>
     </div>

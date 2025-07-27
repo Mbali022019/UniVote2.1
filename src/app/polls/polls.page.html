@@ -1,116 +1,272 @@
-<!-- polls.page.html -->
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title>Student Poll</ion-title>
+    <ion-title>Active Polls</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="polls-bg">
+<ion-content [fullscreen]="true" class="polls-bg">
   <div class="polls-container">
-    
-    <!-- Poll Card -->
-    <div class="glass-card poll-card">
-      
-      <!-- Poll Header -->
-      <div class="poll-header">
-        <div class="poll-avatar">
-          <img src="assets/images/poll-avatar.jpg" alt="Poll Creator" />
-        </div>
-        <div class="poll-meta">
-          <h3 class="poll-creator">Student Council</h3>
-          <p class="poll-time">{{ pollData.createdAt | date:'MMM d, h:mm a' }}</p>
-        </div>
+    <!-- Search and Filter Section -->
+    <div class="search-filter-section">
+      <!-- Search Bar -->
+      <div class="search-container glass-card">
+        <ion-searchbar
+          [(ngModel)]="searchQuery"
+          (ionInput)="onSearchInput($event)"
+          placeholder="Search polls..."
+          show-clear-button="focus"
+          debounce="300"
+          class="custom-searchbar">
+          <ion-icon name="search" slot="start"></ion-icon>
+        </ion-searchbar>
       </div>
 
-      <!-- Poll Question -->
-      <div class="poll-question">
-        <h2>{{ pollData.question }}</h2>
-        <p class="poll-description" *ngIf="pollData.description">
-          {{ pollData.description }}
-        </p>
+      <!-- Category Filter -->
+      <div class="category-filter glass-card">
+        <div class="category-header">
+          <ion-icon name="filter"></ion-icon>
+          <span>Categories</span>
+        </div>
+        <div class="category-chips">
+          <ion-chip 
+            *ngFor="let category of categories"
+            [class.selected]="selectedCategory === category.id"
+            (click)="selectCategory(category.id)"
+            class="category-chip">
+            <ion-icon [name]="category.icon" slot="start"></ion-icon>
+            <ion-label>{{category.name}}</ion-label>
+          </ion-chip>
+        </div>
       </div>
+    </div>
 
-      <!-- Poll Options with Radio Buttons -->
-      <div class="poll-options">
-        <div 
-          class="poll-option"
-          *ngFor="let option of pollData.options; let i = index"
-          (click)="selectOption(i)"
-          [class.selected]="selectedOptions.includes(i)"
-          [class.voted]="hasVoted">
-          
-          <!-- Radio Button Section -->
-          <div class="option-header">
-            <div class="radio-container">
-              <input 
-                type="radio" 
-                [id]="'option-' + i"
-                name="poll-option"
-                [checked]="selectedOptions.includes(i)"
-                (change)="selectOption(i)"
-                [disabled]="hasVoted">
-              <label [for]="'option-' + i" class="radio-label">
-                <span class="radio-button"></span>
-              </label>
+    <!-- Results Count -->
+    <div class="results-info" *ngIf="filteredPolls.length > 0">
+      <span>{{filteredPolls.length}} poll{{filteredPolls.length !== 1 ? 's' : ''}} found</span>
+    </div>
+
+    <!-- Poll Cards -->
+    <div class="poll-list">
+      <div class="glass-card poll-card" *ngFor="let poll of filteredPolls; trackBy: trackByPollId">
+        <!-- Poll Preview (Collapsed State) -->
+        <div class="poll-preview" *ngIf="!isExpanded(poll.id)">
+          <div class="poll-header">
+            <div class="poll-avatar">
+              <img *ngIf="poll.creatorAvatar" [src]="poll.creatorAvatar" [alt]="poll.creatorName">
+              <ion-icon name="person-circle" *ngIf="!poll.creatorAvatar"></ion-icon>
             </div>
-            
-            <div class="option-content">
-              <div class="option-text">{{ option.text }}</div>
-              
-              <!-- Vote Count (only shown after voting) -->
-              <div class="vote-count" *ngIf="hasVoted">
-                {{ option.votes || 0 }} {{ (option.votes || 0) === 1 ? 'vote' : 'votes' }}
+            <div class="poll-meta">
+              <h3 class="poll-creator">{{poll.creatorName}}</h3>
+              <p class="poll-time">{{poll.createdDate}}</p>
+              <div class="poll-category">
+                <ion-icon [name]="getCategoryIcon(poll.category)"></ion-icon>
+                <span>{{getCategoryName(poll.category)}}</span>
+              </div>
+            </div>
+            <div class="poll-status">
+              <div class="status-badge" [class]="getStatusClass(poll)">
+                {{getStatusText(poll)}}
               </div>
             </div>
           </div>
 
-          <!-- Progress Bar (always visible, fills after voting) -->
-          <div class="vote-progress">
-            <div 
-              class="progress-bar"
-              [style.width.%]="hasVoted ? getVotePercentage(option.votes || 0) : (selectedOptions.includes(i) ? 20 : 0)"
-              [class.selected-bar]="selectedOptions.includes(i)"
-              [class.preview-bar]="!hasVoted && selectedOptions.includes(i)">
+          <div class="poll-question-preview">
+            <h2>{{poll.title}}</h2>
+            <p class="poll-description" *ngIf="poll.description">
+              {{poll.description.length > 100 ? (poll.description | slice:0:100) + '...' : poll.description}}
+            </p>
+          </div>
+
+          <div class="poll-stats-preview">
+            <div class="stat-item">
+              <ion-icon name="people"></ion-icon>
+              <span>{{poll.totalVotes}} votes</span>
             </div>
-            <div class="percentage-text" *ngIf="hasVoted">
-              {{ getVotePercentage(option.votes || 0) }}%
+            <div class="stat-item">
+              <ion-icon [name]="poll.allowMultiple ? 'checkbox' : 'radio-button-on'"></ion-icon>
+              <span>{{poll.allowMultiple ? 'Multiple' : 'Single'}} choice</span>
             </div>
-            <div class="preview-text" *ngIf="!hasVoted && selectedOptions.includes(i)">
-              Selected
+            <div class="stat-item">
+              <ion-icon name="list"></ion-icon>
+              <span>{{poll.options.length}} options</span>
             </div>
           </div>
-          
+
+          <div class="view-poll-button">
+            <ion-button 
+              class="view-btn neon-button-outline"
+              expand="block"
+              (click)="expandPoll(poll.id)">
+              <ion-icon name="eye" slot="start"></ion-icon>
+              View Poll
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Full Poll Content (Expanded State) -->
+        <div class="poll-full" *ngIf="isExpanded(poll.id)">
+          <!-- Collapse Button -->
+          <div class="collapse-header">
+            <ion-button 
+              fill="clear" 
+              class="collapse-btn"
+              (click)="collapsePoll(poll.id)">
+              <ion-icon name="chevron-up" slot="start"></ion-icon>
+              Collapse
+            </ion-button>
+          </div>
+
+          <!-- Poll Header with Creator Info -->
+          <div class="poll-header">
+            <div class="poll-avatar">
+              <img *ngIf="poll.creatorAvatar" [src]="poll.creatorAvatar" [alt]="poll.creatorName">
+              <ion-icon name="person-circle" *ngIf="!poll.creatorAvatar"></ion-icon>
+            </div>
+            <div class="poll-meta">
+              <h3 class="poll-creator">{{poll.creatorName}}</h3>
+              <p class="poll-time">{{poll.createdDate}}</p>
+              <div class="poll-category">
+                <ion-icon [name]="getCategoryIcon(poll.category)"></ion-icon>
+                <span>{{getCategoryName(poll.category)}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Poll Question -->
+          <div class="poll-question">
+            <h2>{{poll.title}}</h2>
+            <p class="poll-description" *ngIf="poll.description">{{poll.description}}</p>
+          </div>
+
+          <!-- Poll Options -->
+          <div class="poll-options">
+            <div 
+              class="poll-option" 
+              *ngFor="let option of poll.options; let i = index"
+              [class.selected]="isOptionSelected(poll.id, option.id)"
+              [class.voted]="hasUserVoted(poll.id)"
+              (click)="!hasUserVoted(poll.id) && selectOption(poll.id, option.id, poll.allowMultiple)">
+              
+              <div class="option-header">
+                <!-- Radio Button for Single Choice -->
+                <div class="radio-container" *ngIf="!poll.allowMultiple">
+                  <input 
+                    type="radio" 
+                    [id]="'poll_' + poll.id + '_option_' + option.id"
+                    [name]="'poll_' + poll.id"
+                    [value]="option.id"
+                    [checked]="isOptionSelected(poll.id, option.id)"
+                    [disabled]="hasUserVoted(poll.id)"
+                    (change)="selectOption(poll.id, option.id, poll.allowMultiple)">
+                  <label 
+                    class="radio-label" 
+                    [for]="'poll_' + poll.id + '_option_' + option.id">
+                    <span class="radio-button"></span>
+                  </label>
+                </div>
+
+                <!-- Checkbox for Multiple Choice -->
+                <div class="radio-container" *ngIf="poll.allowMultiple">
+                  <input 
+                    type="checkbox" 
+                    [id]="'poll_' + poll.id + '_option_' + option.id"
+                    [value]="option.id"
+                    [checked]="isOptionSelected(poll.id, option.id)"
+                    [disabled]="hasUserVoted(poll.id)"
+                    (change)="selectOption(poll.id, option.id, poll.allowMultiple)">
+                  <label 
+                    class="radio-label" 
+                    [for]="'poll_' + poll.id + '_option_' + option.id">
+                    <span class="radio-button" [class.checkbox]="poll.allowMultiple"></span>
+                  </label>
+                </div>
+
+                <div class="option-content">
+                  <span class="option-text">{{option.text}}</span>
+                  <span class="vote-count" *ngIf="hasUserVoted(poll.id)">{{option.votes}} votes</span>
+                </div>
+              </div>
+
+              <!-- Progress Bar (shown after voting) -->
+              <div class="vote-progress" *ngIf="hasUserVoted(poll.id)">
+                <div 
+                  class="progress-bar"
+                  [class.selected-bar]="isOptionSelected(poll.id, option.id)"
+                  [style.width.%]="getVotePercentage(poll, option.id)">
+                </div>
+                <span class="percentage-text">{{getVotePercentage(poll, option.id)}}%</span>
+              </div>
+
+              <!-- Preview Progress Bar (shown while selecting) -->
+              <div class="vote-progress" *ngIf="!hasUserVoted(poll.id) && isOptionSelected(poll.id, option.id)">
+                <div class="progress-bar preview-bar" style="width: 100%"></div>
+                <span class="preview-text">Selected</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vote Button -->
+          <div class="vote-button-container" *ngIf="!hasUserVoted(poll.id)">
+            <ion-button 
+              class="vote-btn neon-button"
+              expand="block"
+              [disabled]="!hasSelectedOptions(poll.id)"
+              (click)="submitVote(poll)">
+              <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+              Submit Vote
+            </ion-button>
+          </div>
+
+          <!-- Results Button -->
+          <div class="action-button-container" *ngIf="hasUserVoted(poll.id)">
+            <ion-button 
+              class="results-btn neon-button-outline"
+              expand="block"
+              (click)="viewDetailedResults(poll)">
+              <ion-icon name="bar-chart" slot="start"></ion-icon>
+              View Detailed Results
+            </ion-button>
+          </div>
+
+          <!-- Poll Stats -->
+          <div class="poll-stats">
+            <div class="total-votes">
+              <ion-icon name="people"></ion-icon>
+              <span>{{poll.totalVotes}} total votes</span>
+            </div>
+            <div class="poll-type">
+              <ion-icon [name]="poll.allowMultiple ? 'checkbox' : 'radio-button-on'"></ion-icon>
+              <span>{{poll.allowMultiple ? 'Multiple choice' : 'Single choice'}}</span>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- Poll Stats (shown after voting) -->
-      <div class="poll-stats" *ngIf="hasVoted">
-        <div class="total-votes">
-          <ion-icon name="people-outline"></ion-icon>
-          {{ getTotalVotes() }} {{ getTotalVotes() === 1 ? 'person' : 'people' }} voted
-        </div>
-        <div class="poll-type" *ngIf="pollData.allowMultiple">
-          <ion-icon name="checkbox-outline"></ion-icon>
-          Multiple answers allowed
-        </div>
+    <!-- Empty State -->
+    <div class="glass-card empty-state" *ngIf="filteredPolls.length === 0 && polls.length > 0">
+      <div class="empty-content">
+        <ion-icon name="search-outline"></ion-icon>
+        <h2>No polls found</h2>
+        <p>Try adjusting your search or category filter</p>
+        <ion-button 
+          class="clear-filters-btn neon-button-outline"
+          (click)="clearFilters()">
+          Clear Filters
+        </ion-button>
       </div>
-
     </div>
 
-    <!-- Vote Button (if not voted) -->
-    <div class="vote-button-container" *ngIf="!hasVoted">
-      <ion-button 
-        expand="block"
-        class="neon-button vote-btn"
-        (click)="submitVote()"
-        [disabled]="!canVote()">
-        <ion-icon name="send-outline" slot="start"></ion-icon>
-        Submit Vote
-      </ion-button>
+    <!-- No Polls State -->
+    <div class="glass-card empty-state" *ngIf="polls.length === 0">
+      <div class="empty-content">
+        <ion-icon name="clipboard-outline"></ion-icon>
+        <h2>No Active Polls</h2>
+        <p>Check back later for new polls to participate in!</p>
+      </div>
     </div>
-
   </div>
 </ion-content>

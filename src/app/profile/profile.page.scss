@@ -1,4 +1,190 @@
-// profile.page.scss
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) scale(1); 
+    opacity: 0.7; 
+  }
+  50% { 
+    transform: translateY(-20px) scale(1.1); 
+    opacity: 1; 
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.02); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+@keyframes slideIn {
+  0% { left: -100%; }
+  33% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* Alert Customization */
+.custom-alert {
+  .alert-wrapper {
+    --border-radius: 16px;
+    background: rgba(15, 32, 39, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+  }
+  
+  .alert-title {
+    color: #80d8ff;
+    font-weight: 600;
+  }
+  
+  .alert-message {
+    color: #b3e5fc;
+  }
+  
+  .alert-button {
+    font-weight: 500;
+    color: #b3e5fc;
+    
+    &.alert-button-role-destructive {
+      color: #f44336;
+    }
+    
+    &:hover {
+      background: rgba(0, 229, 255, 0.1);
+    }
+  }
+}
+
+/* Toast Notification Overrides */
+.custom-toast {
+  --background: rgba(0, 188, 212, 0.9);
+  --color: white;
+  --border-radius: 12px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  &.toast-success {
+    --background: rgba(76, 175, 80, 0.9);
+  }
+
+  &.toast-warning {
+    --background: rgba(255, 152, 0, 0.9);
+  }
+
+  &.toast-error {
+    --background: rgba(244, 67, 54, 0.9);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 20px 16px;
+  }
+  
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    font-size: 36px;
+  }
+  
+  .form-section {
+    padding: 24px 20px;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .action-buttons {
+    gap: 12px;
+  }
+  
+  .button-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .section-title {
+    font-size: 20px;
+  }
+  
+  .nav-title {
+    font-size: 18px;
+  }
+  
+  .nav-back {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    font-size: 13px;
+  }
+
+  .date-input-container {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .date-picker-btn {
+      align-self: flex-end;
+      margin-top: 8px;
+      margin-left: 0;
+    }
+    
+    .inline-date-picker {
+      position: relative;
+      margin-top: 12px;
+    }
+  }
+}
+
+/* Dark Mode Enhancements */
+@media (prefers-color-scheme: dark) {
+  .form-section {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .particle,
+  .profile-avatar,
+  .form-section::before {
+    animation: none;
+  }
+  
+  .action-btn,
+  .nav-back,
+  .date-picker-btn {
+    transition: none;
+  }
+}// Modified profile.page.scss to integrate date picker and camera improvements
 
 // Remove default Ionic styles and create custom ones
 ion-content {
@@ -10,6 +196,93 @@ ion-content {
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
+}
+
+/* Date Input Container Styles */
+.date-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  
+  .date-display {
+    flex: 1;
+    cursor: pointer;
+    --background: rgba(255, 255, 255, 0.05);
+    --color: #b3e5fc;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-width: 2px;
+    --border-radius: 12px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: 500;
+    
+    &:hover {
+      --background: rgba(255, 255, 255, 0.08);
+      --border-color: rgba(0, 229, 255, 0.3);
+    }
+  }
+  
+  .date-picker-btn {
+    --color: #80d8ff;
+    --background: rgba(0, 229, 255, 0.1);
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --border-radius: 8px;
+    margin-left: 8px;
+    height: 50px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      --color: #b3e5fc;
+      --background: rgba(0, 229, 255, 0.2);
+      transform: scale(1.05);
+    }
+    
+    &:disabled {
+      --color: rgba(179, 229, 252, 0.5);
+      --background: rgba(255, 255, 255, 0.03);
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* Inline Date Picker Styles */
+.inline-date-picker {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(15, 32, 39, 0.95);
+  border: 2px solid rgba(0, 229, 255, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+  margin-top: 8px;
+  backdrop-filter: blur(20px);
+  max-height: 400px;
+  overflow: visible;
+  
+  // Override default datetime styles
+  --background: rgba(15, 32, 39, 0.95);
+  --color: #b3e5fc;
+  --wheel-highlight-background: rgba(0, 229, 255, 0.2);
+  --wheel-fade-background-rgb: 15, 32, 39;
+  
+  ion-datetime {
+    --max-width: 100%;
+    --padding: 20px;
+    border-radius: 16px;
+    max-height: 350px;
+  }
 }
 
 /* Animated Background Particles */
@@ -144,6 +417,7 @@ ion-content {
   align-items: flex-start;
   min-height: 100vh;
   padding: 20px;
+  padding-bottom: 120px; /* Extra space at bottom */
   position: relative;
   z-index: 2;
 }
@@ -152,6 +426,7 @@ ion-content {
   max-width: 800px;
   width: 100%;
   animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-bottom: 100px; /* Add space at bottom for buttons */
 }
 
 /* Profile Header with Avatar */
@@ -200,6 +475,11 @@ ion-content {
     box-shadow: 
       0 25px 50px rgba(0, 188, 212, 0.5),
       0 0 80px rgba(0, 229, 255, 0.4);
+
+    .avatar-overlay {
+      opacity: 1;
+      background: rgba(0, 229, 255, 0.3);
+    }
   }
 
   &::before {
@@ -243,7 +523,7 @@ ion-content {
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
   z-index: 3;
   backdrop-filter: blur(5px);
 }
@@ -252,6 +532,7 @@ ion-content {
   font-size: 32px;
   margin-bottom: 8px;
   color: white;
+  transition: transform 0.3s ease;
 }
 
 .upload-text {
@@ -260,10 +541,12 @@ ion-content {
   font-weight: 600;
   text-align: center;
   line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+/* Hide the default file inputs */
 .file-input {
-  display: none;
+  display: none !important;
 }
 
 .student-info {
@@ -345,11 +628,23 @@ ion-content {
   gap: 24px;
 }
 
+/* Form Field Improvements */
 .form-field {
   position: relative;
+  margin-bottom: 24px;
 
   &.full-width {
     grid-column: 1 / -1;
+  }
+  
+  // Add extra space for date picker field
+  &:has(.date-input-container) {
+    margin-bottom: 50px;
+    
+    // When date picker is shown, add more space
+    &:has(.inline-date-picker[style*="block"]) {
+      margin-bottom: 450px;
+    }
   }
 }
 
@@ -386,6 +681,13 @@ ion-content {
     &.ion-invalid.ion-touched {
       --border-color: #f44336;
     }
+
+    &[readonly] {
+      --background: rgba(255, 255, 255, 0.03);
+      --color: rgba(179, 229, 252, 0.6);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
   }
 
   ion-textarea {
@@ -401,6 +703,11 @@ ion-content {
   ion-datetime {
     --background: rgba(255, 255, 255, 0.05);
     --color: #b3e5fc;
+
+    &.date-picker {
+      --wheel-highlight-background: rgba(0, 229, 255, 0.2);
+      --wheel-fade-background-rgb: 15, 32, 39;
+    }
   }
 }
 
@@ -422,10 +729,21 @@ ion-content {
 
 /* Action Buttons */
 .action-buttons {
+  margin-top: 40px;
+  margin-bottom: 40px; /* Add bottom margin */
+  position: relative;
+  z-index: 10; /* Ensure buttons are above other content */
+}
+
+.button-row {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 32px;
+  gap: 20px;
+  width: 100%;
+  
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 
 .action-btn {
@@ -441,6 +759,7 @@ ion-content {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  flex: 1;
 
   &.btn-primary {
     --background: linear-gradient(135deg, #00bcd4, #00e5ff);
@@ -485,131 +804,86 @@ ion-content {
   }
 }
 
-/* Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
+/* Action Sheet Customization */
+.custom-action-sheet {
+  .action-sheet-group {
+    background: rgba(15, 32, 39, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    
+    .action-sheet-button {
+      font-weight: 500;
+      color: #b3e5fc;
+      --background: transparent;
+      --color: #b3e5fc;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        --background: rgba(0, 229, 255, 0.1);
+        --color: #00e5ff;
+      }
+      
+      &.action-sheet-destructive {
+        --color: #f44336;
+        
+        &:hover {
+          --background: rgba(244, 67, 54, 0.1);
+        }
+      }
+      
+      ion-icon {
+        margin-right: 12px;
+        color: inherit;
+      }
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOutDown {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-}
-
-@keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) scale(1); 
-    opacity: 0.7; 
-  }
-  50% { 
-    transform: translateY(-20px) scale(1.1); 
-    opacity: 1; 
-  }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.02); }
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-}
-
-@keyframes slideIn {
-  0% { left: -100%; }
-  33% { left: 100%; }
-  100% { left: 100%; }
-}
-
-/* Toast Notification Overrides */
-.custom-toast {
-  --background: rgba(0, 188, 212, 0.9);
-  --color: white;
-  --border-radius: 12px;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  &.toast-success {
-    --background: rgba(76, 175, 80, 0.9);
-  }
-
-  &.toast-warning {
-    --background: rgba(255, 152, 0, 0.9);
-  }
-
-  &.toast-error {
-    --background: rgba(244, 67, 54, 0.9);
+  
+  .action-sheet-title {
+    color: #80d8ff;
+    font-weight: 600;
   }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .profile-container {
-    padding: 20px 16px;
-  }
-  
-  .profile-avatar {
-    width: 120px;
-    height: 120px;
-    font-size: 36px;
-  }
-  
-  .form-section {
-    padding: 24px 20px;
-  }
-  
   .form-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
   }
   
-  .action-buttons {
-    gap: 12px;
-  }
-  
-  .section-title {
-    font-size: 20px;
-  }
-  
-  .nav-title {
-    font-size: 18px;
-  }
-  
-  .nav-back {
-    --padding-start: 16px;
-    --padding-end: 16px;
-    font-size: 13px;
+  .date-input-container {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .date-picker-btn {
+      align-self: flex-end;
+      margin-top: 8px;
+    }
   }
 }
 
-/* Dark Mode Enhancements */
-@media (prefers-color-scheme: dark) {
-  .form-section {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.25);
+/* Animation improvements for particles */
+.bg-animation {
+  .particle {
+    animation: float 20s infinite linear;
+    opacity: 0.1;
+    
+    &:nth-child(odd) {
+      animation-duration: 25s;
+      animation-direction: reverse;
+    }
+    
+    &:nth-child(3n) {
+      animation-duration: 30s;
+    }
   }
 }
 
-/* Reduced Motion Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .particle,
-  .profile-avatar,
-  .form-section::before {
-    animation: none;
+@keyframes float {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
   }
 }

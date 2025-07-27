@@ -1,11 +1,12 @@
-
 // profile.page.ts
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { NavController, ToastController } from '@ionic/angular';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActionSheetController, AlertController, ToastController } from '@ionic/angular';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Router } from '@angular/router';
 
 interface UserProfile {
-  id: string;
+  studentId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -13,15 +14,9 @@ interface UserProfile {
   dateOfBirth: string;
   gender: string;
   address: string;
-  studentId: string;
   department: string;
   yearOfStudy: string;
-  gpa: string;
-  avatar: string;
-}
-
-interface Particle {
-  transform: string;
+  avatarUrl?: string;
 }
 
 @Component({
@@ -31,440 +26,357 @@ interface Particle {
   standalone: false
 })
 export class ProfilePage implements OnInit {
-  @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
-  @ViewChild('avatarImage', { static: false }) avatarImage!: ElementRef;
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('cameraInput') cameraInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('dateTimePicker') dateTimePicker!: any;
 
   profileForm!: FormGroup;
-  userProfile!: UserProfile;
-  isEditing = false;
-  avatarUrl = '';
-  isDragOver = false;
-  particles: Particle[] = [];
-
-  originalValues = {
-    firstName: 'Alex',
-    lastName: 'Johnson',
-    email: 'alex.johnson@university.edu',
-    phone: '+27 82 123 4567',
-    dateOfBirth: '2002-03-15',
-    gender: 'male',
-    address: '123 University Ave, Durban, KZN 4001',
+  userProfile: UserProfile = {
     studentId: 'STU2024001',
-    department: 'computer-science',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@university.edu',
+    phone: '+1 234 567 8900',
+    dateOfBirth: '2000-01-15',
+    gender: 'male',
+    address: '123 University Avenue, Campus City, State 12345',
+    department: 'Computer Science',
     yearOfStudy: '3',
-    gpa: '3.8'
+    avatarUrl: ''
   };
 
-  departments = [
-    { value: 'computer-science', label: 'Computer Science' },
-    { value: 'engineering', label: 'Engineering' },
-    { value: 'business', label: 'Business Administration' },
-    { value: 'psychology', label: 'Psychology' },
-    { value: 'medicine', label: 'Medicine' },
-    { value: 'law', label: 'Law' },
-    { value: 'arts', label: 'Arts & Literature' },
-    { value: 'mathematics', label: 'Mathematics' }
-  ];
+  isEditing = false;
+  isDragOver = false;
+  avatarUrl = '';
+  particles: any[] = [];
+  showDatePicker = false;
 
   constructor(
-    private navCtrl: NavController,
     private formBuilder: FormBuilder,
-    private toastCtrl: ToastController
+    private actionSheetController: ActionSheetController,
+    private alertController: AlertController,
+    private toastController: ToastController,
+    private router: Router
   ) {
-    this.initializeProfile();
-    this.createForm();
-    this.initializeParticles();
+    this.initializeForm();
+    this.generateParticles();
   }
 
   ngOnInit() {
     this.loadUserProfile();
-    this.enableParallaxEffect();
   }
 
-  initializeProfile() {
-    this.userProfile = {
-      id: '1',
-      firstName: this.originalValues.firstName,
-      lastName: this.originalValues.lastName,
-      email: this.originalValues.email,
-      phone: this.originalValues.phone,
-      dateOfBirth: this.originalValues.dateOfBirth,
-      gender: this.originalValues.gender,
-      address: this.originalValues.address,
-      studentId: this.originalValues.studentId,
-      department: this.originalValues.department,
-      yearOfStudy: this.originalValues.yearOfStudy,
-      gpa: this.originalValues.gpa,
-      avatar: ''
-    };
-    this.avatarUrl = this.userProfile.avatar;
-  }
-
-  createForm() {
+  private initializeForm() {
     this.profileForm = this.formBuilder.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern(/^[\+]?[0-9\s\-\(\)]{10,}$/)]],
-      dateOfBirth: ['', [Validators.required]],
-      gender: [''],
-      address: ['', [Validators.required]],
-      studentId: ['', [Validators.required]],
-      department: ['', [Validators.required]],
-      yearOfStudy: ['', [Validators.required]],
-      gpa: ['', [Validators.required, Validators.pattern(/^[0-4](\.[0-9])?$/)]]
+      firstName: [this.userProfile.firstName, [Validators.required, Validators.minLength(2)]],
+      lastName: [this.userProfile.lastName, [Validators.required, Validators.minLength(2)]],
+      email: [this.userProfile.email, [Validators.required, Validators.email]],
+      phone: [this.userProfile.phone, [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]+$/)]],
+      dateOfBirth: [this.userProfile.dateOfBirth, [Validators.required]],
+      gender: [this.userProfile.gender],
+      address: [this.userProfile.address, [Validators.required, Validators.minLength(10)]],
+      studentId: [this.userProfile.studentId, [Validators.required]],
+      department: [this.userProfile.department, [Validators.required]],
+      yearOfStudy: [this.userProfile.yearOfStudy, [Validators.required]]
     });
-
-    // Set all fields to readonly initially
-    this.setFormReadonly(true);
   }
 
-  loadUserProfile() {
-    this.profileForm.patchValue(this.userProfile);
+  private generateParticles() {
+    this.particles = Array.from({ length: 5 }, (_, i) => ({
+      transform: `translate(${Math.random() * 100}vw, ${Math.random() * 100}vh)`
+    }));
   }
 
-  initializeParticles() {
-    this.particles = Array(5).fill(null).map(() => ({ transform: 'translate(0px, 0px)' }));
+  private loadUserProfile() {
+    // Load user profile from storage or API
+    // For demo purposes, using the initialized data
+    this.avatarUrl = this.userProfile.avatarUrl || '';
   }
 
-  // Profile Avatar Functions
-  triggerFileUpload() {
-    this.fileInput.nativeElement.click();
+  openDatePicker() {
+    if (!this.isEditing) return;
+    this.showDatePicker = !this.showDatePicker;
   }
 
-  handleFileSelect(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.processImageFile(file);
-    }
+  onDateChange(event: any) {
+    const selectedDate = event.detail.value;
+    this.profileForm.patchValue({ dateOfBirth: selectedDate });
+    this.showDatePicker = false;
   }
 
-  handleDragOver(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.isDragOver = true;
+  async showProfilePictureOptions() {
+    if (!this.isEditing) return;
+
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Update Profile Picture',
+      cssClass: 'custom-action-sheet',
+      buttons: [
+        {
+          text: 'Take Photo',
+          icon: 'camera-outline',
+          handler: () => {
+            this.takePhotoWithCamera();
+          }
+        },
+        {
+          text: 'Choose from Gallery',
+          icon: 'images-outline',
+          handler: () => {
+            this.selectFromGallery();
+          }
+        },
+        {
+          text: 'Remove Picture',
+          icon: 'trash-outline',
+          role: 'destructive',
+          handler: () => {
+            this.removeProfilePicture();
+          }
+        },
+        {
+          text: 'Cancel',
+          icon: 'close-outline',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
   }
 
-  handleDragLeave(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.isDragOver = false;
-  }
+  async takePhotoWithCamera() {
+    try {
+      // First try to use Capacitor Camera to open actual camera app
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera, // This opens the actual camera app
+        width: 400,
+        height: 400,
+        saveToGallery: false
+      });
 
-  handleDrop(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.isDragOver = false;
-
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      if (file.type.startsWith('image/')) {
-        this.processImageFile(file);
+      if (image.dataUrl) {
+        this.avatarUrl = image.dataUrl;
+        this.userProfile.avatarUrl = image.dataUrl;
+        this.showToast('Photo captured successfully!', 'success');
+      }
+    } catch (error) {
+      console.log('Camera not available:', error);
+      
+      // Enhanced fallback - try to request camera permissions first
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          // Request camera permission and open camera
+          const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'user' } 
+          });
+          
+          // Stop the stream immediately as we just needed permission
+          stream.getTracks().forEach(track => track.stop());
+          
+          // Now try the file input with camera
+          this.cameraInput.nativeElement.click();
+        } catch (permissionError) {
+          console.log('Camera permission denied:', permissionError);
+          this.showToast('Camera access denied. Please enable camera permissions.', 'error');
+        }
       } else {
-        this.showNotification('Please select an image file', 'warning');
+        // Final fallback
+        this.cameraInput.nativeElement.click();
       }
     }
   }
 
-  processImageFile(file: File) {
+  async selectFromGallery() {
+    try {
+      // Try Capacitor Camera first (for mobile devices)
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Photos,
+        width: 400,
+        height: 400
+      });
+
+      if (image.dataUrl) {
+        this.avatarUrl = image.dataUrl;
+        this.userProfile.avatarUrl = image.dataUrl;
+        this.showToast('Photo selected successfully!', 'success');
+      }
+    } catch (error) {
+      console.log('Capacitor Camera not available, falling back to file input');
+      // Fallback to file input for web
+      this.fileInput.nativeElement.click();
+    }
+  }
+
+  handleCameraCapture(event: any) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      this.processImageFile(file);
+      this.showToast('Photo captured successfully!', 'success');
+    }
+    // Reset the input
+    event.target.value = '';
+  }
+
+  handleFileSelect(event: any) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      this.processImageFile(file);
+      this.showToast('Photo uploaded successfully!', 'success');
+    }
+    // Reset the input
+    event.target.value = '';
+  }
+
+  private processImageFile(file: File) {
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      this.showNotification('File size must be less than 5MB', 'warning');
-      return;
-    }
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      this.showNotification('Please select a valid image file', 'warning');
+      this.showToast('Image size should be less than 5MB', 'error');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (e: any) => {
       this.avatarUrl = e.target.result;
-      this.userProfile.avatar = this.avatarUrl;
-
-      // Add upload success animation
-      const avatar = document.querySelector('.profile-avatar') as HTMLElement;
-      if (avatar) {
-        avatar.style.animation = 'none';
-        avatar.style.transform = 'scale(1.1)';
-
-        setTimeout(() => {
-          avatar.style.transform = '';
-          avatar.style.animation = 'pulse 2s ease-in-out infinite alternate';
-        }, 300);
-      }
-
-      this.showNotification('Profile picture updated successfully!', 'success');
+      this.userProfile.avatarUrl = e.target.result;
     };
-
-    reader.onerror = () => {
-      this.showNotification('Error reading file. Please try again.', 'error');
-    };
-
     reader.readAsDataURL(file);
   }
 
-  removeProfilePicture() {
-    this.avatarUrl = '';
-    this.userProfile.avatar = '';
+  handleDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
 
-    // Reset file input
-    if (this.fileInput) {
-      this.fileInput.nativeElement.value = '';
+    if (!this.isEditing) return;
+
+    const files = event.dataTransfer?.files;
+    if (files && files[0] && files[0].type.startsWith('image/')) {
+      this.processImageFile(files[0]);
+      this.showToast('Photo uploaded successfully!', 'success');
     }
-
-    // Add removal animation
-    const avatar = document.querySelector('.profile-avatar') as HTMLElement;
-    if (avatar) {
-      avatar.style.animation = 'none';
-      avatar.style.transform = 'scale(0.9)';
-
-      setTimeout(() => {
-        avatar.style.transform = '';
-        avatar.style.animation = 'pulse 2s ease-in-out infinite alternate';
-      }, 300);
-    }
-
-    this.showNotification('Profile picture removed', 'info');
   }
 
-  // Navigation Functions
-  goBack() {
-    console.log('Navigating back to menu...');
-    // Add smooth exit animation
-    const wrapper = document.querySelector('.profile-wrapper') as HTMLElement;
-    if (wrapper) {
-      wrapper.style.animation = 'fadeOutDown 0.5s ease-in-out';
+  handleDragOver(event: DragEvent) {
+    event.preventDefault();
+    if (this.isEditing) {
+      this.isDragOver = true;
     }
+  }
 
-    setTimeout(() => {
-      this.navCtrl.back();
-      this.showNotification('Navigating to menu page...', 'info');
-    }, 500);
+  handleDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver = false;
+  }
+
+  async removeProfilePicture() {
+    const alert = await this.alertController.create({
+      header: 'Remove Profile Picture',
+      message: 'Are you sure you want to remove your profile picture?',
+      cssClass: 'custom-alert',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Remove',
+          role: 'destructive',
+          handler: () => {
+            this.avatarUrl = '';
+            this.userProfile.avatarUrl = '';
+            this.showToast('Profile picture removed', 'success');
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  getInitials(): string {
+    const firstName = this.profileForm.get('firstName')?.value || this.userProfile.firstName;
+    const lastName = this.profileForm.get('lastName')?.value || this.userProfile.lastName;
+    return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
   }
 
   toggleEditMode() {
-    this.isEditing = !this.isEditing;
-    this.setFormReadonly(!this.isEditing);
-
     if (this.isEditing) {
-      this.showNotification('Edit mode enabled', 'info');
+      this.saveProfile();
     } else {
-      // If exiting edit mode without saving, reload original values
-      this.loadUserProfile();
-      this.showNotification('Edit mode disabled', 'info');
+      this.isEditing = true;
+      this.showToast('Edit mode enabled', 'warning');
     }
   }
 
-  setFormReadonly(readonly: boolean) {
-    Object.keys(this.profileForm.controls).forEach(key => {
-      const control = this.profileForm.get(key);
-      if (control) {
-        if (readonly) {
-          control.disable();
-        } else {
-          control.enable();
-        }
-      }
+  getFormattedDate(dateValue: string): string {
+    if (!dateValue) return '';
+    const date = new Date(dateValue);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   }
 
-  // Form Functions
   async saveProfile() {
     if (this.profileForm.valid) {
-      // Simulate API call delay
-      await this.delay(1000);
+      try {
+        // Update user profile with form values
+        Object.keys(this.profileForm.controls).forEach(key => {
+          (this.userProfile as any)[key] = this.profileForm.get(key)?.value;
+        });
 
-      // Update user profile with form values
-      this.userProfile = { ...this.userProfile, ...this.profileForm.value };
-      
-      // Update original values
-      Object.assign(this.originalValues, this.profileForm.value);
+        // Here you would typically save to a service or API
+        // await this.profileService.updateProfile(this.userProfile);
 
-      this.isEditing = false;
-      this.setFormReadonly(true);
-
-      this.showNotification('Profile saved successfully!', 'success');
+        this.isEditing = false;
+        this.showDatePicker = false; // Hide date picker when saving
+        this.showToast('Profile saved successfully!', 'success');
+      } catch (error) {
+        console.error('Error saving profile:', error);
+        this.showToast('Failed to save profile', 'error');
+      }
     } else {
-      this.showNotification('Please fill in all required fields correctly', 'error');
+      this.showToast('Please fill in all required fields correctly', 'error');
       this.markFormGroupTouched();
     }
   }
 
   resetForm() {
-    console.log('Form reset');
-    
-    // Reset form to original values
-    this.profileForm.patchValue(this.originalValues);
-    
-    // Reset avatar
-    this.avatarUrl = '';
-    this.userProfile.avatar = '';
-    
-    if (this.fileInput) {
-      this.fileInput.nativeElement.value = '';
-    }
-
-    this.showNotification('Form reset to original values', 'info');
-  }
-
-  // Utility Functions
-  getInitials(): string {
-    return `${this.userProfile.firstName.charAt(0)}${this.userProfile.lastName.charAt(0)}`;
-  }
-
-  getDepartmentLabel(value: string): string {
-    const dept = this.departments.find(d => d.value === value);
-    return dept ? dept.label : value;
+    this.profileForm.reset();
+    this.loadUserProfile();
+    this.initializeForm();
+    this.showDatePicker = false;
+    this.showToast('Form reset successfully', 'warning');
   }
 
   private markFormGroupTouched() {
     Object.keys(this.profileForm.controls).forEach(key => {
       const control = this.profileForm.get(key);
-      if (control) {
-        control.markAsTouched();
-      }
+      control?.markAsTouched();
     });
   }
 
-  // Validation Functions
-  validateEmail(email: string): boolean {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+  goBack() {
+    this.router.navigate(['/menu']); // Adjust route as needed
   }
 
-  validatePhone(phone: string): boolean {
-    const re = /^[\+]?[0-9\s\-\(\)]{10,}$/;
-    return re.test(phone);
-  }
-
-  validateGPA(gpa: string): boolean {
-    const num = parseFloat(gpa);
-    return !isNaN(num) && num >= 0 && num <= 4;
-  }
-
-  getErrorMessage(fieldName: string): string {
-    const field = this.profileForm.get(fieldName);
-    if (field?.errors && field.touched) {
-      if (field.errors['required']) return `${fieldName} is required`;
-      if (field.errors['email']) return 'Please enter a valid email address';
-      if (field.errors['minlength']) return `${fieldName} is too short`;
-      if (field.errors['pattern']) {
-        if (fieldName === 'phone') return 'Please enter a valid phone number';
-        if (fieldName === 'gpa') return 'GPA must be between 0 and 4';
-        return `Please enter a valid ${fieldName}`;
-      }
-    }
-    return '';
-  }
-
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.profileForm.get(fieldName);
-    return !!(field?.invalid && field.touched);
-  }
-
-  // Enhanced Parallax Effect for Background Particles
-  @HostListener('mousemove', ['$event'])
-  onMouseMove(event: MouseEvent) {
-    const x = event.clientX / window.innerWidth;
-    const y = event.clientY / window.innerHeight;
-
-    this.particles.forEach((particle, index) => {
-      const speed = (index + 1) * 0.3;
-      const xPos = (x - 0.5) * speed * 30;
-      const yPos = (y - 0.5) * speed * 30;
-      particle.transform = `translate(${xPos}px, ${yPos}px)`;
-    });
-  }
-
-  enableParallaxEffect() {
-    // This method can be used to initialize any additional parallax effects
-    console.log('Parallax effect enabled');
-  }
-
-  // Notification System
-  private async showNotification(message: string, type: 'success' | 'warning' | 'error' | 'info') {
-    let color = 'primary'; // default info
-    if (type === 'success') color = 'success';
-    if (type === 'warning') color = 'warning';
-    if (type === 'error') color = 'danger';
-
-    const toast = await this.toastCtrl.create({
+  private async showToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {
+    const toast = await this.toastController.create({
       message,
-      duration: 4000,
-      color,
+      duration: 3000,
       position: 'top',
       cssClass: `custom-toast toast-${type}`,
       buttons: [
         {
-          text: 'Dismiss',
+          text: 'OK',
           role: 'cancel'
         }
       ]
     });
-
     await toast.present();
-  }
-
-  private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  // Enhanced form interactions
-  onInputFocus(event: any) {
-    const element = event.target;
-    if (element) {
-      element.style.transform = 'translateY(-2px)';
-    }
-  }
-
-  onInputBlur(event: any) {
-    const element = event.target;
-    if (element) {
-      element.style.transform = '';
-    }
-
-    // Real-time validation
-    const fieldName = event.target.getAttribute('formControlName');
-    if (fieldName) {
-      this.validateField(fieldName);
-    }
-  }
-
-  private validateField(fieldName: string) {
-    const field = this.profileForm.get(fieldName);
-    if (field && field.value) {
-      switch (fieldName) {
-        case 'email':
-          if (!this.validateEmail(field.value)) {
-            this.showNotification('Please enter a valid email address', 'warning');
-          }
-          break;
-        case 'phone':
-          if (!this.validatePhone(field.value)) {
-            this.showNotification('Please enter a valid phone number', 'warning');
-          }
-          break;
-        case 'gpa':
-          if (!this.validateGPA(field.value)) {
-            this.showNotification('GPA must be between 0 and 4', 'warning');
-          }
-          break;
-      }
-    }
-  }
-
-  // Button press animations
-  onButtonPress(event: any) {
-    const button = event.target.closest('ion-button');
-    if (button) {
-      button.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        button.style.transform = '';
-      }, 150);
-    }
   }
 }

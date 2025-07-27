@@ -1,4 +1,4 @@
-!-- profile.page.html -->
+<!-- profile.page.html -->
 <ion-header [translucent]="true" class="custom-header">
   <ion-toolbar class="nav-header">
     <ion-buttons slot="start">
@@ -29,7 +29,7 @@
       <!-- Profile Header -->
       <div class="profile-header">
         <div class="profile-avatar" 
-             (click)="triggerFileUpload()" 
+             (click)="showProfilePictureOptions()" 
              (drop)="handleDrop($event)" 
              (dragover)="handleDragOver($event)" 
              (dragleave)="handleDragLeave($event)"
@@ -43,15 +43,24 @@
             {{getInitials()}}
           </div>
           <div class="avatar-overlay">
-            <ion-icon name="cloud-upload" class="upload-icon"></ion-icon>
-            <div class="upload-text">Click or drag<br>to upload photo</div>
+            <ion-icon name="images" class="upload-icon"></ion-icon>
+            <div class="upload-text">Change Photo</div>
           </div>
         </div>
+        
+        <!-- Hidden file inputs -->
         <input #fileInput 
                type="file" 
                class="file-input" 
                accept="image/*" 
                (change)="handleFileSelect($event)">
+        
+        <input #cameraInput 
+               type="file" 
+               class="file-input" 
+               accept="image/*" 
+               capture="camera"
+               (change)="handleCameraCapture($event)">
         
         <div class="student-info">
           <div class="student-id">{{userProfile.studentId}}</div>
@@ -116,12 +125,32 @@
           <div class="form-field">
             <div class="input-group">
               <ion-label class="form-label" position="floating">Date of Birth</ion-label>
-              <ion-datetime 
-                class="date-picker" 
-                formControlName="dateOfBirth" 
-                presentation="date"
-                [disabled]="!isEditing">
-              </ion-datetime>
+              <div class="date-input-container">
+                <ion-input 
+                  class="form-input date-display" 
+                  [value]="getFormattedDate(profileForm.get('dateOfBirth')?.value)" 
+                  placeholder="Select date of birth"
+                  [readonly]="true"
+                  (click)="openDatePicker()">
+                </ion-input>
+                <ion-button 
+                  fill="clear" 
+                  class="date-picker-btn"
+                  (click)="openDatePicker()"
+                  [disabled]="!isEditing">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                </ion-button>
+                <ion-datetime 
+                  #dateTimePicker
+                  class="inline-date-picker" 
+                  formControlName="dateOfBirth" 
+                  presentation="date"
+                  [disabled]="!isEditing"
+                  [showDefaultButtons]="true"
+                  (ionChange)="onDateChange($event)"
+                  [style.display]="showDatePicker ? 'block' : 'none'">
+                </ion-datetime>
+              </div>
             </div>
           </div>
           
@@ -210,53 +239,30 @@
               </ion-select>
             </div>
           </div>
-          
-          <div class="form-field">
-            <div class="input-group">
-              <ion-label class="form-label" position="floating">GPA</ion-label>
-              <ion-input 
-                class="form-input" 
-                type="number" 
-                formControlName="gpa" 
-                placeholder="Enter GPA" 
-                step="0.1" 
-                min="0" 
-                max="4"
-                [readonly]="!isEditing">
-              </ion-input>
-            </div>
-          </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <ion-button 
-          class="action-btn btn-primary" 
-          expand="block" 
-          (click)="saveProfile()"
-          [disabled]="!isEditing || profileForm.invalid">
-          <ion-icon name="save" slot="start"></ion-icon>
-          Save Changes
-        </ion-button>
-        
-        <ion-button 
-          class="action-btn btn-secondary" 
-          expand="block" 
-          fill="outline" 
-          (click)="resetForm()">
-          <ion-icon name="refresh" slot="start"></ion-icon>
-          Reset Form
-        </ion-button>
-        
-        <ion-button 
-          class="action-btn btn-secondary" 
-          expand="block" 
-          fill="outline" 
-          (click)="removeProfilePicture()">
-          <ion-icon name="trash" slot="start"></ion-icon>
-          Remove Photo
-        </ion-button>
+        <div class="button-row">
+          <ion-button 
+            class="action-btn btn-primary" 
+            expand="block" 
+            (click)="saveProfile()"
+            [disabled]="!isEditing || profileForm.invalid">
+            <ion-icon name="save" slot="start"></ion-icon>
+            Save Changes
+          </ion-button>
+          
+          <ion-button 
+            class="action-btn btn-secondary" 
+            expand="block" 
+            fill="outline" 
+            (click)="resetForm()">
+            <ion-icon name="refresh" slot="start"></ion-icon>
+            Reset Form
+          </ion-button>
+        </div>
       </div>
     </div>
   </div>

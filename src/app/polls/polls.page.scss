@@ -1,29 +1,33 @@
-// Polls Page SCSS
+// Polls Page SCSS - Modern Glass Style
 
 .polls-bg {
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   min-height: 100vh;
+  overflow: hidden;
 }
 
 .polls-container {
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
+  animation: fadeIn 1.2s ease-in-out;
 }
 
 // Glass Card Base Style
 .glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 191, 255, 0.08);
   margin-bottom: 20px;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-in-out;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px) scale(1.005);
+    box-shadow: 0 12px 32px rgba(0, 191, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -37,14 +41,16 @@
   margin-bottom: 16px;
 
   .custom-searchbar {
-    --background: transparent;
-    --color: #ffffff;
+    --background: rgba(255, 255, 255, 0.05);
+    --color: #b3e5fc;
     --placeholder-color: #80d8ff;
-    --icon-color: #80d8ff;
-    --clear-button-color: #80d8ff;
+    --icon-color: #00e5ff;
+    --clear-button-color: #00e5ff;
     
     ion-searchbar {
       --border-radius: 12px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
   }
 }
@@ -56,13 +62,13 @@
     display: flex;
     align-items: center;
     margin-bottom: 12px;
-    color: #ffffff;
+    color: #b3e5fc;
     font-size: 16px;
     font-weight: 600;
 
     ion-icon {
       margin-right: 8px;
-      color: #80d8ff;
+      color: #00e5ff;
     }
   }
 
@@ -70,22 +76,28 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    justify-content: center;
 
     .category-chip {
-      --background: rgba(128, 216, 255, 0.1);
+      --background: rgba(0, 229, 255, 0.08);
       --color: #80d8ff;
-      border: 1px solid rgba(128, 216, 255, 0.3);
-      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.3s ease-in-out;
       cursor: pointer;
 
       &.selected {
-        --background: #80d8ff;
-        --color: #0f0f23;
+        --background: #00bcd4;
+        --color: white;
         transform: scale(1.05);
+        box-shadow: 0 4px 16px rgba(0, 188, 212, 0.3);
       }
 
-      &:hover {
-        --background: rgba(128, 216, 255, 0.2);
+      &:hover:not(.selected) {
+        --background: rgba(0, 229, 255, 0.12);
+        --color: #b3e5fc;
+        transform: scale(1.02);
       }
 
       ion-icon {
@@ -114,7 +126,7 @@
 
 // Poll Preview (Collapsed State)
 .poll-preview {
-  padding: 20px;
+  padding: 24px;
 
   .poll-header {
     display: flex;
@@ -127,10 +139,13 @@
       border-radius: 50%;
       overflow: hidden;
       margin-right: 12px;
-      background: rgba(128, 216, 255, 0.2);
+      background: rgba(0, 229, 255, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
+      border: 1px solid rgba(0, 229, 255, 0.2);
 
       img {
         width: 100%;
@@ -139,8 +154,8 @@
       }
 
       ion-icon {
-        font-size: 32px;
-        color: #80d8ff;
+        font-size: 24px;
+        color: #00e5ff;
       }
     }
 
@@ -148,7 +163,7 @@
       flex: 1;
 
       .poll-creator {
-        color: #ffffff;
+        color: #b3e5fc;
         font-size: 16px;
         font-weight: 600;
         margin: 0 0 4px 0;
@@ -170,25 +185,28 @@
         ion-icon {
           margin-right: 4px;
           font-size: 14px;
+          color: #00e5ff;
         }
       }
     }
 
     .poll-status {
       .status-badge {
-        padding: 4px 8px;
+        padding: 6px 12px;
         border-radius: 12px;
         font-size: 11px;
         font-weight: 600;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         
         &.not-voted {
-          background: rgba(255, 193, 7, 0.2);
+          background: rgba(255, 193, 7, 0.15);
           color: #ffc107;
           border: 1px solid rgba(255, 193, 7, 0.3);
         }
 
         &.voted {
-          background: rgba(76, 175, 80, 0.2);
+          background: rgba(76, 175, 80, 0.15);
           color: #4caf50;
           border: 1px solid rgba(76, 175, 80, 0.3);
         }
@@ -200,7 +218,7 @@
     margin-bottom: 16px;
 
     h2 {
-      color: #ffffff;
+      color: #b3e5fc;
       font-size: 18px;
       font-weight: 700;
       margin: 0 0 8px 0;
@@ -233,6 +251,7 @@
       ion-icon {
         margin-right: 4px;
         font-size: 14px;
+        color: #00e5ff;
       }
     }
   }
@@ -242,25 +261,32 @@
       height: 44px;
       font-weight: 600;
       text-transform: none;
+      letter-spacing: 0.5px;
     }
   }
 }
 
 // Collapse Header
 .collapse-header {
-  padding: 12px 20px 0;
+  padding: 12px 24px 0;
   text-align: right;
 
   .collapse-btn {
-    --color: #80d8ff;
+    --color: #00e5ff;
     font-size: 12px;
     height: 32px;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      --color: #b3e5fc;
+      transform: scale(1.05);
+    }
   }
 }
 
 // Full Poll Content (Expanded State)
 .poll-full {
-  padding: 0 20px 20px;
+  padding: 0 24px 24px;
 
   .poll-header {
     display: flex;
@@ -273,10 +299,13 @@
       border-radius: 50%;
       overflow: hidden;
       margin-right: 15px;
-      background: rgba(128, 216, 255, 0.2);
+      background: rgba(0, 229, 255, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: center;
+      border: 1px solid rgba(0, 229, 255, 0.2);
 
       img {
         width: 100%;
@@ -285,14 +314,14 @@
       }
 
       ion-icon {
-        font-size: 32px;
-        color: #80d8ff;
+        font-size: 28px;
+        color: #00e5ff;
       }
     }
 
     .poll-meta {
       .poll-creator {
-        color: #ffffff;
+        color: #b3e5fc;
         font-size: 18px;
         font-weight: 600;
         margin: 0 0 5px 0;
@@ -314,6 +343,7 @@
         ion-icon {
           margin-right: 6px;
           font-size: 16px;
+          color: #00e5ff;
         }
       }
     }
@@ -323,7 +353,7 @@
     margin-bottom: 24px;
 
     h2 {
-      color: #ffffff;
+      color: #b3e5fc;
       font-size: 22px;
       font-weight: 700;
       margin: 0 0 12px 0;
@@ -343,24 +373,27 @@
     margin-bottom: 24px;
 
     .poll-option {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(128, 216, 255, 0.2);
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px solid rgba(0, 229, 255, 0.2);
       border-radius: 12px;
       margin-bottom: 12px;
       padding: 16px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s ease-in-out;
       position: relative;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
 
       &:hover:not(.voted) {
-        background: rgba(128, 216, 255, 0.1);
-        border-color: rgba(128, 216, 255, 0.4);
-        transform: translateX(4px);
+        background: rgba(0, 229, 255, 0.08);
+        border-color: rgba(0, 229, 255, 0.4);
+        transform: translateX(4px) scale(1.01);
       }
 
       &.selected {
-        border-color: #80d8ff;
-        background: rgba(128, 216, 255, 0.15);
+        border-color: #00e5ff;
+        background: rgba(0, 229, 255, 0.12);
+        box-shadow: 0 4px 16px rgba(0, 229, 255, 0.15);
       }
 
       &.voted {
@@ -388,11 +421,11 @@
             .radio-button {
               width: 20px;
               height: 20px;
-              border: 2px solid #80d8ff;
+              border: 2px solid #00e5ff;
               border-radius: 50%;
               background: transparent;
               position: relative;
-              transition: all 0.3s ease;
+              transition: all 0.3s ease-in-out;
 
               &.checkbox {
                 border-radius: 4px;
@@ -406,9 +439,9 @@
                 transform: translate(-50%, -50%) scale(0);
                 width: 8px;
                 height: 8px;
-                background: #80d8ff;
+                background: #00e5ff;
                 border-radius: 50%;
-                transition: transform 0.3s ease;
+                transition: transform 0.3s ease-in-out;
               }
 
               &.checkbox::after {
@@ -419,8 +452,13 @@
             }
           }
 
-          input:checked + .radio-label .radio-button::after {
-            transform: translate(-50%, -50%) scale(1);
+          input:checked + .radio-label .radio-button {
+            background: rgba(0, 229, 255, 0.15);
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+
+            &::after {
+              transform: translate(-50%, -50%) scale(1);
+            }
           }
         }
 
@@ -431,7 +469,7 @@
           align-items: center;
 
           .option-text {
-            color: #ffffff;
+            color: #b3e5fc;
             font-size: 16px;
             font-weight: 500;
           }
@@ -448,22 +486,26 @@
         margin-top: 12px;
         position: relative;
         height: 8px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
         border-radius: 4px;
         overflow: hidden;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
 
         .progress-bar {
           height: 100%;
-          background: linear-gradient(90deg, #80d8ff, #40c4ff);
+          background: linear-gradient(90deg, #00bcd4, #00e5ff);
           border-radius: 4px;
-          transition: width 0.6s ease;
+          transition: width 0.6s ease-in-out;
+          box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
 
           &.selected-bar {
             background: linear-gradient(90deg, #ffc107, #ffeb3b);
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
           }
 
           &.preview-bar {
-            background: linear-gradient(90deg, rgba(128, 216, 255, 0.5), rgba(64, 196, 255, 0.5));
+            background: linear-gradient(90deg, rgba(0, 188, 212, 0.5), rgba(0, 229, 255, 0.5));
             animation: pulse 2s infinite;
           }
         }
@@ -474,7 +516,7 @@
           right: 8px;
           top: 50%;
           transform: translateY(-50%);
-          color: #ffffff;
+          color: #b3e5fc;
           font-size: 11px;
           font-weight: 600;
         }
@@ -495,6 +537,7 @@
       height: 48px;
       font-weight: 600;
       text-transform: none;
+      letter-spacing: 0.5px;
     }
   }
 
@@ -502,7 +545,7 @@
     display: flex;
     justify-content: space-between;
     padding-top: 16px;
-    border-top: 1px solid rgba(128, 216, 255, 0.2);
+    border-top: 1px solid rgba(0, 229, 255, 0.2);
 
     .total-votes,
     .poll-type {
@@ -515,6 +558,7 @@
       ion-icon {
         margin-right: 6px;
         font-size: 16px;
+        color: #00e5ff;
       }
     }
   }
@@ -522,20 +566,23 @@
 
 // Button Styles
 .neon-button {
-  --background: linear-gradient(135deg, #80d8ff, #40c4ff);
-  --color: #0f0f23;
+  --background: #00bcd4;
+  --color: white;
   --border-radius: 12px;
-  --box-shadow: 0 4px 20px rgba(128, 216, 255, 0.3);
+  --box-shadow: 0 4px 20px rgba(0, 188, 212, 0.3);
   font-weight: 600;
   text-transform: none;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease-in-out;
 
   &:hover {
-    --box-shadow: 0 6px 25px rgba(128, 216, 255, 0.4);
-    transform: translateY(-1px);
+    --background: #00e5ff;
+    --box-shadow: 0 6px 25px rgba(0, 229, 255, 0.4);
+    transform: scale(1.02);
   }
 
   &:disabled {
-    --background: rgba(128, 216, 255, 0.2);
+    --background: rgba(0, 188, 212, 0.2);
     --color: rgba(255, 255, 255, 0.5);
     --box-shadow: none;
   }
@@ -547,13 +594,17 @@
   --border-radius: 12px;
   --border-width: 2px;
   --border-style: solid;
-  --border-color: #80d8ff;
+  --border-color: #00e5ff;
+  --background-hover: rgba(0, 229, 255, 0.06);
   font-weight: 600;
   text-transform: none;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease-in-out;
 
   &:hover {
-    --background: rgba(128, 216, 255, 0.1);
-    transform: translateY(-1px);
+    --color: #b3e5fc;
+    --border-color: #b3e5fc;
+    transform: scale(1.02);
   }
 }
 
@@ -566,13 +617,14 @@
 
     ion-icon {
       font-size: 80px;
-      color: #80d8ff;
+      color: #00e5ff;
       opacity: 0.6;
       margin-bottom: 20px;
+      animation: pulse 2s infinite;
     }
 
     h2 {
-      color: #ffffff;
+      color: #b3e5fc;
       margin-bottom: 16px;
       font-size: 28px;
       font-weight: 700;
@@ -592,12 +644,24 @@
 }
 
 // Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
-    opacity: 0.5;
+    opacity: 0.6;
   }
   50% {
     opacity: 1;
+    transform: scale(1.05);
   }
 }
 
@@ -608,7 +672,7 @@
   }
 
   .poll-preview {
-    padding: 16px;
+    padding: 20px;
 
     .poll-stats-preview {
       flex-direction: column;
@@ -618,7 +682,7 @@
   }
 
   .poll-full {
-    padding: 0 16px 16px;
+    padding: 0 20px 20px;
 
     .poll-question h2 {
       font-size: 20px;

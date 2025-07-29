@@ -1,7 +1,7 @@
 // profile.page.ts
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActionSheetController, AlertController, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, ToastController, Platform, ModalController } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Router } from '@angular/router';
 
@@ -29,6 +29,8 @@ export class ProfilePage implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('cameraInput') cameraInput!: ElementRef<HTMLInputElement>;
   @ViewChild('dateTimePicker') dateTimePicker!: any;
+  @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
+  @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
   profileForm!: FormGroup;
   userProfile: UserProfile = {
@@ -50,20 +52,41 @@ export class ProfilePage implements OnInit {
   avatarUrl = '';
   particles: any[] = [];
   showDatePicker = false;
+  
+  // Camera modal properties
+  showCameraModal = false;
+  cameraStream: MediaStream | null = null;
+  isCameraActive = false;
+
+  // Platform detection
+  isNativePlatform = false;
+  isWebPlatform = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private actionSheetController: ActionSheetController,
     private alertController: AlertController,
     private toastController: ToastController,
-    private router: Router
+    private router: Router,
+    private platform: Platform,
+    private modalController: ModalController
   ) {
     this.initializeForm();
     this.generateParticles();
+    this.detectPlatform();
   }
 
   ngOnInit() {
     this.loadUserProfile();
+  }
+
+  ngOnDestroy() {
+    this.stopCameraStream();
+  }
+
+  private detectPlatform() {
+    this.isNativePlatform = this.platform.is('cordova') || this.platform.is('capacitor');
+    this.isWebPlatform = this.platform.is('desktop') || this.platform.is('mobileweb');
   }
 
   private initializeForm() {
@@ -107,53 +130,84 @@ export class ProfilePage implements OnInit {
   async showProfilePictureOptions() {
     if (!this.isEditing) return;
 
+    const buttons: any[] = [];
+
+    // Always show camera option - let the method handle platform differences
+    buttons.push({
+      text: 'Take Photo',
+      icon: 'camera-outline',
+      handler: () => {
+        this.openCameraInterface();
+      }
+    });
+
+    // Gallery/file selection is always available
+    buttons.push({
+      text: this.isNativePlatform ? 'Choose from Gallery' : 'Upload Photo',
+      icon: 'images-outline',
+      handler: () => {
+        this.selectFromGallery();
+      }
+    });
+
+    // Remove picture option
+    if (this.avatarUrl) {
+      buttons.push({
+        text: 'Remove Picture',
+        icon: 'trash-outline',
+        role: 'destructive',
+        handler: () => {
+          this.removeProfilePicture();
+        }
+      });
+    }
+
+    // Cancel option
+    buttons.push({
+      text: 'Cancel',
+      icon: 'close-outline',
+      role: 'cancel'
+    });
+
     const actionSheet = await this.actionSheetController.create({
       header: 'Update Profile Picture',
       cssClass: 'custom-action-sheet',
-      buttons: [
-        {
-          text: 'Take Photo',
-          icon: 'camera-outline',
-          handler: () => {
-            this.takePhotoWithCamera();
-          }
-        },
-        {
-          text: 'Choose from Gallery',
-          icon: 'images-outline',
-          handler: () => {
-            this.selectFromGallery();
-          }
-        },
-        {
-          text: 'Remove Picture',
-          icon: 'trash-outline',
-          role: 'destructive',
-          handler: () => {
-            this.removeProfilePicture();
-          }
-        },
-        {
-          text: 'Cancel',
-          icon: 'close-outline',
-          role: 'cancel'
-        }
-      ]
+      buttons: buttons
     });
     await actionSheet.present();
   }
 
-  async takePhotoWithCamera() {
+  async openCameraInterface() {
     try {
-      // First try to use Capacitor Camera to open actual camera app
+      if (this.isNativePlatform) {
+        // For native platforms, we'll still use the native camera with editing enabled
+        // But you could also implement a custom camera interface if preferred
+        await this.takePhotoWithCapacitorCamera();
+      } else {
+        // For web platforms, open the custom camera modal
+        await this.openWebCameraModal();
+      }
+    } catch (error) {
+      console.error('Camera error:', error);
+      this.handleCameraError(error);
+    }
+  }
+
+  private async takePhotoWithCapacitorCamera() {
+    try {
       const image = await Camera.getPhoto({
         quality: 90,
-        allowEditing: true,
+        allowEditing: true, // This allows users to crop/adjust before confirming
         resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera, // This opens the actual camera app
+        source: CameraSource.Camera,
         width: 400,
         height: 400,
-        saveToGallery: false
+        saveToGallery: false,
+        correctOrientation: true,
+        promptLabelHeader: 'Take Photo',
+        promptLabelCancel: 'Cancel',
+        promptLabelPhoto: 'From Photos',
+        promptLabelPicture: 'Take Picture'
       });
 
       if (image.dataUrl) {
@@ -161,54 +215,163 @@ export class ProfilePage implements OnInit {
         this.userProfile.avatarUrl = image.dataUrl;
         this.showToast('Photo captured successfully!', 'success');
       }
-    } catch (error) {
-      console.log('Camera not available:', error);
-      
-      // Enhanced fallback - try to request camera permissions first
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        try {
-          // Request camera permission and open camera
-          const stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: 'user' } 
-          });
-          
-          // Stop the stream immediately as we just needed permission
-          stream.getTracks().forEach(track => track.stop());
-          
-          // Now try the file input with camera
-          this.cameraInput.nativeElement.click();
-        } catch (permissionError) {
-          console.log('Camera permission denied:', permissionError);
-          this.showToast('Camera access denied. Please enable camera permissions.', 'error');
-        }
-      } else {
-        // Final fallback
-        this.cameraInput.nativeElement.click();
+    } catch (error: any) {
+      if (error.message && error.message.includes('cancelled')) {
+        // User cancelled, don't show error
+        return;
       }
+      throw error;
     }
+  }
+
+  private async openWebCameraModal() {
+    try {
+      if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
+        throw new Error('Camera not supported');
+      }
+
+      this.showCameraModal = true;
+      await this.initializeCamera();
+    } catch (error) {
+      console.error('Camera access failed:', error);
+      // Fallback to file input with camera capture
+      this.cameraInput.nativeElement.setAttribute('capture', 'camera');
+      this.cameraInput.nativeElement.click();
+    }
+  }
+
+  private async initializeCamera() {
+    try {
+      this.cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: 'user',
+          width: { ideal: 400 },
+          height: { ideal: 400 }
+        }
+      });
+
+      // Wait for the next tick to ensure the video element is rendered
+      setTimeout(() => {
+        if (this.videoElement && this.videoElement.nativeElement) {
+          this.videoElement.nativeElement.srcObject = this.cameraStream;
+          this.videoElement.nativeElement.play();
+          this.isCameraActive = true;
+        }
+      }, 100);
+
+    } catch (error) {
+      console.error('Failed to initialize camera:', error);
+      this.closeCameraModal();
+      throw error;
+    }
+  }
+
+  capturePhoto() {
+    if (!this.cameraStream || !this.videoElement || !this.canvasElement) {
+      this.showToast('Camera not ready', 'error');
+      return;
+    }
+
+    const video = this.videoElement.nativeElement;
+    const canvas = this.canvasElement.nativeElement;
+    const context = canvas.getContext('2d')!;
+
+    // Set canvas dimensions
+    canvas.width = 400;
+    canvas.height = 400;
+
+    // Draw the current video frame to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Get the image data
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+
+    this.avatarUrl = dataUrl;
+    this.userProfile.avatarUrl = dataUrl;
+    
+    this.closeCameraModal();
+    this.showToast('Photo captured successfully!', 'success');
+  }
+
+  retakePhoto() {
+    // Just keep the camera running for another attempt
+    this.showToast('Ready to take another photo', 'warning');
+  }
+
+  closeCameraModal() {
+    this.showCameraModal = false;
+    this.stopCameraStream();
+  }
+
+  private stopCameraStream() {
+    if (this.cameraStream) {
+      this.cameraStream.getTracks().forEach(track => track.stop());
+      this.cameraStream = null;
+    }
+    this.isCameraActive = false;
+  }
+
+  switchCamera() {
+    if (!this.cameraStream) return;
+
+    // Stop current stream
+    this.stopCameraStream();
+
+    // Determine the current facing mode and switch
+    const currentMode = this.cameraStream ? 'user' : 'environment';
+    const newMode = currentMode === 'user' ? 'environment' : 'user';
+
+    // Reinitialize with the new facing mode
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: newMode,
+        width: { ideal: 400 },
+        height: { ideal: 400 }
+      }
+    }).then(stream => {
+      this.cameraStream = stream;
+      if (this.videoElement && this.videoElement.nativeElement) {
+        this.videoElement.nativeElement.srcObject = stream;
+        this.videoElement.nativeElement.play();
+      }
+    }).catch(error => {
+      console.error('Failed to switch camera:', error);
+      this.showToast('Failed to switch camera', 'error');
+      // Fallback to original mode
+      this.initializeCamera();
+    });
   }
 
   async selectFromGallery() {
     try {
-      // Try Capacitor Camera first (for mobile devices)
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: true,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Photos,
-        width: 400,
-        height: 400
-      });
+      if (this.isNativePlatform) {
+        // Use Capacitor Camera for native platforms
+        const image = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: true,
+          resultType: CameraResultType.DataUrl,
+          source: CameraSource.Photos,
+          width: 400,
+          height: 400,
+          correctOrientation: true
+        });
 
-      if (image.dataUrl) {
-        this.avatarUrl = image.dataUrl;
-        this.userProfile.avatarUrl = image.dataUrl;
-        this.showToast('Photo selected successfully!', 'success');
+        if (image.dataUrl) {
+          this.avatarUrl = image.dataUrl;
+          this.userProfile.avatarUrl = image.dataUrl;
+          this.showToast('Photo selected successfully!', 'success');
+        }
+      } else {
+        // Use file input for web platforms
+        this.fileInput.nativeElement.click();
       }
-    } catch (error) {
-      console.log('Capacitor Camera not available, falling back to file input');
-      // Fallback to file input for web
-      this.fileInput.nativeElement.click();
+    } catch (error: any) {
+      if (error.message && error.message.includes('cancelled')) {
+        // User cancelled, don't show error
+        return;
+      }
+      console.error('Gallery selection error:', error);
+      this.showToast('Unable to access gallery. Please try uploading a file instead.', 'error');
     }
   }
 
@@ -227,6 +390,8 @@ export class ProfilePage implements OnInit {
     if (file && file.type.startsWith('image/')) {
       this.processImageFile(file);
       this.showToast('Photo uploaded successfully!', 'success');
+    } else if (file) {
+      this.showToast('Please select a valid image file', 'error');
     }
     // Reset the input
     event.target.value = '';
@@ -239,12 +404,57 @@ export class ProfilePage implements OnInit {
       return;
     }
 
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      this.showToast('Please select a valid image format (JPEG, PNG, GIF, WebP)', 'error');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      this.avatarUrl = e.target.result;
-      this.userProfile.avatarUrl = e.target.result;
+      // Optionally resize the image before setting it
+      this.resizeImage(e.target.result, 400, 400).then(resizedImage => {
+        this.avatarUrl = resizedImage;
+        this.userProfile.avatarUrl = resizedImage;
+      });
+    };
+    reader.onerror = () => {
+      this.showToast('Error reading the image file', 'error');
     };
     reader.readAsDataURL(file);
+  }
+
+  private resizeImage(dataUrl: string, maxWidth: number, maxHeight: number): Promise<string> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d')!;
+
+        // Calculate new dimensions
+        let { width, height } = img;
+        if (width > height) {
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = (width * maxHeight) / height;
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // Draw and resize image
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.9));
+      };
+      img.src = dataUrl;
+    });
   }
 
   handleDrop(event: DragEvent) {
@@ -257,6 +467,8 @@ export class ProfilePage implements OnInit {
     if (files && files[0] && files[0].type.startsWith('image/')) {
       this.processImageFile(files[0]);
       this.showToast('Photo uploaded successfully!', 'success');
+    } else {
+      this.showToast('Please drop a valid image file', 'error');
     }
   }
 
@@ -270,6 +482,26 @@ export class ProfilePage implements OnInit {
   handleDragLeave(event: DragEvent) {
     event.preventDefault();
     this.isDragOver = false;
+  }
+
+  private handleCameraError(error: any) {
+    console.error('Camera error:', error);
+    
+    let message = 'Unable to access camera. ';
+    
+    if (error.message) {
+      if (error.message.includes('permission')) {
+        message += 'Please enable camera permissions in your browser/device settings.';
+      } else if (error.message.includes('not found')) {
+        message += 'No camera found on this device.';
+      } else {
+        message += 'Please try uploading a photo instead.';
+      }
+    } else {
+      message += 'Please try uploading a photo instead.';
+    }
+
+    this.showToast(message, 'error');
   }
 
   async removeProfilePicture() {
@@ -333,7 +565,7 @@ export class ProfilePage implements OnInit {
         // await this.profileService.updateProfile(this.userProfile);
 
         this.isEditing = false;
-        this.showDatePicker = false; // Hide date picker when saving
+        this.showDatePicker = false;
         this.showToast('Profile saved successfully!', 'success');
       } catch (error) {
         console.error('Error saving profile:', error);
@@ -361,7 +593,7 @@ export class ProfilePage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/menu']); // Adjust route as needed
+    this.router.navigate(['/menu']);
   }
 
   private async showToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {

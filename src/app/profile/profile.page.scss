@@ -127,11 +127,6 @@
     gap: 12px;
   }
   
-  .button-row {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
   .section-title {
     font-size: 20px;
   }
@@ -268,8 +263,6 @@ ion-content {
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
   margin-top: 8px;
   backdrop-filter: blur(20px);
-  max-height: 400px;
-  overflow: visible;
   
   // Override default datetime styles
   --background: rgba(15, 32, 39, 0.95);
@@ -281,7 +274,6 @@ ion-content {
     --max-width: 100%;
     --padding: 20px;
     border-radius: 16px;
-    max-height: 350px;
   }
 }
 
@@ -417,7 +409,6 @@ ion-content {
   align-items: flex-start;
   min-height: 100vh;
   padding: 20px;
-  padding-bottom: 120px; /* Extra space at bottom */
   position: relative;
   z-index: 2;
 }
@@ -426,7 +417,6 @@ ion-content {
   max-width: 800px;
   width: 100%;
   animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-  padding-bottom: 100px; /* Add space at bottom for buttons */
 }
 
 /* Profile Header with Avatar */
@@ -628,23 +618,11 @@ ion-content {
   gap: 24px;
 }
 
-/* Form Field Improvements */
 .form-field {
   position: relative;
-  margin-bottom: 24px;
 
   &.full-width {
     grid-column: 1 / -1;
-  }
-  
-  // Add extra space for date picker field
-  &:has(.date-input-container) {
-    margin-bottom: 50px;
-    
-    // When date picker is shown, add more space
-    &:has(.inline-date-picker[style*="block"]) {
-      margin-bottom: 450px;
-    }
   }
 }
 
@@ -729,21 +707,10 @@ ion-content {
 
 /* Action Buttons */
 .action-buttons {
-  margin-top: 40px;
-  margin-bottom: 40px; /* Add bottom margin */
-  position: relative;
-  z-index: 10; /* Ensure buttons are above other content */
-}
-
-.button-row {
   display: flex;
-  gap: 20px;
-  width: 100%;
-  
-  @media (max-width: 600px) {
-    flex-direction: column;
-    gap: 16px;
-  }
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
 }
 
 .action-btn {
@@ -759,7 +726,6 @@ ion-content {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  flex: 1;
 
   &.btn-primary {
     --background: linear-gradient(135deg, #00bcd4, #00e5ff);

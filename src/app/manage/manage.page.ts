@@ -7,21 +7,36 @@ interface PollOption {
   votes: number;
 }
 
+interface Voter {
+  id: string;
+  name: string;
+  studentId: string;
+  course: string;
+  avatar?: string;
+  selectedOptions: string[];
+  votedAt: string;
+}
+
 interface Poll {
   id: string;
   title: string;
   description: string;
+  categoryType: 'University-wide' | 'Faculty' | 'Course';
+  category: string;
   options: PollOption[];
   isActive: boolean;
   allowMultiple: boolean;
   isAnonymous: boolean;
   votes: number;
   createdDate: string;
+  voters?: Voter[];
 }
 
 interface NewPoll {
   title: string;
   description: string;
+  categoryType: 'University-wide' | 'Faculty' | 'Course';
+  category: string;
   options: { text: string }[];
   allowMultiple: boolean;
   isAnonymous: boolean;
@@ -42,6 +57,7 @@ export class ManagePage implements OnInit {
   // Filter and search
   searchText: string = '';
   selectedFilter: string = 'all';
+  selectedCategory: string = '';
   
   // Stats
   totalPolls: number = 0;
@@ -50,11 +66,40 @@ export class ManagePage implements OnInit {
   
   // Modal state
   showCreateModal: boolean = false;
+  showResultsModal: boolean = false;
+  editingPoll: Poll | null = null;
+  selectedPollForResults: Poll | null = null;
+  
+  // Categories
+  faculties: string[] = [
+    'Faculty of Science',
+    'Faculty of Medicine',
+    'Faculty of Law',
+    'Faculty of Engineering',
+    'Faculty of Arts',
+    'Faculty of Business',
+    'Faculty of Education'
+  ];
+
+  courses: string[] = [
+    'Computer Science',
+    'Information Technology',
+    'Dentistry',
+    'Optometry',
+    'Nursing',
+    'Pharmacy',
+    'Accounting',
+    'Marketing',
+    'Psychology',
+    'Economics'
+  ];
   
   // New poll form
   newPoll: NewPoll = {
     title: '',
     description: '',
+    categoryType: 'University-wide',
+    category: 'All Students',
     options: [
       { text: '' },
       { text: '' }
@@ -74,53 +119,99 @@ export class ManagePage implements OnInit {
     this.filterPolls();
   }
 
-  // Load sample polls
+  // Load sample polls with enhanced data
   loadPolls() {
     this.polls = [
       {
         id: '1',
-        title: 'What should we have for lunch?',
-        description: 'Help us decide what to order for the team lunch this Friday.',
+        title: 'Campus Food Court Preferences',
+        description: 'Help us decide what new food outlets to add to the main campus food court.',
+        categoryType: 'University-wide',
+        category: 'All Students',
         options: [
-          { id: '1', text: 'Pizza', votes: 15 },
-          { id: '2', text: 'Sushi', votes: 8 },
-          { id: '3', text: 'Sandwiches', votes: 12 }
+          { id: '1', text: 'Asian Cuisine', votes: 145 },
+          { id: '2', text: 'Mexican Food', votes: 98 },
+          { id: '3', text: 'Healthy Salads', votes: 127 },
+          { id: '4', text: 'Pizza Corner', votes: 156 }
+        ],
+        isActive: true,
+        allowMultiple: true,
+        isAnonymous: true,
+        votes: 526,
+        createdDate: '2 days ago',
+        voters: []
+      },
+      {
+        id: '2',
+        title: 'Best Time for CS Department Seminars',
+        description: 'When works best for Computer Science students for weekly technical seminars?',
+        categoryType: 'Course',
+        category: 'Computer Science',
+        options: [
+          { id: '1', text: 'Monday 2 PM', votes: 22 },
+          { id: '2', text: 'Wednesday 4 PM', votes: 35 },
+          { id: '3', text: 'Friday 10 AM', votes: 18 }
+        ],
+        isActive: false,
+        allowMultiple: false,
+        isAnonymous: false,
+        votes: 75,
+        createdDate: '1 week ago',
+        voters: [
+          {
+            id: '1',
+            name: 'John Smith',
+            studentId: 'CS2021001',
+            course: 'Computer Science',
+            selectedOptions: ['Wednesday 4 PM'],
+            votedAt: '3 days ago'
+          },
+          {
+            id: '2',
+            name: 'Sarah Johnson',
+            studentId: 'CS2021002',
+            course: 'Computer Science',
+            selectedOptions: ['Wednesday 4 PM'],
+            votedAt: '4 days ago'
+          }
+        ]
+      },
+      {
+        id: '3',
+        title: 'Science Faculty Library Hours',
+        description: 'What are your preferred extended library hours during exam season?',
+        categoryType: 'Faculty',
+        category: 'Faculty of Science',
+        options: [
+          { id: '1', text: '24/7 Access', votes: 89 },
+          { id: '2', text: 'Until 2 AM', votes: 156 },
+          { id: '3', text: 'Until Midnight', votes: 67 }
         ],
         isActive: true,
         allowMultiple: false,
         isAnonymous: true,
-        votes: 35,
-        createdDate: '2 days ago'
+        votes: 312,
+        createdDate: '5 days ago',
+        voters: []
       },
       {
-        id: '2',
-        title: 'Best time for team meeting?',
-        description: 'When works best for everyone for our weekly team sync?',
+        id: '4',
+        title: 'IT Lab Software Preferences',
+        description: 'Which development tools should we prioritize for the new IT labs?',
+        categoryType: 'Course',
+        category: 'Information Technology',
         options: [
-          { id: '1', text: 'Monday 9 AM', votes: 22 },
-          { id: '2', text: 'Tuesday 2 PM', votes: 18 },
-          { id: '3', text: 'Wednesday 10 AM', votes: 25 }
-        ],
-        isActive: false,
-        allowMultiple: true,
-        isAnonymous: false,
-        votes: 65,
-        createdDate: '1 week ago'
-      },
-      {
-        id: '3',
-        title: 'Office renovation priorities',
-        description: 'What areas should we focus on during the office renovation?',
-        options: [
-          { id: '1', text: 'Kitchen/Break room', votes: 35 },
-          { id: '2', text: 'Meeting rooms', votes: 28 },
-          { id: '3', text: 'Open workspace', votes: 20 }
+          { id: '1', text: 'Visual Studio Code', votes: 45 },
+          { id: '2', text: 'IntelliJ IDEA', votes: 32 },
+          { id: '3', text: 'Eclipse IDE', votes: 18 },
+          { id: '4', text: 'PyCharm', votes: 28 }
         ],
         isActive: true,
         allowMultiple: true,
-        isAnonymous: true,
-        votes: 83,
-        createdDate: '5 days ago'
+        isAnonymous: false,
+        votes: 123,
+        createdDate: '1 day ago',
+        voters: []
       }
     ];
   }
@@ -132,6 +223,30 @@ export class ManagePage implements OnInit {
     this.activePolls = this.polls.filter(poll => poll.isActive).length;
   }
 
+  // Get available categories based on current filter
+  getAvailableCategories(): string[] {
+    if (this.selectedFilter === 'faculty') {
+      return [...new Set(this.polls
+        .filter(poll => poll.categoryType === 'Faculty')
+        .map(poll => poll.category))];
+    } else if (this.selectedFilter === 'course') {
+      return [...new Set(this.polls
+        .filter(poll => poll.categoryType === 'Course')
+        .map(poll => poll.category))];
+    }
+    return [];
+  }
+
+  // Get category color for badges
+  getCategoryColor(categoryType: string): string {
+    switch (categoryType) {
+      case 'University-wide': return 'primary';
+      case 'Faculty': return 'secondary';
+      case 'Course': return 'tertiary';
+      default: return 'medium';
+    }
+  }
+
   // Filter polls based on search and filter criteria
   filterPolls() {
     let filtered = [...this.polls];
@@ -141,15 +256,28 @@ export class ManagePage implements OnInit {
       const searchLower = this.searchText.toLowerCase().trim();
       filtered = filtered.filter(poll => 
         poll.title.toLowerCase().includes(searchLower) ||
-        poll.description.toLowerCase().includes(searchLower)
+        poll.description.toLowerCase().includes(searchLower) ||
+        poll.category.toLowerCase().includes(searchLower)
       );
     }
 
-    // Apply status filter
+    // Apply status and category filters
     if (this.selectedFilter === 'active') {
       filtered = filtered.filter(poll => poll.isActive);
     } else if (this.selectedFilter === 'closed') {
       filtered = filtered.filter(poll => !poll.isActive);
+    } else if (this.selectedFilter === 'university-wide') {
+      filtered = filtered.filter(poll => poll.categoryType === 'University-wide');
+    } else if (this.selectedFilter === 'faculty') {
+      filtered = filtered.filter(poll => poll.categoryType === 'Faculty');
+      if (this.selectedCategory) {
+        filtered = filtered.filter(poll => poll.category === this.selectedCategory);
+      }
+    } else if (this.selectedFilter === 'course') {
+      filtered = filtered.filter(poll => poll.categoryType === 'Course');
+      if (this.selectedCategory) {
+        filtered = filtered.filter(poll => poll.category === this.selectedCategory);
+      }
     }
 
     this.displayedPolls = filtered;
@@ -157,19 +285,33 @@ export class ManagePage implements OnInit {
 
   // Modal methods
   openCreateModal() {
+    this.editingPoll = null;
     this.showCreateModal = true;
     this.resetNewPoll();
   }
 
   closeCreateModal() {
     this.showCreateModal = false;
+    this.editingPoll = null;
     this.resetNewPoll();
+  }
+
+  openResultsModal(poll: Poll) {
+    this.selectedPollForResults = poll;
+    this.showResultsModal = true;
+  }
+
+  closeResultsModal() {
+    this.showResultsModal = false;
+    this.selectedPollForResults = null;
   }
 
   resetNewPoll() {
     this.newPoll = {
       title: '',
       description: '',
+      categoryType: 'University-wide',
+      category: 'All Students',
       options: [
         { text: '' },
         { text: '' }
@@ -181,7 +323,7 @@ export class ManagePage implements OnInit {
 
   // Option management
   addOption() {
-    if (this.newPoll.options.length < 6) {
+    if (this.newPoll.options.length < 10) {
       this.newPoll.options.push({ text: '' });
     }
   }
@@ -196,12 +338,16 @@ export class ManagePage implements OnInit {
   canCreatePoll(): boolean {
     if (!this.newPoll.title.trim()) return false;
     
+    // Check category selection
+    if (this.newPoll.categoryType === 'Faculty' && !this.newPoll.category) return false;
+    if (this.newPoll.categoryType === 'Course' && !this.newPoll.category) return false;
+    
     const validOptions = this.newPoll.options.filter(opt => opt.text.trim()).length;
     return validOptions >= 2;
   }
 
-  // Create poll
-  async createPoll() {
+  // Save poll (create or update)
+  async savePoll() {
     if (!this.canCreatePoll()) {
       await this.showToast('Please fill in all required fields', 'warning');
       return;
@@ -215,37 +361,96 @@ export class ManagePage implements OnInit {
         votes: 0
       }));
 
-    const poll: Poll = {
-      id: Date.now().toString(),
-      title: this.newPoll.title.trim(),
-      description: this.newPoll.description.trim(),
-      options: validOptions,
-      isActive: true,
-      allowMultiple: this.newPoll.allowMultiple,
-      isAnonymous: this.newPoll.isAnonymous,
-      votes: 0,
-      createdDate: 'Just now'
-    };
+    // Set category based on type
+    let category = this.newPoll.category;
+    if (this.newPoll.categoryType === 'University-wide') {
+      category = 'All Students';
+    }
 
-    this.polls.unshift(poll);
+    if (this.editingPoll) {
+      // Update existing poll
+      const pollIndex = this.polls.findIndex(p => p.id === this.editingPoll!.id);
+      if (pollIndex !== -1) {
+        this.polls[pollIndex] = {
+          ...this.polls[pollIndex],
+          title: this.newPoll.title.trim(),
+          description: this.newPoll.description.trim(),
+          categoryType: this.newPoll.categoryType,
+          category: category,
+          options: validOptions,
+          allowMultiple: this.newPoll.allowMultiple,
+          isAnonymous: this.newPoll.isAnonymous
+        };
+        await this.showToast('Poll updated successfully!', 'success');
+      }
+    } else {
+      // Create new poll
+      const poll: Poll = {
+        id: Date.now().toString(),
+        title: this.newPoll.title.trim(),
+        description: this.newPoll.description.trim(),
+        categoryType: this.newPoll.categoryType,
+        category: category,
+        options: validOptions,
+        isActive: true,
+        allowMultiple: this.newPoll.allowMultiple,
+        isAnonymous: this.newPoll.isAnonymous,
+        votes: 0,
+        createdDate: 'Just now',
+        voters: this.newPoll.isAnonymous ? undefined : []
+      };
+
+      this.polls.unshift(poll);
+      await this.showToast('Poll created successfully!', 'success');
+    }
+
     this.calculateStats();
     this.filterPolls();
     this.closeCreateModal();
-    
-    await this.showToast('Poll created successfully!', 'success');
   }
 
   // Poll actions
   viewPollResults(poll: Poll) {
-    // Navigate to results page or show results
-    console.log('Viewing results for:', poll.title);
-    this.showToast(`Viewing results for: ${poll.title}`, 'primary');
+    this.openResultsModal(poll);
   }
 
   editPoll(poll: Poll) {
-    // Navigate to edit page or show edit modal
-    console.log('Editing poll:', poll.title);
-    this.showToast(`Editing: ${poll.title}`, 'primary');
+    this.editingPoll = poll;
+    this.newPoll = {
+      title: poll.title,
+      description: poll.description,
+      categoryType: poll.categoryType,
+      category: poll.category,
+      options: poll.options.map(opt => ({ text: opt.text })),
+      allowMultiple: poll.allowMultiple,
+      isAnonymous: poll.isAnonymous
+    };
+    this.showCreateModal = true;
+  }
+
+  async togglePollStatus(poll: Poll) {
+    const action = poll.isActive ? 'close' : 'activate';
+    const alert = await this.alertController.create({
+      header: `${action.charAt(0).toUpperCase() + action.slice(1)} Poll`,
+      message: `Are you sure you want to ${action} this poll?`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: action.charAt(0).toUpperCase() + action.slice(1),
+          handler: () => {
+            poll.isActive = !poll.isActive;
+            this.calculateStats();
+            this.filterPolls();
+            this.showToast(`Poll ${action}d successfully`, 'success');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   async deletePoll(pollId: string) {
@@ -271,6 +476,12 @@ export class ManagePage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  // Results helper methods
+  getVotePercentage(votes: number, totalVotes: number): number {
+    if (totalVotes === 0) return 0;
+    return Math.round((votes / totalVotes) * 100);
   }
 
   // Utility methods

@@ -1,12 +1,11 @@
+
 // profile.page.ts
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { NavController, ToastController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActionSheetController, AlertController, ToastController, Platform, ModalController } from '@ionic/angular';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Router } from '@angular/router';
 
 interface UserProfile {
-  studentId: string;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -14,9 +13,15 @@ interface UserProfile {
   dateOfBirth: string;
   gender: string;
   address: string;
+  studentId: string;
   department: string;
   yearOfStudy: string;
-  avatarUrl?: string;
+  gpa: string;
+  avatar: string;
+}
+
+interface Particle {
+  transform: string;
 }
 
 @Component({
@@ -26,589 +31,440 @@ interface UserProfile {
   standalone: false
 })
 export class ProfilePage implements OnInit {
-  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('cameraInput') cameraInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('dateTimePicker') dateTimePicker!: any;
-  @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
-  @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
+  @ViewChild('avatarImage', { static: false }) avatarImage!: ElementRef;
 
   profileForm!: FormGroup;
-  userProfile: UserProfile = {
-    studentId: 'STU2024001',
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@university.edu',
-    phone: '+1 234 567 8900',
-    dateOfBirth: '2000-01-15',
+  userProfile!: UserProfile;
+  isEditing = false;
+  avatarUrl = '';
+  isDragOver = false;
+  particles: Particle[] = [];
+
+  originalValues = {
+    firstName: 'Alex',
+    lastName: 'Johnson',
+    email: 'alex.johnson@university.edu',
+    phone: '+27 82 123 4567',
+    dateOfBirth: '2002-03-15',
     gender: 'male',
-    address: '123 University Avenue, Campus City, State 12345',
-    department: 'Computer Science',
+    address: '123 University Ave, Durban, KZN 4001',
+    studentId: 'STU2024001',
+    department: 'computer-science',
     yearOfStudy: '3',
-    avatarUrl: ''
+    gpa: '3.8'
   };
 
-  isEditing = false;
-  isDragOver = false;
-  avatarUrl = '';
-  particles: any[] = [];
-  showDatePicker = false;
-  
-  // Camera modal properties
-  showCameraModal = false;
-  cameraStream: MediaStream | null = null;
-  isCameraActive = false;
-
-  // Platform detection
-  isNativePlatform = false;
-  isWebPlatform = false;
+  departments = [
+    { value: 'computer-science', label: 'Computer Science' },
+    { value: 'engineering', label: 'Engineering' },
+    { value: 'business', label: 'Business Administration' },
+    { value: 'psychology', label: 'Psychology' },
+    { value: 'medicine', label: 'Medicine' },
+    { value: 'law', label: 'Law' },
+    { value: 'arts', label: 'Arts & Literature' },
+    { value: 'mathematics', label: 'Mathematics' }
+  ];
 
   constructor(
+    private navCtrl: NavController,
     private formBuilder: FormBuilder,
-    private actionSheetController: ActionSheetController,
-    private alertController: AlertController,
-    private toastController: ToastController,
-    private router: Router,
-    private platform: Platform,
-    private modalController: ModalController
+    private toastCtrl: ToastController
   ) {
-    this.initializeForm();
-    this.generateParticles();
-    this.detectPlatform();
+    this.initializeProfile();
+    this.createForm();
+    this.initializeParticles();
   }
 
   ngOnInit() {
     this.loadUserProfile();
+    this.enableParallaxEffect();
   }
 
-  ngOnDestroy() {
-    this.stopCameraStream();
+  initializeProfile() {
+    this.userProfile = {
+      id: '1',
+      firstName: this.originalValues.firstName,
+      lastName: this.originalValues.lastName,
+      email: this.originalValues.email,
+      phone: this.originalValues.phone,
+      dateOfBirth: this.originalValues.dateOfBirth,
+      gender: this.originalValues.gender,
+      address: this.originalValues.address,
+      studentId: this.originalValues.studentId,
+      department: this.originalValues.department,
+      yearOfStudy: this.originalValues.yearOfStudy,
+      gpa: this.originalValues.gpa,
+      avatar: ''
+    };
+    this.avatarUrl = this.userProfile.avatar;
   }
 
-  private detectPlatform() {
-    this.isNativePlatform = this.platform.is('cordova') || this.platform.is('capacitor');
-    this.isWebPlatform = this.platform.is('desktop') || this.platform.is('mobileweb');
-  }
-
-  private initializeForm() {
+  createForm() {
     this.profileForm = this.formBuilder.group({
-      firstName: [this.userProfile.firstName, [Validators.required, Validators.minLength(2)]],
-      lastName: [this.userProfile.lastName, [Validators.required, Validators.minLength(2)]],
-      email: [this.userProfile.email, [Validators.required, Validators.email]],
-      phone: [this.userProfile.phone, [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]+$/)]],
-      dateOfBirth: [this.userProfile.dateOfBirth, [Validators.required]],
-      gender: [this.userProfile.gender],
-      address: [this.userProfile.address, [Validators.required, Validators.minLength(10)]],
-      studentId: [this.userProfile.studentId, [Validators.required]],
-      department: [this.userProfile.department, [Validators.required]],
-      yearOfStudy: [this.userProfile.yearOfStudy, [Validators.required]]
-    });
-  }
-
-  private generateParticles() {
-    this.particles = Array.from({ length: 5 }, (_, i) => ({
-      transform: `translate(${Math.random() * 100}vw, ${Math.random() * 100}vh)`
-    }));
-  }
-
-  private loadUserProfile() {
-    // Load user profile from storage or API
-    // For demo purposes, using the initialized data
-    this.avatarUrl = this.userProfile.avatarUrl || '';
-  }
-
-  openDatePicker() {
-    if (!this.isEditing) return;
-    this.showDatePicker = !this.showDatePicker;
-  }
-
-  onDateChange(event: any) {
-    const selectedDate = event.detail.value;
-    this.profileForm.patchValue({ dateOfBirth: selectedDate });
-    this.showDatePicker = false;
-  }
-
-  async showProfilePictureOptions() {
-    if (!this.isEditing) return;
-
-    const buttons: any[] = [];
-
-    // Always show camera option - let the method handle platform differences
-    buttons.push({
-      text: 'Take Photo',
-      icon: 'camera-outline',
-      handler: () => {
-        this.openCameraInterface();
-      }
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern(/^[\+]?[0-9\s\-\(\)]{10,}$/)]],
+      dateOfBirth: ['', [Validators.required]],
+      gender: [''],
+      address: ['', [Validators.required]],
+      studentId: ['', [Validators.required]],
+      department: ['', [Validators.required]],
+      yearOfStudy: ['', [Validators.required]],
+      gpa: ['', [Validators.required, Validators.pattern(/^[0-4](\.[0-9])?$/)]]
     });
 
-    // Gallery/file selection is always available
-    buttons.push({
-      text: this.isNativePlatform ? 'Choose from Gallery' : 'Upload Photo',
-      icon: 'images-outline',
-      handler: () => {
-        this.selectFromGallery();
-      }
-    });
-
-    // Remove picture option
-    if (this.avatarUrl) {
-      buttons.push({
-        text: 'Remove Picture',
-        icon: 'trash-outline',
-        role: 'destructive',
-        handler: () => {
-          this.removeProfilePicture();
-        }
-      });
-    }
-
-    // Cancel option
-    buttons.push({
-      text: 'Cancel',
-      icon: 'close-outline',
-      role: 'cancel'
-    });
-
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Update Profile Picture',
-      cssClass: 'custom-action-sheet',
-      buttons: buttons
-    });
-    await actionSheet.present();
+    // Set all fields to readonly initially
+    this.setFormReadonly(true);
   }
 
-  async openCameraInterface() {
-    try {
-      if (this.isNativePlatform) {
-        // For native platforms, we'll still use the native camera with editing enabled
-        // But you could also implement a custom camera interface if preferred
-        await this.takePhotoWithCapacitorCamera();
-      } else {
-        // For web platforms, open the custom camera modal
-        await this.openWebCameraModal();
-      }
-    } catch (error) {
-      console.error('Camera error:', error);
-      this.handleCameraError(error);
-    }
+  loadUserProfile() {
+    this.profileForm.patchValue(this.userProfile);
   }
 
-  private async takePhotoWithCapacitorCamera() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: true, // This allows users to crop/adjust before confirming
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Camera,
-        width: 400,
-        height: 400,
-        saveToGallery: false,
-        correctOrientation: true,
-        promptLabelHeader: 'Take Photo',
-        promptLabelCancel: 'Cancel',
-        promptLabelPhoto: 'From Photos',
-        promptLabelPicture: 'Take Picture'
-      });
-
-      if (image.dataUrl) {
-        this.avatarUrl = image.dataUrl;
-        this.userProfile.avatarUrl = image.dataUrl;
-        this.showToast('Photo captured successfully!', 'success');
-      }
-    } catch (error: any) {
-      if (error.message && error.message.includes('cancelled')) {
-        // User cancelled, don't show error
-        return;
-      }
-      throw error;
-    }
+  initializeParticles() {
+    this.particles = Array(5).fill(null).map(() => ({ transform: 'translate(0px, 0px)' }));
   }
 
-  private async openWebCameraModal() {
-    try {
-      if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
-        throw new Error('Camera not supported');
-      }
-
-      this.showCameraModal = true;
-      await this.initializeCamera();
-    } catch (error) {
-      console.error('Camera access failed:', error);
-      // Fallback to file input with camera capture
-      this.cameraInput.nativeElement.setAttribute('capture', 'camera');
-      this.cameraInput.nativeElement.click();
-    }
-  }
-
-  private async initializeCamera() {
-    try {
-      this.cameraStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: 'user',
-          width: { ideal: 400 },
-          height: { ideal: 400 }
-        }
-      });
-
-      // Wait for the next tick to ensure the video element is rendered
-      setTimeout(() => {
-        if (this.videoElement && this.videoElement.nativeElement) {
-          this.videoElement.nativeElement.srcObject = this.cameraStream;
-          this.videoElement.nativeElement.play();
-          this.isCameraActive = true;
-        }
-      }, 100);
-
-    } catch (error) {
-      console.error('Failed to initialize camera:', error);
-      this.closeCameraModal();
-      throw error;
-    }
-  }
-
-  capturePhoto() {
-    if (!this.cameraStream || !this.videoElement || !this.canvasElement) {
-      this.showToast('Camera not ready', 'error');
-      return;
-    }
-
-    const video = this.videoElement.nativeElement;
-    const canvas = this.canvasElement.nativeElement;
-    const context = canvas.getContext('2d')!;
-
-    // Set canvas dimensions
-    canvas.width = 400;
-    canvas.height = 400;
-
-    // Draw the current video frame to canvas
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // Get the image data
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-
-    this.avatarUrl = dataUrl;
-    this.userProfile.avatarUrl = dataUrl;
-    
-    this.closeCameraModal();
-    this.showToast('Photo captured successfully!', 'success');
-  }
-
-  retakePhoto() {
-    // Just keep the camera running for another attempt
-    this.showToast('Ready to take another photo', 'warning');
-  }
-
-  closeCameraModal() {
-    this.showCameraModal = false;
-    this.stopCameraStream();
-  }
-
-  private stopCameraStream() {
-    if (this.cameraStream) {
-      this.cameraStream.getTracks().forEach(track => track.stop());
-      this.cameraStream = null;
-    }
-    this.isCameraActive = false;
-  }
-
-  switchCamera() {
-    if (!this.cameraStream) return;
-
-    // Stop current stream
-    this.stopCameraStream();
-
-    // Determine the current facing mode and switch
-    const currentMode = this.cameraStream ? 'user' : 'environment';
-    const newMode = currentMode === 'user' ? 'environment' : 'user';
-
-    // Reinitialize with the new facing mode
-    navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: newMode,
-        width: { ideal: 400 },
-        height: { ideal: 400 }
-      }
-    }).then(stream => {
-      this.cameraStream = stream;
-      if (this.videoElement && this.videoElement.nativeElement) {
-        this.videoElement.nativeElement.srcObject = stream;
-        this.videoElement.nativeElement.play();
-      }
-    }).catch(error => {
-      console.error('Failed to switch camera:', error);
-      this.showToast('Failed to switch camera', 'error');
-      // Fallback to original mode
-      this.initializeCamera();
-    });
-  }
-
-  async selectFromGallery() {
-    try {
-      if (this.isNativePlatform) {
-        // Use Capacitor Camera for native platforms
-        const image = await Camera.getPhoto({
-          quality: 90,
-          allowEditing: true,
-          resultType: CameraResultType.DataUrl,
-          source: CameraSource.Photos,
-          width: 400,
-          height: 400,
-          correctOrientation: true
-        });
-
-        if (image.dataUrl) {
-          this.avatarUrl = image.dataUrl;
-          this.userProfile.avatarUrl = image.dataUrl;
-          this.showToast('Photo selected successfully!', 'success');
-        }
-      } else {
-        // Use file input for web platforms
-        this.fileInput.nativeElement.click();
-      }
-    } catch (error: any) {
-      if (error.message && error.message.includes('cancelled')) {
-        // User cancelled, don't show error
-        return;
-      }
-      console.error('Gallery selection error:', error);
-      this.showToast('Unable to access gallery. Please try uploading a file instead.', 'error');
-    }
-  }
-
-  handleCameraCapture(event: any) {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      this.processImageFile(file);
-      this.showToast('Photo captured successfully!', 'success');
-    }
-    // Reset the input
-    event.target.value = '';
+  // Profile Avatar Functions
+  triggerFileUpload() {
+    this.fileInput.nativeElement.click();
   }
 
   handleFileSelect(event: any) {
     const file = event.target.files[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file) {
       this.processImageFile(file);
-      this.showToast('Photo uploaded successfully!', 'success');
-    } else if (file) {
-      this.showToast('Please select a valid image file', 'error');
-    }
-    // Reset the input
-    event.target.value = '';
-  }
-
-  private processImageFile(file: File) {
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      this.showToast('Image size should be less than 5MB', 'error');
-      return;
-    }
-
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      this.showToast('Please select a valid image format (JPEG, PNG, GIF, WebP)', 'error');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      // Optionally resize the image before setting it
-      this.resizeImage(e.target.result, 400, 400).then(resizedImage => {
-        this.avatarUrl = resizedImage;
-        this.userProfile.avatarUrl = resizedImage;
-      });
-    };
-    reader.onerror = () => {
-      this.showToast('Error reading the image file', 'error');
-    };
-    reader.readAsDataURL(file);
-  }
-
-  private resizeImage(dataUrl: string, maxWidth: number, maxHeight: number): Promise<string> {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d')!;
-
-        // Calculate new dimensions
-        let { width, height } = img;
-        if (width > height) {
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width = (width * maxHeight) / height;
-            height = maxHeight;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        // Draw and resize image
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', 0.9));
-      };
-      img.src = dataUrl;
-    });
-  }
-
-  handleDrop(event: DragEvent) {
-    event.preventDefault();
-    this.isDragOver = false;
-
-    if (!this.isEditing) return;
-
-    const files = event.dataTransfer?.files;
-    if (files && files[0] && files[0].type.startsWith('image/')) {
-      this.processImageFile(files[0]);
-      this.showToast('Photo uploaded successfully!', 'success');
-    } else {
-      this.showToast('Please drop a valid image file', 'error');
     }
   }
 
   handleDragOver(event: DragEvent) {
     event.preventDefault();
-    if (this.isEditing) {
-      this.isDragOver = true;
-    }
+    event.stopPropagation();
+    this.isDragOver = true;
   }
 
   handleDragLeave(event: DragEvent) {
     event.preventDefault();
+    event.stopPropagation();
     this.isDragOver = false;
   }
 
-  private handleCameraError(error: any) {
-    console.error('Camera error:', error);
-    
-    let message = 'Unable to access camera. ';
-    
-    if (error.message) {
-      if (error.message.includes('permission')) {
-        message += 'Please enable camera permissions in your browser/device settings.';
-      } else if (error.message.includes('not found')) {
-        message += 'No camera found on this device.';
+  handleDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        this.processImageFile(file);
       } else {
-        message += 'Please try uploading a photo instead.';
+        this.showNotification('Please select an image file', 'warning');
       }
-    } else {
-      message += 'Please try uploading a photo instead.';
+    }
+  }
+
+  processImageFile(file: File) {
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      this.showNotification('File size must be less than 5MB', 'warning');
+      return;
     }
 
-    this.showToast(message, 'error');
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      this.showNotification('Please select a valid image file', 'warning');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.avatarUrl = e.target.result;
+      this.userProfile.avatar = this.avatarUrl;
+
+      // Add upload success animation
+      const avatar = document.querySelector('.profile-avatar') as HTMLElement;
+      if (avatar) {
+        avatar.style.animation = 'none';
+        avatar.style.transform = 'scale(1.1)';
+
+        setTimeout(() => {
+          avatar.style.transform = '';
+          avatar.style.animation = 'pulse 2s ease-in-out infinite alternate';
+        }, 300);
+      }
+
+      this.showNotification('Profile picture updated successfully!', 'success');
+    };
+
+    reader.onerror = () => {
+      this.showNotification('Error reading file. Please try again.', 'error');
+    };
+
+    reader.readAsDataURL(file);
   }
 
-  async removeProfilePicture() {
-    const alert = await this.alertController.create({
-      header: 'Remove Profile Picture',
-      message: 'Are you sure you want to remove your profile picture?',
-      cssClass: 'custom-alert',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Remove',
-          role: 'destructive',
-          handler: () => {
-            this.avatarUrl = '';
-            this.userProfile.avatarUrl = '';
-            this.showToast('Profile picture removed', 'success');
-          }
-        }
-      ]
-    });
-    await alert.present();
+  removeProfilePicture() {
+    this.avatarUrl = '';
+    this.userProfile.avatar = '';
+
+    // Reset file input
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
+
+    // Add removal animation
+    const avatar = document.querySelector('.profile-avatar') as HTMLElement;
+    if (avatar) {
+      avatar.style.animation = 'none';
+      avatar.style.transform = 'scale(0.9)';
+
+      setTimeout(() => {
+        avatar.style.transform = '';
+        avatar.style.animation = 'pulse 2s ease-in-out infinite alternate';
+      }, 300);
+    }
+
+    this.showNotification('Profile picture removed', 'info');
   }
 
-  getInitials(): string {
-    const firstName = this.profileForm.get('firstName')?.value || this.userProfile.firstName;
-    const lastName = this.profileForm.get('lastName')?.value || this.userProfile.lastName;
-    return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
+  // Navigation Functions
+  goBack() {
+    console.log('Navigating back to menu...');
+    // Add smooth exit animation
+    const wrapper = document.querySelector('.profile-wrapper') as HTMLElement;
+    if (wrapper) {
+      wrapper.style.animation = 'fadeOutDown 0.5s ease-in-out';
+    }
+
+    setTimeout(() => {
+      this.navCtrl.back();
+      this.showNotification('Navigating to menu page...', 'info');
+    }, 500);
   }
 
   toggleEditMode() {
+    this.isEditing = !this.isEditing;
+    this.setFormReadonly(!this.isEditing);
+
     if (this.isEditing) {
-      this.saveProfile();
+      this.showNotification('Edit mode enabled', 'info');
     } else {
-      this.isEditing = true;
-      this.showToast('Edit mode enabled', 'warning');
+      // If exiting edit mode without saving, reload original values
+      this.loadUserProfile();
+      this.showNotification('Edit mode disabled', 'info');
     }
   }
 
-  getFormattedDate(dateValue: string): string {
-    if (!dateValue) return '';
-    const date = new Date(dateValue);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+  setFormReadonly(readonly: boolean) {
+    Object.keys(this.profileForm.controls).forEach(key => {
+      const control = this.profileForm.get(key);
+      if (control) {
+        if (readonly) {
+          control.disable();
+        } else {
+          control.enable();
+        }
+      }
     });
   }
 
+  // Form Functions
   async saveProfile() {
     if (this.profileForm.valid) {
-      try {
-        // Update user profile with form values
-        Object.keys(this.profileForm.controls).forEach(key => {
-          (this.userProfile as any)[key] = this.profileForm.get(key)?.value;
-        });
+      // Simulate API call delay
+      await this.delay(1000);
 
-        // Here you would typically save to a service or API
-        // await this.profileService.updateProfile(this.userProfile);
+      // Update user profile with form values
+      this.userProfile = { ...this.userProfile, ...this.profileForm.value };
+      
+      // Update original values
+      Object.assign(this.originalValues, this.profileForm.value);
 
-        this.isEditing = false;
-        this.showDatePicker = false;
-        this.showToast('Profile saved successfully!', 'success');
-      } catch (error) {
-        console.error('Error saving profile:', error);
-        this.showToast('Failed to save profile', 'error');
-      }
+      this.isEditing = false;
+      this.setFormReadonly(true);
+
+      this.showNotification('Profile saved successfully!', 'success');
     } else {
-      this.showToast('Please fill in all required fields correctly', 'error');
+      this.showNotification('Please fill in all required fields correctly', 'error');
       this.markFormGroupTouched();
     }
   }
 
   resetForm() {
-    this.profileForm.reset();
-    this.loadUserProfile();
-    this.initializeForm();
-    this.showDatePicker = false;
-    this.showToast('Form reset successfully', 'warning');
+    console.log('Form reset');
+    
+    // Reset form to original values
+    this.profileForm.patchValue(this.originalValues);
+    
+    // Reset avatar
+    this.avatarUrl = '';
+    this.userProfile.avatar = '';
+    
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
+
+    this.showNotification('Form reset to original values', 'info');
+  }
+
+  // Utility Functions
+  getInitials(): string {
+    return `${this.userProfile.firstName.charAt(0)}${this.userProfile.lastName.charAt(0)}`;
+  }
+
+  getDepartmentLabel(value: string): string {
+    const dept = this.departments.find(d => d.value === value);
+    return dept ? dept.label : value;
   }
 
   private markFormGroupTouched() {
     Object.keys(this.profileForm.controls).forEach(key => {
       const control = this.profileForm.get(key);
-      control?.markAsTouched();
+      if (control) {
+        control.markAsTouched();
+      }
     });
   }
 
-  goBack() {
-    this.router.navigate(['/menu']);
+  // Validation Functions
+  validateEmail(email: string): boolean {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
   }
 
-  private async showToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {
-    const toast = await this.toastController.create({
+  validatePhone(phone: string): boolean {
+    const re = /^[\+]?[0-9\s\-\(\)]{10,}$/;
+    return re.test(phone);
+  }
+
+  validateGPA(gpa: string): boolean {
+    const num = parseFloat(gpa);
+    return !isNaN(num) && num >= 0 && num <= 4;
+  }
+
+  getErrorMessage(fieldName: string): string {
+    const field = this.profileForm.get(fieldName);
+    if (field?.errors && field.touched) {
+      if (field.errors['required']) return `${fieldName} is required`;
+      if (field.errors['email']) return 'Please enter a valid email address';
+      if (field.errors['minlength']) return `${fieldName} is too short`;
+      if (field.errors['pattern']) {
+        if (fieldName === 'phone') return 'Please enter a valid phone number';
+        if (fieldName === 'gpa') return 'GPA must be between 0 and 4';
+        return `Please enter a valid ${fieldName}`;
+      }
+    }
+    return '';
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.profileForm.get(fieldName);
+    return !!(field?.invalid && field.touched);
+  }
+
+  // Enhanced Parallax Effect for Background Particles
+  @HostListener('mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    const x = event.clientX / window.innerWidth;
+    const y = event.clientY / window.innerHeight;
+
+    this.particles.forEach((particle, index) => {
+      const speed = (index + 1) * 0.3;
+      const xPos = (x - 0.5) * speed * 30;
+      const yPos = (y - 0.5) * speed * 30;
+      particle.transform = `translate(${xPos}px, ${yPos}px)`;
+    });
+  }
+
+  enableParallaxEffect() {
+    // This method can be used to initialize any additional parallax effects
+    console.log('Parallax effect enabled');
+  }
+
+  // Notification System
+  private async showNotification(message: string, type: 'success' | 'warning' | 'error' | 'info') {
+    let color = 'primary'; // default info
+    if (type === 'success') color = 'success';
+    if (type === 'warning') color = 'warning';
+    if (type === 'error') color = 'danger';
+
+    const toast = await this.toastCtrl.create({
       message,
-      duration: 3000,
+      duration: 4000,
+      color,
       position: 'top',
       cssClass: `custom-toast toast-${type}`,
       buttons: [
         {
-          text: 'OK',
+          text: 'Dismiss',
           role: 'cancel'
         }
       ]
     });
+
     await toast.present();
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Enhanced form interactions
+  onInputFocus(event: any) {
+    const element = event.target;
+    if (element) {
+      element.style.transform = 'translateY(-2px)';
+    }
+  }
+
+  onInputBlur(event: any) {
+    const element = event.target;
+    if (element) {
+      element.style.transform = '';
+    }
+
+    // Real-time validation
+    const fieldName = event.target.getAttribute('formControlName');
+    if (fieldName) {
+      this.validateField(fieldName);
+    }
+  }
+
+  private validateField(fieldName: string) {
+    const field = this.profileForm.get(fieldName);
+    if (field && field.value) {
+      switch (fieldName) {
+        case 'email':
+          if (!this.validateEmail(field.value)) {
+            this.showNotification('Please enter a valid email address', 'warning');
+          }
+          break;
+        case 'phone':
+          if (!this.validatePhone(field.value)) {
+            this.showNotification('Please enter a valid phone number', 'warning');
+          }
+          break;
+        case 'gpa':
+          if (!this.validateGPA(field.value)) {
+            this.showNotification('GPA must be between 0 and 4', 'warning');
+          }
+          break;
+      }
+    }
+  }
+
+  // Button press animations
+  onButtonPress(event: any) {
+    const button = event.target.closest('ion-button');
+    if (button) {
+      button.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        button.style.transform = '';
+      }, 150);
+    }
   }
 }

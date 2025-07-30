@@ -28,63 +28,39 @@
     <div class="profile-wrapper">
       <!-- Profile Header -->
       <div class="profile-header">
-        <!-- Profile Picture with Camera Functionality -->
         <div class="profile-avatar" 
              (click)="showProfilePictureOptions()" 
              (drop)="handleDrop($event)" 
              (dragover)="handleDragOver($event)" 
              (dragleave)="handleDragLeave($event)"
-             [class.drag-over]="isDragOver"
-             [class.editing]="isEditing">
-          
-          <!-- Profile Image -->
+             [class.drag-over]="isDragOver">
           <img #avatarImage 
                class="avatar-image" 
                [src]="avatarUrl" 
                [style.display]="avatarUrl ? 'block' : 'none'" 
                alt="Profile Picture">
-          
-          <!-- Initials Placeholder -->
-          <div class="avatar-placeholder" [style.display]="!avatarUrl ? 'flex' : 'none'">
+          <div class="avatar-placeholder" [style.display]="!avatarUrl ? 'block' : 'none'">
             {{getInitials()}}
           </div>
-          
-          <!-- Edit Overlay (shows on hover when editing) -->
-          <div class="avatar-overlay" *ngIf="isEditing">
+          <div class="avatar-overlay">
             <ion-icon name="camera" class="upload-icon"></ion-icon>
             <div class="upload-text">Change Photo</div>
           </div>
-          
-          <!-- Drag and Drop Overlay -->
-          <div class="drag-overlay" *ngIf="isDragOver">
-            <ion-icon name="cloud-upload" class="upload-icon"></ion-icon>
-            <div class="upload-text">Drop image here</div>
-          </div>
-          
-          <!-- Click hint for non-editing mode -->
-          <div class="camera-hint" *ngIf="!isEditing">
-            <ion-icon name="camera-outline" class="hint-icon"></ion-icon>
-            <div class="hint-text">Enable edit mode to change photo</div>
-          </div>
         </div>
         
-        <!-- Hidden file inputs for camera and gallery -->
-        <input #fileInput 
-               type="file" 
-               class="file-input" 
-               accept="image/*" 
-               (change)="handleFileSelect($event)"
-               style="display: none;">
-        
+        <!-- Hidden file inputs -->
         <input #cameraInput 
                type="file" 
                class="file-input" 
                accept="image/*" 
-               capture="environment"
-               (change)="handleCameraCapture($event)"
-               style="display: none;">
+               capture="camera"
+               (change)="handleCameraCapture($event)">
+        <input #galleryInput 
+               type="file" 
+               class="file-input" 
+               accept="image/*" 
+               (change)="handleGallerySelect($event)">
         
-        <!-- Student Info -->
         <div class="student-info">
           <div class="student-id">{{userProfile.studentId}}</div>
           <div class="course-name">{{userProfile.department}}</div>
@@ -104,10 +80,6 @@
                 placeholder="Enter first name"
                 [readonly]="!isEditing">
               </ion-input>
-              <div class="error-message" *ngIf="profileForm.get('firstName')?.errors && profileForm.get('firstName')?.touched">
-                <span *ngIf="profileForm.get('firstName')?.errors?.['required']">First name is required</span>
-                <span *ngIf="profileForm.get('firstName')?.errors?.['minlength']">First name must be at least 2 characters</span>
-              </div>
             </div>
           </div>
           
@@ -120,10 +92,6 @@
                 placeholder="Enter last name"
                 [readonly]="!isEditing">
               </ion-input>
-              <div class="error-message" *ngIf="profileForm.get('lastName')?.errors && profileForm.get('lastName')?.touched">
-                <span *ngIf="profileForm.get('lastName')?.errors?.['required']">Last name is required</span>
-                <span *ngIf="profileForm.get('lastName')?.errors?.['minlength']">Last name must be at least 2 characters</span>
-              </div>
             </div>
           </div>
           
@@ -137,10 +105,6 @@
                 placeholder="Enter email address"
                 [readonly]="!isEditing">
               </ion-input>
-              <div class="error-message" *ngIf="profileForm.get('email')?.errors && profileForm.get('email')?.touched">
-                <span *ngIf="profileForm.get('email')?.errors?.['required']">Email is required</span>
-                <span *ngIf="profileForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
-              </div>
             </div>
           </div>
           
@@ -154,45 +118,38 @@
                 placeholder="Enter phone number"
                 [readonly]="!isEditing">
               </ion-input>
-              <div class="error-message" *ngIf="profileForm.get('phone')?.errors && profileForm.get('phone')?.touched">
-                <span *ngIf="profileForm.get('phone')?.errors?.['required']">Phone number is required</span>
-                <span *ngIf="profileForm.get('phone')?.errors?.['pattern']">Please enter a valid phone number</span>
-              </div>
             </div>
           </div>
           
           <div class="form-field">
-            <div class="input-group">
+            <div class="input-group date-input-group">
               <ion-label class="form-label" position="floating">Date of Birth</ion-label>
-              <div class="date-input-container">
+              <div class="date-picker-container">
                 <ion-input 
                   class="form-input date-display" 
-                  [value]="getFormattedDate(profileForm.get('dateOfBirth')?.value)" 
+                  [value]="getFormattedDate(profileForm.get('dateOfBirth')?.value)"
                   placeholder="Select date of birth"
                   [readonly]="true"
                   (click)="openDatePicker()">
                 </ion-input>
                 <ion-button 
                   fill="clear" 
-                  class="date-picker-btn"
+                  class="date-picker-button"
                   (click)="openDatePicker()"
                   [disabled]="!isEditing">
                   <ion-icon name="calendar-outline"></ion-icon>
                 </ion-button>
-                <ion-datetime 
-                  #dateTimePicker
-                  class="inline-date-picker" 
-                  formControlName="dateOfBirth" 
-                  presentation="date"
-                  [disabled]="!isEditing"
-                  [showDefaultButtons]="true"
-                  (ionChange)="onDateChange($event)"
-                  [style.display]="showDatePicker ? 'block' : 'none'">
-                </ion-datetime>
               </div>
-              <div class="error-message" *ngIf="profileForm.get('dateOfBirth')?.errors && profileForm.get('dateOfBirth')?.touched">
-                <span *ngIf="profileForm.get('dateOfBirth')?.errors?.['required']">Date of birth is required</span>
-              </div>
+              <ion-datetime 
+                #dateTimePicker
+                class="compact-date-picker" 
+                formControlName="dateOfBirth" 
+                presentation="date"
+                [isOpen]="isDatePickerOpen"
+                (ionChange)="onDateChange($event)"
+                (ionCancel)="closeDatePicker()"
+                [disabled]="!isEditing">
+              </ion-datetime>
             </div>
           </div>
           
@@ -222,10 +179,6 @@
                 placeholder="Enter your full address"
                 [readonly]="!isEditing">
               </ion-textarea>
-              <div class="error-message" *ngIf="profileForm.get('address')?.errors && profileForm.get('address')?.touched">
-                <span *ngIf="profileForm.get('address')?.errors?.['required']">Address is required</span>
-                <span *ngIf="profileForm.get('address')?.errors?.['minlength']">Address must be at least 10 characters</span>
-              </div>
             </div>
           </div>
         </form>
@@ -244,9 +197,6 @@
                 placeholder="Enter student ID"
                 [readonly]="!isEditing">
               </ion-input>
-              <div class="error-message" *ngIf="profileForm.get('studentId')?.errors && profileForm.get('studentId')?.touched">
-                <span *ngIf="profileForm.get('studentId')?.errors?.['required']">Student ID is required</span>
-              </div>
             </div>
           </div>
           
@@ -259,22 +209,15 @@
                 placeholder="Select Department"
                 [disabled]="!isEditing">
                 <ion-select-option value="">Select Department</ion-select-option>
-                <ion-select-option value="Computer Science">Computer Science</ion-select-option>
-                <ion-select-option value="Information Technology">Information Technology</ion-select-option>
-                <ion-select-option value="Software Engineering">Software Engineering</ion-select-option>
-                <ion-select-option value="Data Science">Data Science</ion-select-option>
-                <ion-select-option value="Cybersecurity">Cybersecurity</ion-select-option>
-                <ion-select-option value="Engineering">Engineering</ion-select-option>
-                <ion-select-option value="Business Administration">Business Administration</ion-select-option>
-                <ion-select-option value="Psychology">Psychology</ion-select-option>
-                <ion-select-option value="Medicine">Medicine</ion-select-option>
-                <ion-select-option value="Law">Law</ion-select-option>
-                <ion-select-option value="Arts & Literature">Arts & Literature</ion-select-option>
-                <ion-select-option value="Mathematics">Mathematics</ion-select-option>
+                <ion-select-option value="computer-science">Computer Science</ion-select-option>
+                <ion-select-option value="engineering">Engineering</ion-select-option>
+                <ion-select-option value="business">Business Administration</ion-select-option>
+                <ion-select-option value="psychology">Psychology</ion-select-option>
+                <ion-select-option value="medicine">Medicine</ion-select-option>
+                <ion-select-option value="law">Law</ion-select-option>
+                <ion-select-option value="arts">Arts & Literature</ion-select-option>
+                <ion-select-option value="mathematics">Mathematics</ion-select-option>
               </ion-select>
-              <div class="error-message" *ngIf="profileForm.get('department')?.errors && profileForm.get('department')?.touched">
-                <span *ngIf="profileForm.get('department')?.errors?.['required']">Department is required</span>
-              </div>
             </div>
           </div>
           
@@ -291,12 +234,8 @@
                 <ion-select-option value="2">2nd Year</ion-select-option>
                 <ion-select-option value="3">3rd Year</ion-select-option>
                 <ion-select-option value="4">4th Year</ion-select-option>
-                <ion-select-option value="5">5th Year</ion-select-option>
                 <ion-select-option value="postgrad">Postgraduate</ion-select-option>
               </ion-select>
-              <div class="error-message" *ngIf="profileForm.get('yearOfStudy')?.errors && profileForm.get('yearOfStudy')?.touched">
-                <span *ngIf="profileForm.get('yearOfStudy')?.errors?.['required']">Year of study is required</span>
-              </div>
             </div>
           </div>
         </div>
@@ -304,92 +243,24 @@
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <div class="button-row">
-          <ion-button 
-            class="action-btn btn-primary" 
-            expand="block" 
-            (click)="saveProfile()"
-            [disabled]="!isEditing || profileForm.invalid">
-            <ion-icon name="save" slot="start"></ion-icon>
-            Save Changes
-          </ion-button>
-          
-          <ion-button 
-            class="action-btn btn-secondary" 
-            expand="block" 
-            fill="outline" 
-            (click)="resetForm()">
-            <ion-icon name="refresh" slot="start"></ion-icon>
-            Reset Form
-          </ion-button>
-        </div>
+        <ion-button 
+          class="action-btn btn-primary" 
+          expand="block" 
+          (click)="saveProfile()"
+          [disabled]="!isEditing || profileForm.invalid">
+          <ion-icon name="save" slot="start"></ion-icon>
+          Save Changes
+        </ion-button>
+        
+        <ion-button 
+          class="action-btn btn-secondary" 
+          expand="block" 
+          fill="outline" 
+          (click)="resetForm()">
+          <ion-icon name="refresh" slot="start"></ion-icon>
+          Reset Form
+        </ion-button>
       </div>
     </div>
   </div>
 </ion-content>
-
-<!-- Camera Modal -->
-<ion-modal [isOpen]="showCameraModal" (didDismiss)="closeCameraModal()">
-  <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Take Photo</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="closeCameraModal()">
-            <ion-icon name="close"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    
-    <ion-content class="camera-modal-content">
-      <div class="camera-container">
-        <!-- Video preview -->
-        <video 
-          #videoElement 
-          class="camera-preview" 
-          autoplay 
-          playsinline
-          [style.display]="isCameraActive ? 'block' : 'none'">
-        </video>
-        
-        <!-- Hidden canvas for capturing -->
-        <canvas #canvasElement style="display: none;"></canvas>
-        
-        <!-- Loading indicator -->
-        <div class="camera-loading" *ngIf="!isCameraActive">
-          <ion-spinner name="circular"></ion-spinner>
-          <p>Initializing camera...</p>
-        </div>
-        
-        <!-- Camera controls -->
-        <div class="camera-controls" *ngIf="isCameraActive">
-          <ion-button 
-            fill="clear" 
-            size="large" 
-            (click)="switchCamera()"
-            class="control-button">
-            <ion-icon name="camera-reverse" slot="icon-only"></ion-icon>
-          </ion-button>
-          
-          <ion-button 
-            fill="solid" 
-            size="large" 
-            color="primary"
-            (click)="capturePhoto()"
-            class="capture-button">
-            <ion-icon name="camera" slot="icon-only"></ion-icon>
-          </ion-button>
-          
-          <ion-button 
-            fill="clear" 
-            size="large" 
-            (click)="closeCameraModal()"
-            class="control-button">
-            <ion-icon name="close" slot="icon-only"></ion-icon>
-          </ion-button>
-        </div>
-      </div>
-    </ion-content>
-  </ng-template>
-</ion-modal>

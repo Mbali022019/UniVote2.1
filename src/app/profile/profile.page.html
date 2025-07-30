@@ -155,7 +155,7 @@
                 [readonly]="!isEditing">
               </ion-input>
               <div class="error-message" *ngIf="profileForm.get('phone')?.errors && profileForm.get('phone')?.touched">
-                <span *ngIf="profileForm.get('phone')?.errors?.['required']">Phone number is required</span>
+                <span *ngIf="profileForm.get('phone')?.errors?.['required']">Phone number required</span>
                 <span *ngIf="profileForm.get('phone')?.errors?.['pattern']">Please enter a valid phone number</span>
               </div>
             </div>

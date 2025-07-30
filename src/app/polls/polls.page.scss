@@ -1,31 +1,33 @@
-// Polls Page SCSS - Modern Glass Style
+// Modern Glass-Style Polls Page SCSS
 
 .polls-bg {
   --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   min-height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  padding: 20px;
+  overflow-x: hidden;
 }
 
 .polls-container {
-  padding: 20px;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
   animation: fadeIn 1.2s ease-in-out;
 }
 
-// Glass Card Base Style
+// Enhanced glass card effect with modern aesthetic
 .glass-card {
   background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 191, 255, 0.08);
-  margin-bottom: 20px;
   transition: all 0.3s ease-in-out;
 
   &:hover {
-    transform: translateY(-2px) scale(1.005);
+    transform: translateY(-2px);
     box-shadow: 0 12px 32px rgba(0, 191, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.2);
   }
@@ -33,119 +35,513 @@
 
 // Search and Filter Section
 .search-filter-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
   margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 
+// Search Container with modern glass styling
 .search-container {
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: 8px;
 
   .custom-searchbar {
-    --background: rgba(255, 255, 255, 0.05);
+    --background: transparent;
     --color: #b3e5fc;
     --placeholder-color: #80d8ff;
-    --icon-color: #00e5ff;
-    --clear-button-color: #00e5ff;
-    
-    ion-searchbar {
-      --border-radius: 12px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+    --icon-color: #80d8ff;
+    --clear-button-color: #80d8ff;
+
+    .searchbar-input {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 16px;
+      padding: 12px 16px;
+      transition: all 0.3s ease-in-out;
+
+      &:focus {
+        border-color: #00e5ff;
+        box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      &::placeholder {
+        color: #80d8ff;
+      }
     }
   }
 }
 
+// Category filter container needs highest priority
 .category-filter {
   padding: 16px;
+  position: relative;
+  z-index: 2000;
 
   .category-header {
     display: flex;
     align-items: center;
+    gap: 8px;
     margin-bottom: 12px;
     color: #b3e5fc;
-    font-size: 16px;
     font-weight: 600;
+    font-size: 14px;
 
     ion-icon {
-      margin-right: 8px;
-      color: #00e5ff;
+      font-size: 18px;
+      color: #00bcd4;
     }
   }
 
-  .category-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
+  .dropdown-container {
+    position: relative;
 
-    .category-chip {
-      --background: rgba(0, 229, 255, 0.08);
-      --color: #80d8ff;
-      border: 1px solid rgba(0, 229, 255, 0.3);
+    .dropdown-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.07);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      transition: all 0.3s ease-in-out;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #b3e5fc;
       cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      font-size: 14px;
+      font-weight: 500;
+      position: relative;
+      z-index: 2001;
 
-      &.selected {
-        --background: #00bcd4;
-        --color: white;
-        transform: scale(1.05);
-        box-shadow: 0 4px 16px rgba(0, 188, 212, 0.3);
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #00e5ff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 191, 255, 0.15);
       }
 
-      &:hover:not(.selected) {
-        --background: rgba(0, 229, 255, 0.12);
-        --color: #b3e5fc;
-        transform: scale(1.02);
+      &:focus {
+        outline: 2px solid #00e5ff;
+        outline-offset: 2px;
       }
 
-      ion-icon {
+      &.open {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(255, 255, 255, 0.15);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-bottom-color: transparent;
+      }
+
+      .dropdown-selected {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        ion-icon {
+          font-size: 18px;
+          color: #00bcd4;
+        }
+
+        span {
+          font-weight: 500;
+          color: #b3e5fc;
+        }
+      }
+
+      .dropdown-arrow {
         font-size: 16px;
+        color: #80d8ff;
+        transition: transform 0.3s ease;
+
+        &.rotated {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% - 1px);
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-top: none;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      z-index: 2002 !important;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      isolation: isolate;
+      will-change: transform, opacity;
+      transform-style: preserve-3d;
+
+      &.open {
+        max-height: 500px;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .dropdown-group {
+        &:not(:last-child) {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .dropdown-group-header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 16px 20px 12px;
+          font-weight: 700;
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          position: relative;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            border-radius: 1px;
+          }
+
+          &:has(+ .course-item) {
+            background: linear-gradient(135deg, rgba(0, 188, 212, 0.1), rgba(0, 229, 255, 0.05));
+            color: #00bcd4;
+
+            &::after {
+              background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            }
+
+            ion-icon {
+              color: #00bcd4;
+            }
+          }
+
+          &:has(+ .faculty-item) {
+            background: linear-gradient(135deg, rgba(0, 150, 136, 0.15), rgba(0, 188, 212, 0.1));
+            color: #009688;
+            font-size: 14px;
+            padding: 18px 20px 14px;
+
+            &::after {
+              background: linear-gradient(90deg, #009688, #00bcd4);
+              height: 3px;
+            }
+
+            ion-icon {
+              color: #009688;
+              font-size: 20px;
+            }
+          }
+
+          &:has(+ .university-item) {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(128, 216, 255, 0.1));
+            color: #00e5ff;
+            font-size: 15px;
+            padding: 20px 20px 16px;
+            font-weight: 800;
+
+            &::after {
+              background: linear-gradient(90deg, #00e5ff, #80d8ff);
+              height: 4px;
+            }
+
+            ion-icon {
+              color: #00e5ff;
+              font-size: 22px;
+            }
+          }
+
+          ion-icon {
+            font-size: 18px;
+          }
+        }
+
+        .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 16px 24px;
+          color: #2c3e50;
+          background: transparent;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          border: none;
+          text-align: left;
+          position: relative;
+          overflow: hidden;
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            transition: width 0.3s ease;
+          }
+
+          &:hover {
+            background: rgba(0, 188, 212, 0.08);
+            color: #0f2027;
+            transform: translateX(4px);
+
+            &::before {
+              width: 4px;
+            }
+          }
+
+          &.selected {
+            font-weight: 600;
+            transform: translateX(4px);
+
+            &::before {
+              width: 4px;
+            }
+
+            &::after {
+              content: '✓';
+              margin-left: auto;
+              font-weight: bold;
+              font-size: 16px;
+            }
+          }
+
+          &.course-item {
+            &:hover::before {
+              background: linear-gradient(180deg, #00bcd4, #00e5ff);
+            }
+
+            &.selected {
+              background: linear-gradient(135deg, rgba(0, 188, 212, 0.15), rgba(0, 229, 255, 0.05));
+              color: #00bcd4;
+
+              &::before {
+                background: linear-gradient(180deg, #00bcd4, #00e5ff);
+              }
+
+              &::after {
+                color: #00bcd4;
+              }
+            }
+
+            ion-icon {
+              color: #00bcd4;
+            }
+          }
+
+          &.faculty-item {
+            padding: 18px 24px;
+            
+            &:hover::before {
+              background: linear-gradient(180deg, #009688, #00bcd4);
+              width: 5px;
+            }
+
+            &.selected {
+              background: linear-gradient(135deg, rgba(0, 150, 136, 0.2), rgba(0, 188, 212, 0.1));
+              color: #009688;
+              font-weight: 700;
+
+              &::before {
+                background: linear-gradient(180deg, #009688, #00bcd4);
+                width: 5px;
+              }
+
+              &::after {
+                color: #009688;
+                font-size: 18px;
+              }
+            }
+
+            ion-icon {
+              color: #009688;
+              font-size: 22px;
+            }
+
+            span {
+              font-size: 16px;
+              font-weight: 500;
+            }
+          }
+
+          &.university-item {
+            padding: 20px 24px;
+            border-left: 3px solid transparent;
+            
+            &:hover {
+              border-left-color: #00e5ff;
+              
+              &::before {
+                background: linear-gradient(180deg, #00e5ff, #80d8ff);
+                width: 6px;
+              }
+            }
+
+            &.selected {
+              background: linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(128, 216, 255, 0.1));
+              color: #00e5ff;
+              font-weight: 800;
+              border-left-color: #00e5ff;
+
+              &::before {
+                background: linear-gradient(180deg, #00e5ff, #80d8ff);
+                width: 6px;
+              }
+
+              &::after {
+                color: #00e5ff;
+                font-size: 20px;
+              }
+            }
+
+            ion-icon {
+              color: #00e5ff;
+              font-size: 24px;
+            }
+
+            span {
+              font-size: 17px;
+              font-weight: 600;
+            }
+          }
+
+          ion-icon {
+            font-size: 20px;
+            min-width: 20px;
+          }
+
+          span {
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.4;
+          }
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #00bcd4, #00e5ff);
+        border-radius: 3px;
+
+        &:hover {
+          background: linear-gradient(135deg, #00e5ff, #80d8ff);
+        }
       }
     }
   }
 }
 
-// Results Info
+// Results Info with modern styling
 .results-info {
-  color: #80d8ff;
-  font-size: 14px;
-  margin-bottom: 16px;
-  padding-left: 8px;
-  opacity: 0.8;
+  margin-bottom: 20px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 25px;
+  display: inline-block;
+
+  span {
+    color: #b3e5fc;
+    font-size: 14px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
 }
 
 // Poll List
 .poll-list {
-  .poll-card {
-    padding: 0;
-    overflow: hidden;
+  display: grid;
+  gap: 24px;
+}
+
+// Poll Card with modern glass effect
+.poll-card {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #00bcd4, #00e5ff, #80d8ff);
+  }
+
+  &.loading {
+    .poll-preview,
+    .poll-full {
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(179, 229, 252, 0.1), transparent);
+        animation: loading-shimmer 1.5s infinite;
+        z-index: 1;
+      }
+    }
   }
 }
 
-// Poll Preview (Collapsed State)
+// Poll Preview (Collapsed) with modern styling
 .poll-preview {
   padding: 24px;
 
   .poll-header {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 16px;
+    gap: 16px;
+    margin-bottom: 20px;
 
     .poll-avatar {
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       overflow: hidden;
-      margin-right: 12px;
-      background: rgba(0, 229, 255, 0.15);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: linear-gradient(135deg, #00bcd4, #00e5ff);
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(0, 229, 255, 0.2);
+      flex-shrink: 0;
 
       img {
         width: 100%;
@@ -154,8 +550,8 @@
       }
 
       ion-icon {
-        font-size: 24px;
-        color: #00e5ff;
+        font-size: 28px;
+        color: white;
       }
     }
 
@@ -171,21 +567,20 @@
 
       .poll-time {
         color: #80d8ff;
-        font-size: 12px;
+        font-size: 13px;
         margin: 0 0 8px 0;
-        opacity: 0.8;
       }
 
-      .poll-category {
+      .poll-academic-info {
         display: flex;
         align-items: center;
-        color: #80d8ff;
-        font-size: 12px;
+        gap: 6px;
+        color: #00bcd4;
+        font-size: 13px;
+        font-weight: 500;
 
         ion-icon {
-          margin-right: 4px;
-          font-size: 14px;
-          color: #00e5ff;
+          font-size: 16px;
         }
       }
     }
@@ -193,119 +588,124 @@
     .poll-status {
       .status-badge {
         padding: 6px 12px;
-        border-radius: 12px;
-        font-size: 11px;
+        border-radius: 20px;
+        font-size: 12px;
         font-weight: 600;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        
-        &.not-voted {
-          background: rgba(255, 193, 7, 0.15);
-          color: #ffc107;
-          border: 1px solid rgba(255, 193, 7, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        &.status-active {
+          background: linear-gradient(135deg, #009688, #00bcd4);
+          color: white;
         }
 
-        &.voted {
-          background: rgba(76, 175, 80, 0.15);
-          color: #4caf50;
-          border: 1px solid rgba(76, 175, 80, 0.3);
+        &.status-closed {
+          background: linear-gradient(135deg, #e57373, #ef5350);
+          color: white;
+        }
+
+        &.status-draft {
+          background: linear-gradient(135deg, #ffb74d, #ffa726);
+          color: white;
         }
       }
     }
   }
 
   .poll-question-preview {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 
     h2 {
       color: #b3e5fc;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
-      margin: 0 0 8px 0;
-      line-height: 1.4;
+      margin: 0 0 12px 0;
+      line-height: 1.3;
     }
 
     .poll-description {
       color: #80d8ff;
       font-size: 14px;
-      margin: 0;
-      opacity: 0.9;
       line-height: 1.5;
+      margin: 0;
     }
   }
 
   .poll-stats-preview {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+    gap: 24px;
+    margin-bottom: 24px;
     flex-wrap: wrap;
-    gap: 8px;
 
     .stat-item {
       display: flex;
       align-items: center;
+      gap: 8px;
       color: #80d8ff;
-      font-size: 12px;
-      opacity: 0.8;
+      font-size: 14px;
 
       ion-icon {
-        margin-right: 4px;
-        font-size: 14px;
-        color: #00e5ff;
+        font-size: 18px;
+        color: #00bcd4;
       }
     }
   }
 
   .view-poll-button {
     .view-btn {
-      height: 44px;
+      --background: transparent;
+      --color: #00bcd4;
+      border: 2px solid #00bcd4;
+      border-radius: 12px;
+      height: 48px;
       font-weight: 600;
-      text-transform: none;
-      letter-spacing: 0.5px;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        --background: #00bcd4;
+        --color: white;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+      }
     }
   }
 }
 
-// Collapse Header
-.collapse-header {
-  padding: 12px 24px 0;
-  text-align: right;
-
-  .collapse-btn {
-    --color: #00e5ff;
-    font-size: 12px;
-    height: 32px;
-    transition: all 0.3s ease-in-out;
-
-    &:hover {
-      --color: #b3e5fc;
-      transform: scale(1.05);
-    }
-  }
-}
-
-// Full Poll Content (Expanded State)
+// Poll Full (Expanded) with modern styling
 .poll-full {
-  padding: 0 24px 24px;
+  .collapse-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: flex-end;
+
+    .collapse-btn {
+      --color: #80d8ff;
+      font-size: 14px;
+
+      &:hover {
+        --color: #b3e5fc;
+      }
+    }
+  }
 
   .poll-header {
+    padding: 24px 24px 0;
     display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
 
     .poll-avatar {
       width: 50px;
       height: 50px;
       border-radius: 50%;
       overflow: hidden;
-      margin-right: 15px;
-      background: rgba(0, 229, 255, 0.15);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: linear-gradient(135deg, #00bcd4, #00e5ff);
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(0, 229, 255, 0.2);
+      flex-shrink: 0;
 
       img {
         width: 100%;
@@ -315,149 +715,207 @@
 
       ion-icon {
         font-size: 28px;
-        color: #00e5ff;
+        color: white;
       }
     }
 
     .poll-meta {
+      flex: 1;
+
       .poll-creator {
         color: #b3e5fc;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
-        margin: 0 0 5px 0;
+        margin: 0 0 4px 0;
       }
 
       .poll-time {
         color: #80d8ff;
-        font-size: 14px;
+        font-size: 13px;
         margin: 0 0 8px 0;
-        opacity: 0.8;
       }
 
-      .poll-category {
+      .poll-academic-info {
         display: flex;
         align-items: center;
-        color: #80d8ff;
+        gap: 6px;
+        color: #00bcd4;
         font-size: 13px;
+        font-weight: 500;
 
         ion-icon {
-          margin-right: 6px;
           font-size: 16px;
-          color: #00e5ff;
         }
       }
     }
   }
 
   .poll-question {
-    margin-bottom: 24px;
+    padding: 0 24px;
+    margin-bottom: 32px;
 
     h2 {
       color: #b3e5fc;
       font-size: 22px;
       font-weight: 700;
-      margin: 0 0 12px 0;
-      line-height: 1.4;
+      margin: 0 0 16px 0;
+      line-height: 1.3;
     }
 
     .poll-description {
       color: #80d8ff;
-      font-size: 16px;
-      margin: 0;
-      opacity: 0.9;
+      font-size: 15px;
       line-height: 1.6;
+      margin: 0;
     }
   }
 
   .poll-options {
-    margin-bottom: 24px;
+    padding: 0 24px;
+    margin-bottom: 32px;
 
     .poll-option {
-      background: rgba(255, 255, 255, 0.03);
-      border: 2px solid rgba(0, 229, 255, 0.2);
-      border-radius: 12px;
-      margin-bottom: 12px;
-      padding: 16px;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
-      position: relative;
+      margin-bottom: 16px;
+      background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      overflow: hidden;
 
-      &:hover:not(.voted) {
-        background: rgba(0, 229, 255, 0.08);
-        border-color: rgba(0, 229, 255, 0.4);
-        transform: translateX(4px) scale(1.01);
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+        transition: left 0.5s ease;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(0, 188, 212, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 188, 212, 0.15);
+
+        &::before {
+          left: 100%;
+        }
       }
 
       &.selected {
-        border-color: #00e5ff;
-        background: rgba(0, 229, 255, 0.12);
-        box-shadow: 0 4px 16px rgba(0, 229, 255, 0.15);
+        background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(0, 229, 255, 0.1));
+        border-color: #00bcd4;
+        box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
       }
 
       &.voted {
         cursor: default;
-        background: rgba(255, 255, 255, 0.02);
+        
+        &:hover {
+          transform: none;
+        }
+
+        .vote-progress {
+          .progress-bar {
+            &.selected-bar {
+              background: linear-gradient(90deg, #00bcd4, #00e5ff, #80d8ff);
+              box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+            }
+          }
+
+          .percentage-text {
+            font-weight: 700;
+            font-size: 13px;
+            color: #b3e5fc;
+          }
+        }
       }
 
       .option-header {
         display: flex;
         align-items: center;
+        gap: 16px;
+        margin-bottom: 12px;
 
         .radio-container {
-          margin-right: 12px;
+          position: relative;
+          flex-shrink: 0;
 
           input[type="radio"],
           input[type="checkbox"] {
-            display: none;
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+
+            &:checked + .radio-label .radio-button {
+              background: linear-gradient(135deg, #00bcd4, #00e5ff);
+              border-color: #00bcd4;
+              box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+
+              &::after {
+                opacity: 1;
+                transform: scale(1);
+              }
+
+              &.checkbox::after {
+                content: '✓';
+                font-size: 12px;
+                font-weight: bold;
+              }
+            }
+
+            &:focus + .radio-label .radio-button {
+              box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.3);
+            }
           }
 
           .radio-label {
             cursor: pointer;
-            display: flex;
-            align-items: center;
+            display: block;
 
             .radio-button {
-              width: 20px;
-              height: 20px;
-              border: 2px solid #00e5ff;
+              width: 24px;
+              height: 24px;
+              border: 2px solid rgba(255, 255, 255, 0.4);
               border-radius: 50%;
-              background: transparent;
+              background: rgba(255, 255, 255, 0.1);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.3s ease;
               position: relative;
-              transition: all 0.3s ease-in-out;
-
-              &.checkbox {
-                border-radius: 4px;
-              }
 
               &::after {
                 content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) scale(0);
                 width: 8px;
                 height: 8px;
-                background: #00e5ff;
                 border-radius: 50%;
-                transition: transform 0.3s ease-in-out;
+                background: white;
+                opacity: 0;
+                transform: scale(0);
+                transition: all 0.2s ease;
               }
 
-              &.checkbox::after {
-                width: 6px;
-                height: 6px;
-                border-radius: 2px;
+              &.checkbox {
+                border-radius: 6px;
+
+                &::after {
+                  color: white;
+                  font-size: 12px;
+                  font-weight: bold;
+                  width: auto;
+                  height: auto;
+                  border-radius: 0;
+                  background: transparent;
+                }
               }
-            }
-          }
-
-          input:checked + .radio-label .radio-button {
-            background: rgba(0, 229, 255, 0.15);
-            box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
-
-            &::after {
-              transform: translate(-50%, -50%) scale(1);
             }
           }
         }
@@ -477,36 +935,48 @@
           .vote-count {
             color: #80d8ff;
             font-size: 14px;
-            opacity: 0.8;
+            font-weight: 600;
           }
         }
       }
 
       .vote-progress {
-        margin-top: 12px;
         position: relative;
         height: 8px;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 4px;
         overflow: hidden;
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        margin-top: 12px;
 
         .progress-bar {
           height: 100%;
-          background: linear-gradient(90deg, #00bcd4, #00e5ff);
           border-radius: 4px;
-          transition: width 0.6s ease-in-out;
-          box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+          transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+          position: relative;
+          overflow: hidden;
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+          }
 
           &.selected-bar {
-            background: linear-gradient(90deg, #ffc107, #ffeb3b);
-            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+            background: linear-gradient(90deg, #00bcd4, #00e5ff, #80d8ff);
+          }
+
+          &:not(.selected-bar) {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
           }
 
           &.preview-bar {
-            background: linear-gradient(90deg, rgba(0, 188, 212, 0.5), rgba(0, 229, 255, 0.5));
-            animation: pulse 2s infinite;
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            animation: pulse 1.5s infinite;
           }
         }
 
@@ -516,13 +986,15 @@
           right: 8px;
           top: 50%;
           transform: translateY(-50%);
-          color: #b3e5fc;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 600;
+          color: #b3e5fc;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .preview-text {
-          color: #80d8ff;
+          color: #00bcd4;
+          font-weight: 700;
         }
       }
     }
@@ -530,120 +1002,105 @@
 
   .vote-button-container,
   .action-button-container {
-    margin-bottom: 20px;
+    padding: 0 24px 24px;
 
-    .vote-btn,
-    .results-btn {
-      height: 48px;
-      font-weight: 600;
-      text-transform: none;
-      letter-spacing: 0.5px;
+    .vote-btn {
+      --background: #00bcd4;
+      --color: white;
+      border-radius: 16px;
+      height: 56px;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+      transition: all 0.3s ease-in-out;
+
+      &:hover:not([disabled]) {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 35px rgba(0, 188, 212, 0.4);
+        --background: #00e5ff;
+      }
+
+      &[disabled] {
+        --background: rgba(255, 255, 255, 0.1);
+        --color: rgba(255, 255, 255, 0.5);
+        box-shadow: none;
+      }
     }
   }
 
   .poll-stats {
+    padding: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
-    justify-content: space-between;
-    padding-top: 16px;
-    border-top: 1px solid rgba(0, 229, 255, 0.2);
+    gap: 32px;
+    background: rgba(255, 255, 255, 0.03);
 
     .total-votes,
     .poll-type {
       display: flex;
       align-items: center;
+      gap: 8px;
       color: #80d8ff;
       font-size: 14px;
-      opacity: 0.8;
+      font-weight: 500;
 
       ion-icon {
-        margin-right: 6px;
-        font-size: 16px;
-        color: #00e5ff;
+        font-size: 18px;
+        color: #00bcd4;
       }
     }
   }
 }
 
-// Button Styles
-.neon-button {
-  --background: #00bcd4;
-  --color: white;
-  --border-radius: 12px;
-  --box-shadow: 0 4px 20px rgba(0, 188, 212, 0.3);
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    --background: #00e5ff;
-    --box-shadow: 0 6px 25px rgba(0, 229, 255, 0.4);
-    transform: scale(1.02);
-  }
-
-  &:disabled {
-    --background: rgba(0, 188, 212, 0.2);
-    --color: rgba(255, 255, 255, 0.5);
-    --box-shadow: none;
-  }
-}
-
-.neon-button-outline {
-  --background: transparent;
-  --color: #80d8ff;
-  --border-radius: 12px;
-  --border-width: 2px;
-  --border-style: solid;
-  --border-color: #00e5ff;
-  --background-hover: rgba(0, 229, 255, 0.06);
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    --color: #b3e5fc;
-    --border-color: #b3e5fc;
-    transform: scale(1.02);
-  }
-}
-
-// Empty State
+// Empty States with modern styling
 .empty-state {
+  text-align: center;
   padding: 60px 40px;
+  background: rgba(255, 255, 255, 0.05);
 
   .empty-content {
-    text-align: center;
-
     ion-icon {
       font-size: 80px;
-      color: #00e5ff;
-      opacity: 0.6;
-      margin-bottom: 20px;
-      animation: pulse 2s infinite;
+      color: rgba(179, 229, 252, 0.3);
+      margin-bottom: 24px;
+      display: block;
     }
 
     h2 {
       color: #b3e5fc;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       font-size: 28px;
       font-weight: 700;
     }
 
     p {
       color: #80d8ff;
-      opacity: 0.8;
-      font-size: 18px;
-      margin: 0 0 24px 0;
+      margin-bottom: 32px;
+      font-size: 16px;
+      line-height: 1.5;
     }
 
     .clear-filters-btn {
-      margin-top: 16px;
+      --background: transparent;
+      --color: #00bcd4;
+      border: 2px solid #00bcd4;
+      border-radius: 12px;
+      height: 48px;
+      font-weight: 600;
+      min-width: 160px;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        --background: #00bcd4;
+        --color: white;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+      }
     }
   }
 }
 
-// Animations
+// Enhanced animations
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -655,13 +1112,30 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
-    opacity: 0.6;
+    opacity: 1;
   }
   50% {
-    opacity: 1;
-    transform: scale(1.05);
+    opacity: 0.7;
+  }
+}
+
+@keyframes loading-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
   }
 }
 
@@ -671,50 +1145,3072 @@
     padding: 16px;
   }
 
-  .poll-preview {
-    padding: 20px;
-
-    .poll-stats-preview {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
+  .poll-preview .poll-stats-preview {
+    flex-direction: column;
+    gap: 12px;
   }
 
-  .poll-full {
-    padding: 0 20px 20px;
-
-    .poll-question h2 {
-      font-size: 20px;
-    }
-
-    .poll-stats {
-      flex-direction: column;
-      gap: 8px;
-    }
+  .poll-full .poll-stats {
+    flex-direction: column;
+    gap: 16px;
   }
 
-  .category-filter .category-chips {
-    justify-content: center;
+  .category-filter .dropdown-container .dropdown-menu {
+    left: -10px;
+    right: -10px;
   }
 }
 
 @media (max-width: 480px) {
-  .poll-preview .poll-header {
-    flex-direction: column;
-    align-items: flex-start;
+  .poll-preview,
+  .poll-full .poll-question,
+  .poll-full .poll-options,
+  .poll-full .vote-button-container,
+  .poll-full .action-button-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 
-    .poll-avatar {
-      margin-bottom: 8px;
+  .poll-preview .poll-question-preview h2,
+  .poll-full .poll-question h2 {
+    font-size: 18px;
+  }
+}
+
+// Ensure proper layering - CRITICAL FIX FOR CENTRAL CONTENT OVERLAP
+.polls-container {
+  position: relative;
+  z-index: 1;
+}
+
+// Make sure any central content/empty state has lower z-index than dropdown
+.empty-state,
+.results-info,
+.poll-list,
+.glass-card:not(.category-filter) {
+  position: relative;
+  z-index: 10;
+}
+
+.dropdown-container {
+  position: relative;
+  z-index: 2000;
+}
+
+.dropdown-button {
+  position: relative;
+  z-index: 2001 !important;
+}
+
+.dropdown-menu {
+  z-index: 2002 !important;
+}
+
+// Modern button classes for consistency
+.neon-button {
+  --background: #00bcd4;
+  --color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+    --background: #00e5ff;
+  }
+}
+
+.neon-button-outline {
+  --background: transparent;
+  --color: #00bcd4;
+  border: 2px solid #00bcd4;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    --background: #00bcd4;
+    --color: white;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+  }
+}
+
+// Enhanced focus styles for accessibility
+.dropdown-button:focus,
+.poll-option:focus,
+.vote-btn:focus,
+.clear-filters-btn:focus,
+.view-btn:focus {
+  outline: 2px solid #00e5ff;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .glass-card {
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #00e5ff;
+  }
+
+  .dropdown-menu {
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid #00bcd4;
+  }
+
+  .poll-option {
+    border: 2px solid rgba(179, 229, 252, 0.8);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .glass-card:hover {
+    transform: none;
+  }
+  
+  .poll-option:hover {
+    transform: none;
+  }
+  
+  .neon-button:hover,
+  .neon-button-outline:hover {
+    transform: none;
+  }
+}
+
+// Modern theme variables
+:root {
+  --polls-primary: #00bcd4;
+  --polls-primary-light: #00e5ff;
+  --polls-primary-dark: #0097a7;
+  --polls-secondary: #80d8ff;
+  --polls-accent: #b3e5fc;
+  --polls-success: #009688;
+  --polls-warning: #ffa726;
+  --polls-error: #ef5350;
+  --polls-background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --polls-card-bg: rgba(255, 255, 255, 0.07);
+  --polls-text-primary: #b3e5fc;
+  --polls-text-secondary: #80d8ff;
+  --polls-border: rgba(255, 255, 255, 0.15);
+  --polls-blur: blur(12px);
+  --polls-blur-light: blur(8px);
+}
+
+// Additional utility classes
+.text-gradient {
+  background: linear-gradient(135deg, #00bcd4, #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-effect {
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+// Modern glass morphism utilities
+.glass-light {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-medium {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-heavy {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// Interactive hover effects
+.hover-lift {
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.hover-glow {
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.2);
+  }
+}
+
+.hover-scale {
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+// Print styles
+@media print {
+  .polls-bg {
+    background: white !important;
+  }
+
+  .glass-card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+
+  .dropdown-menu {
+    display: none !important;
+  }
+
+  .poll-preview .view-poll-button,
+  .poll-full .collapse-header,
+  .poll-full .vote-button-container,
+  .poll-full .action-button-container {
+    display: none !important;
+  }
+  
+  .poll-creator,
+  .poll-question-preview h2,
+  .poll-question h2 {
+    color: #000 !important;
+  }
+  
+  .poll-description,
+  .poll-time,
+  .option-text {
+    color: #333 !important;
+  }
+}// Modern Glass-Style Polls Page SCSS
+
+.polls-bg {
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  min-height: 100vh;
+  width: 100%;
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+.polls-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+// Enhanced glass card effect with modern aesthetic
+.glass-card {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 191, 255, 0.08);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 191, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+// Search and Filter Section
+.search-filter-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Search Container with modern glass styling
+.search-container {
+  padding: 8px;
+
+  .custom-searchbar {
+    --background: transparent;
+    --color: #b3e5fc;
+    --placeholder-color: #80d8ff;
+    --icon-color: #80d8ff;
+    --clear-button-color: #80d8ff;
+
+    .searchbar-input {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 16px;
+      padding: 12px 16px;
+      transition: all 0.3s ease-in-out;
+
+      &:focus {
+        border-color: #00e5ff;
+        box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      &::placeholder {
+        color: #80d8ff;
+      }
+    }
+  }
+}
+
+// Category filter container needs highest priority
+.category-filter {
+  padding: 16px;
+  position: relative;
+  z-index: 2000;
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #b3e5fc;
+    font-weight: 600;
+    font-size: 14px;
+
+    ion-icon {
+      font-size: 18px;
+      color: #00bcd4;
     }
   }
 
-  .poll-full .poll-header {
-    flex-direction: column;
+  .dropdown-container {
+    position: relative;
+
+    .dropdown-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #b3e5fc;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      font-size: 14px;
+      font-weight: 500;
+      position: relative;
+      z-index: 2001;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #00e5ff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 191, 255, 0.15);
+      }
+
+      &:focus {
+        outline: 2px solid #00e5ff;
+        outline-offset: 2px;
+      }
+
+      &.open {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(255, 255, 255, 0.15);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-bottom-color: transparent;
+      }
+
+      .dropdown-selected {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        ion-icon {
+          font-size: 18px;
+          color: #00bcd4;
+        }
+
+        span {
+          font-weight: 500;
+          color: #b3e5fc;
+        }
+      }
+
+      .dropdown-arrow {
+        font-size: 16px;
+        color: #80d8ff;
+        transition: transform 0.3s ease;
+
+        &.rotated {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% - 1px);
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-top: none;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      z-index: 2002 !important;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      isolation: isolate;
+      will-change: transform, opacity;
+      transform-style: preserve-3d;
+
+      &.open {
+        max-height: 500px;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .dropdown-group {
+        &:not(:last-child) {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .dropdown-group-header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 16px 20px 12px;
+          font-weight: 700;
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          position: relative;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            border-radius: 1px;
+          }
+
+          &:has(+ .course-item) {
+            background: linear-gradient(135deg, rgba(0, 188, 212, 0.1), rgba(0, 229, 255, 0.05));
+            color: #00bcd4;
+
+            &::after {
+              background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            }
+
+            ion-icon {
+              color: #00bcd4;
+            }
+          }
+
+          &:has(+ .faculty-item) {
+            background: linear-gradient(135deg, rgba(0, 150, 136, 0.15), rgba(0, 188, 212, 0.1));
+            color: #009688;
+            font-size: 14px;
+            padding: 18px 20px 14px;
+
+            &::after {
+              background: linear-gradient(90deg, #009688, #00bcd4);
+              height: 3px;
+            }
+
+            ion-icon {
+              color: #009688;
+              font-size: 20px;
+            }
+          }
+
+          &:has(+ .university-item) {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(128, 216, 255, 0.1));
+            color: #00e5ff;
+            font-size: 15px;
+            padding: 20px 20px 16px;
+            font-weight: 800;
+
+            &::after {
+              background: linear-gradient(90deg, #00e5ff, #80d8ff);
+              height: 4px;
+            }
+
+            ion-icon {
+              color: #00e5ff;
+              font-size: 22px;
+            }
+          }
+
+          ion-icon {
+            font-size: 18px;
+          }
+        }
+
+        .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 16px 24px;
+          color: #2c3e50;
+          background: transparent;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          border: none;
+          text-align: left;
+          position: relative;
+          overflow: hidden;
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            transition: width 0.3s ease;
+          }
+
+          &:hover {
+            background: rgba(0, 188, 212, 0.08);
+            color: #0f2027;
+            transform: translateX(4px);
+
+            &::before {
+              width: 4px;
+            }
+          }
+
+          &.selected {
+            font-weight: 600;
+            transform: translateX(4px);
+
+            &::before {
+              width: 4px;
+            }
+
+            &::after {
+              content: '✓';
+              margin-left: auto;
+              font-weight: bold;
+              font-size: 16px;
+            }
+          }
+
+          &.course-item {
+            &:hover::before {
+              background: linear-gradient(180deg, #00bcd4, #00e5ff);
+            }
+
+            &.selected {
+              background: linear-gradient(135deg, rgba(0, 188, 212, 0.15), rgba(0, 229, 255, 0.05));
+              color: #00bcd4;
+
+              &::before {
+                background: linear-gradient(180deg, #00bcd4, #00e5ff);
+              }
+
+              &::after {
+                color: #00bcd4;
+              }
+            }
+
+            ion-icon {
+              color: #00bcd4;
+            }
+          }
+
+          &.faculty-item {
+            padding: 18px 24px;
+            
+            &:hover::before {
+              background: linear-gradient(180deg, #009688, #00bcd4);
+              width: 5px;
+            }
+
+            &.selected {
+              background: linear-gradient(135deg, rgba(0, 150, 136, 0.2), rgba(0, 188, 212, 0.1));
+              color: #009688;
+              font-weight: 700;
+
+              &::before {
+                background: linear-gradient(180deg, #009688, #00bcd4);
+                width: 5px;
+              }
+
+              &::after {
+                color: #009688;
+                font-size: 18px;
+              }
+            }
+
+            ion-icon {
+              color: #009688;
+              font-size: 22px;
+            }
+
+            span {
+              font-size: 16px;
+              font-weight: 500;
+            }
+          }
+
+          &.university-item {
+            padding: 20px 24px;
+            border-left: 3px solid transparent;
+            
+            &:hover {
+              border-left-color: #00e5ff;
+              
+              &::before {
+                background: linear-gradient(180deg, #00e5ff, #80d8ff);
+                width: 6px;
+              }
+            }
+
+            &.selected {
+              background: linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(128, 216, 255, 0.1));
+              color: #00e5ff;
+              font-weight: 800;
+              border-left-color: #00e5ff;
+
+              &::before {
+                background: linear-gradient(180deg, #00e5ff, #80d8ff);
+                width: 6px;
+              }
+
+              &::after {
+                color: #00e5ff;
+                font-size: 20px;
+              }
+            }
+
+            ion-icon {
+              color: #00e5ff;
+              font-size: 24px;
+            }
+
+            span {
+              font-size: 17px;
+              font-weight: 600;
+            }
+          }
+
+          ion-icon {
+            font-size: 20px;
+            min-width: 20px;
+          }
+
+          span {
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.4;
+          }
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #00bcd4, #00e5ff);
+        border-radius: 3px;
+
+        &:hover {
+          background: linear-gradient(135deg, #00e5ff, #80d8ff);
+        }
+      }
+    }
+  }
+}
+
+// Results Info with modern styling
+.results-info {
+  margin-bottom: 20px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 25px;
+  display: inline-block;
+
+  span {
+    color: #b3e5fc;
+    font-size: 14px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Poll List
+.poll-list {
+  display: grid;
+  gap: 24px;
+}
+
+// Poll Card with modern glass effect
+.poll-card {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #00bcd4, #00e5ff, #80d8ff);
+  }
+
+  &.loading {
+    .poll-preview,
+    .poll-full {
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(179, 229, 252, 0.1), transparent);
+        animation: loading-shimmer 1.5s infinite;
+        z-index: 1;
+      }
+    }
+  }
+}
+
+// Poll Preview (Collapsed) with modern styling
+.poll-preview {
+  padding: 24px;
+
+  .poll-header {
+    display: flex;
     align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
 
     .poll-avatar {
-      margin-bottom: 12px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #00bcd4, #00e5ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      ion-icon {
+        font-size: 28px;
+        color: white;
+      }
     }
+
+    .poll-meta {
+      flex: 1;
+
+      .poll-creator {
+        color: #b3e5fc;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+      }
+
+      .poll-time {
+        color: #80d8ff;
+        font-size: 13px;
+        margin: 0 0 8px 0;
+      }
+
+      .poll-academic-info {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #00bcd4;
+        font-size: 13px;
+        font-weight: 500;
+
+        ion-icon {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .poll-status {
+      .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        &.status-active {
+          background: linear-gradient(135deg, #009688, #00bcd4);
+          color: white;
+        }
+
+        &.status-closed {
+          background: linear-gradient(135deg, #e57373, #ef5350);
+          color: white;
+        }
+
+        &.status-draft {
+          background: linear-gradient(135deg, #ffb74d, #ffa726);
+          color: white;
+        }
+      }
+    }
+  }
+
+  .poll-question-preview {
+    margin-bottom: 20px;
+
+    h2 {
+      color: #b3e5fc;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+      line-height: 1.3;
+    }
+
+    .poll-description {
+      color: #80d8ff;
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0;
+    }
+  }
+
+  .poll-stats-preview {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #80d8ff;
+      font-size: 14px;
+
+      ion-icon {
+        font-size: 18px;
+        color: #00bcd4;
+      }
+    }
+  }
+
+  .view-poll-button {
+    .view-btn {
+      --background: transparent;
+      --color: #00bcd4;
+      border: 2px solid #00bcd4;
+      border-radius: 12px;
+      height: 48px;
+      font-weight: 600;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        --background: #00bcd4;
+        --color: white;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+      }
+    }
+  }
+}
+
+// Poll Full (Expanded) with modern styling
+.poll-full {
+  .collapse-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: flex-end;
+
+    .collapse-btn {
+      --color: #80d8ff;
+      font-size: 14px;
+
+      &:hover {
+        --color: #b3e5fc;
+      }
+    }
+  }
+
+  .poll-header {
+    padding: 24px 24px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .poll-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #00bcd4, #00e5ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      ion-icon {
+        font-size: 28px;
+        color: white;
+      }
+    }
+
+    .poll-meta {
+      flex: 1;
+
+      .poll-creator {
+        color: #b3e5fc;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+      }
+
+      .poll-time {
+        color: #80d8ff;
+        font-size: 13px;
+        margin: 0 0 8px 0;
+      }
+
+      .poll-academic-info {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #00bcd4;
+        font-size: 13px;
+        font-weight: 500;
+
+        ion-icon {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .poll-question {
+    padding: 0 24px;
+    margin-bottom: 32px;
+
+    h2 {
+      color: #b3e5fc;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 16px 0;
+      line-height: 1.3;
+    }
+
+    .poll-description {
+      color: #80d8ff;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  .poll-options {
+    padding: 0 24px;
+    margin-bottom: 32px;
+
+    .poll-option {
+      margin-bottom: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+        transition: left 0.5s ease;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(0, 188, 212, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 188, 212, 0.15);
+
+        &::before {
+          left: 100%;
+        }
+      }
+
+      &.selected {
+        background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(0, 229, 255, 0.1));
+        border-color: #00bcd4;
+        box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+      }
+
+      &.voted {
+        cursor: default;
+        
+        &:hover {
+          transform: none;
+        }
+
+        .vote-progress {
+          .progress-bar {
+            &.selected-bar {
+              background: linear-gradient(90deg, #00bcd4, #00e5ff, #80d8ff);
+              box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+            }
+          }
+
+          .percentage-text {
+            font-weight: 700;
+            font-size: 13px;
+            color: #b3e5fc;
+          }
+        }
+      }
+
+      .option-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 12px;
+
+        .radio-container {
+          position: relative;
+          flex-shrink: 0;
+
+          input[type="radio"],
+          input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+
+            &:checked + .radio-label .radio-button {
+              background: linear-gradient(135deg, #00bcd4, #00e5ff);
+              border-color: #00bcd4;
+              box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+
+              &::after {
+                opacity: 1;
+                transform: scale(1);
+              }
+
+              &.checkbox::after {
+                content: '✓';
+                font-size: 12px;
+                font-weight: bold;
+              }
+            }
+
+            &:focus + .radio-label .radio-button {
+              box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.3);
+            }
+          }
+
+          .radio-label {
+            cursor: pointer;
+            display: block;
+
+            .radio-button {
+              width: 24px;
+              height: 24px;
+              border: 2px solid rgba(255, 255, 255, 0.4);
+              border-radius: 50%;
+              background: rgba(255, 255, 255, 0.1);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.3s ease;
+              position: relative;
+
+              &::after {
+                content: '';
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: white;
+                opacity: 0;
+                transform: scale(0);
+                transition: all 0.2s ease;
+              }
+
+              &.checkbox {
+                border-radius: 6px;
+
+                &::after {
+                  color: white;
+                  font-size: 12px;
+                  font-weight: bold;
+                  width: auto;
+                  height: auto;
+                  border-radius: 0;
+                  background: transparent;
+                }
+              }
+            }
+          }
+        }
+
+        .option-content {
+          flex: 1;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .option-text {
+            color: #b3e5fc;
+            font-size: 16px;
+            font-weight: 500;
+          }
+
+          .vote-count {
+            color: #80d8ff;
+            font-size: 14px;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .vote-progress {
+        position: relative;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 12px;
+
+        .progress-bar {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+          position: relative;
+          overflow: hidden;
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+          }
+
+          &.selected-bar {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff, #80d8ff);
+          }
+
+          &:not(.selected-bar) {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+          }
+
+          &.preview-bar {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            animation: pulse 1.5s infinite;
+          }
+        }
+
+        .percentage-text,
+        .preview-text {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 12px;
+          font-weight: 600;
+          color: #b3e5fc;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .preview-text {
+          color: #00bcd4;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+
+  .vote-button-container,
+  .action-button-container {
+    padding: 0 24px 24px;
+
+    .vote-btn {
+      --background: #00bcd4;
+      --color: white;
+      border-radius: 16px;
+      height: 56px;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+      transition: all 0.3s ease-in-out;
+
+      &:hover:not([disabled]) {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 35px rgba(0, 188, 212, 0.4);
+        --background: #00e5ff;
+      }
+
+      &[disabled] {
+        --background: rgba(255, 255, 255, 0.1);
+        --color: rgba(255, 255, 255, 0.5);
+        box-shadow: none;
+      }
+    }
+  }
+
+  .poll-stats {
+    padding: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 32px;
+    background: rgba(255, 255, 255, 0.03);
+
+    .total-votes,
+    .poll-type {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #80d8ff;
+      font-size: 14px;
+      font-weight: 500;
+
+      ion-icon {
+        font-size: 18px;
+        color: #00bcd4;
+      }
+    }
+  }
+}
+
+// Empty States with modern styling
+.empty-state {
+  text-align: center;
+  padding: 60px 40px;
+  background: rgba(255, 255, 255, 0.05);
+
+  .empty-content {
+    ion-icon {
+      font-size: 80px;
+      color: rgba(179, 229, 252, 0.3);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    h2 {
+      color: #b3e5fc;
+      margin-bottom: 12px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    p {
+      color: #80d8ff;
+      margin-bottom: 32px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .clear-filters-btn {
+      --background: transparent;
+      --color: #00bcd4;
+      border: 2px solid #00bcd4;
+      border-radius: 12px;
+      height: 48px;
+      font-weight: 600;
+      min-width: 160px;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        --background: #00bcd4;
+        --color: white;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+      }
+    }
+  }
+}
+
+// Enhanced animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes loading-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .polls-container {
+    padding: 16px;
+  }
+
+  .poll-preview .poll-stats-preview {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .poll-full .poll-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .category-filter .dropdown-container .dropdown-menu {
+    left: -10px;
+    right: -10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .poll-preview,
+  .poll-full .poll-question,
+  .poll-full .poll-options,
+  .poll-full .vote-button-container,
+  .poll-full .action-button-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .poll-preview .poll-question-preview h2,
+  .poll-full .poll-question h2 {
+    font-size: 18px;
+  }
+}
+
+// Ensure proper layering - CRITICAL FIX FOR CENTRAL CONTENT OVERLAP
+.polls-container {
+  position: relative;
+  z-index: 1;
+}
+
+// Make sure any central content/empty state has lower z-index than dropdown
+.empty-state,
+.results-info,
+.poll-list,
+.glass-card:not(.category-filter) {
+  position: relative;
+  z-index: 10;
+}
+
+.dropdown-container {
+  position: relative;
+  z-index: 2000;
+}
+
+.dropdown-button {
+  position: relative;
+  z-index: 2001 !important;
+}
+
+.dropdown-menu {
+  z-index: 2002 !important;
+}
+
+// Modern button classes for consistency
+.neon-button {
+  --background: #00bcd4;
+  --color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+    --background: #00e5ff;
+  }
+}
+
+.neon-button-outline {
+  --background: transparent;
+  --color: #00bcd4;
+  border: 2px solid #00bcd4;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    --background: #00bcd4;
+    --color: white;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+  }
+}
+
+// Enhanced focus styles for accessibility
+.dropdown-button:focus,
+.poll-option:focus,
+.vote-btn:focus,
+.clear-filters-btn:focus,
+.view-btn:focus {
+  outline: 2px solid #00e5ff;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .glass-card {
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #00e5ff;
+  }
+
+  .dropdown-menu {
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid #00bcd4;
+  }
+
+  .poll-option {
+    border: 2px solid rgba(179, 229, 252, 0.8);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .glass-card:hover {
+    transform: none;
+  }
+  
+  .poll-option:hover {
+    transform: none;
+  }
+  
+  .neon-button:hover,
+  .neon-button-outline:hover {
+    transform: none;
+  }
+}
+
+// Modern theme variables
+:root {
+  --polls-primary: #00bcd4;
+  --polls-primary-light: #00e5ff;
+  --polls-primary-dark: #0097a7;
+  --polls-secondary: #80d8ff;
+  --polls-accent: #b3e5fc;
+  --polls-success: #009688;
+  --polls-warning: #ffa726;
+  --polls-error: #ef5350;
+  --polls-background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --polls-card-bg: rgba(255, 255, 255, 0.07);
+  --polls-text-primary: #b3e5fc;
+  --polls-text-secondary: #80d8ff;
+  --polls-border: rgba(255, 255, 255, 0.15);
+  --polls-blur: blur(12px);
+  --polls-blur-light: blur(8px);
+}
+
+// Additional utility classes
+.text-gradient {
+  background: linear-gradient(135deg, #00bcd4, #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-effect {
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+// Modern glass morphism utilities
+.glass-light {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-medium {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-heavy {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// Interactive hover effects
+.hover-lift {
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.hover-glow {
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.2);
+  }
+}
+
+.hover-scale {
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+// Print styles
+@media print {
+  .polls-bg {
+    background: white !important;
+  }
+
+  .glass-card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+
+  .dropdown-menu {
+    display: none !important;
+  }
+
+  .poll-preview .view-poll-button,
+  .poll-full .collapse-header,
+  .poll-full .vote-button-container,
+  .poll-full .action-button-container {
+    display: none !important;
+  }
+  
+  .poll-creator,
+  .poll-question-preview h2,
+  .poll-question h2 {
+    color: #000 !important;
+  }
+  
+  .poll-description,
+  .poll-time,
+  .option-text {
+    color: #333 !important;
+  }
+}// Modern Glass-Style Polls Page SCSS
+
+.polls-bg {
+  --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  min-height: 100vh;
+  width: 100%;
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+.polls-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+// Enhanced glass card effect with modern aesthetic
+.glass-card {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 191, 255, 0.08);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 191, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+// Search and Filter Section
+.search-filter-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Search Container with modern glass styling
+.search-container {
+  padding: 8px;
+
+  .custom-searchbar {
+    --background: transparent;
+    --color: #b3e5fc;
+    --placeholder-color: #80d8ff;
+    --icon-color: #80d8ff;
+    --clear-button-color: #80d8ff;
+
+    .searchbar-input {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 16px;
+      padding: 12px 16px;
+      transition: all 0.3s ease-in-out;
+
+      &:focus {
+        border-color: #00e5ff;
+        box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      &::placeholder {
+        color: #80d8ff;
+      }
+    }
+  }
+}
+
+// Category filter container needs highest priority
+.category-filter {
+  padding: 16px;
+  position: relative;
+  z-index: 2000;
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #b3e5fc;
+    font-weight: 600;
+    font-size: 14px;
+
+    ion-icon {
+      font-size: 18px;
+      color: #00bcd4;
+    }
+  }
+
+  .dropdown-container {
+    position: relative;
+
+    .dropdown-button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #b3e5fc;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      font-size: 14px;
+      font-weight: 500;
+      position: relative;
+      z-index: 2001;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #00e5ff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 191, 255, 0.15);
+      }
+
+      &:focus {
+        outline: 2px solid #00e5ff;
+        outline-offset: 2px;
+      }
+
+      &.open {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(255, 255, 255, 0.15);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-bottom-color: transparent;
+      }
+
+      .dropdown-selected {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        ion-icon {
+          font-size: 18px;
+          color: #00bcd4;
+        }
+
+        span {
+          font-weight: 500;
+          color: #b3e5fc;
+        }
+      }
+
+      .dropdown-arrow {
+        font-size: 16px;
+        color: #80d8ff;
+        transition: transform 0.3s ease;
+
+        &.rotated {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% - 1px);
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-top: none;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      z-index: 2002 !important;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-5px);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      isolation: isolate;
+      will-change: transform, opacity;
+      transform-style: preserve-3d;
+
+      &.open {
+        max-height: 500px;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .dropdown-group {
+        &:not(:last-child) {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .dropdown-group-header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 16px 20px 12px;
+          font-weight: 700;
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          position: relative;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            border-radius: 1px;
+          }
+
+          &:has(+ .course-item) {
+            background: linear-gradient(135deg, rgba(0, 188, 212, 0.1), rgba(0, 229, 255, 0.05));
+            color: #00bcd4;
+
+            &::after {
+              background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            }
+
+            ion-icon {
+              color: #00bcd4;
+            }
+          }
+
+          &:has(+ .faculty-item) {
+            background: linear-gradient(135deg, rgba(0, 150, 136, 0.15), rgba(0, 188, 212, 0.1));
+            color: #009688;
+            font-size: 14px;
+            padding: 18px 20px 14px;
+
+            &::after {
+              background: linear-gradient(90deg, #009688, #00bcd4);
+              height: 3px;
+            }
+
+            ion-icon {
+              color: #009688;
+              font-size: 20px;
+            }
+          }
+
+          &:has(+ .university-item) {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(128, 216, 255, 0.1));
+            color: #00e5ff;
+            font-size: 15px;
+            padding: 20px 20px 16px;
+            font-weight: 800;
+
+            &::after {
+              background: linear-gradient(90deg, #00e5ff, #80d8ff);
+              height: 4px;
+            }
+
+            ion-icon {
+              color: #00e5ff;
+              font-size: 22px;
+            }
+          }
+
+          ion-icon {
+            font-size: 18px;
+          }
+        }
+
+        .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 16px 24px;
+          color: #2c3e50;
+          background: transparent;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          border: none;
+          text-align: left;
+          position: relative;
+          overflow: hidden;
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            transition: width 0.3s ease;
+          }
+
+          &:hover {
+            background: rgba(0, 188, 212, 0.08);
+            color: #0f2027;
+            transform: translateX(4px);
+
+            &::before {
+              width: 4px;
+            }
+          }
+
+          &.selected {
+            font-weight: 600;
+            transform: translateX(4px);
+
+            &::before {
+              width: 4px;
+            }
+
+            &::after {
+              content: '✓';
+              margin-left: auto;
+              font-weight: bold;
+              font-size: 16px;
+            }
+          }
+
+          &.course-item {
+            &:hover::before {
+              background: linear-gradient(180deg, #00bcd4, #00e5ff);
+            }
+
+            &.selected {
+              background: linear-gradient(135deg, rgba(0, 188, 212, 0.15), rgba(0, 229, 255, 0.05));
+              color: #00bcd4;
+
+              &::before {
+                background: linear-gradient(180deg, #00bcd4, #00e5ff);
+              }
+
+              &::after {
+                color: #00bcd4;
+              }
+            }
+
+            ion-icon {
+              color: #00bcd4;
+            }
+          }
+
+          &.faculty-item {
+            padding: 18px 24px;
+            
+            &:hover::before {
+              background: linear-gradient(180deg, #009688, #00bcd4);
+              width: 5px;
+            }
+
+            &.selected {
+              background: linear-gradient(135deg, rgba(0, 150, 136, 0.2), rgba(0, 188, 212, 0.1));
+              color: #009688;
+              font-weight: 700;
+
+              &::before {
+                background: linear-gradient(180deg, #009688, #00bcd4);
+                width: 5px;
+              }
+
+              &::after {
+                color: #009688;
+                font-size: 18px;
+              }
+            }
+
+            ion-icon {
+              color: #009688;
+              font-size: 22px;
+            }
+
+            span {
+              font-size: 16px;
+              font-weight: 500;
+            }
+          }
+
+          &.university-item {
+            padding: 20px 24px;
+            border-left: 3px solid transparent;
+            
+            &:hover {
+              border-left-color: #00e5ff;
+              
+              &::before {
+                background: linear-gradient(180deg, #00e5ff, #80d8ff);
+                width: 6px;
+              }
+            }
+
+            &.selected {
+              background: linear-gradient(135deg, rgba(0, 229, 255, 0.25), rgba(128, 216, 255, 0.1));
+              color: #00e5ff;
+              font-weight: 800;
+              border-left-color: #00e5ff;
+
+              &::before {
+                background: linear-gradient(180deg, #00e5ff, #80d8ff);
+                width: 6px;
+              }
+
+              &::after {
+                color: #00e5ff;
+                font-size: 20px;
+              }
+            }
+
+            ion-icon {
+              color: #00e5ff;
+              font-size: 24px;
+            }
+
+            span {
+              font-size: 17px;
+              font-weight: 600;
+            }
+          }
+
+          ion-icon {
+            font-size: 20px;
+            min-width: 20px;
+          }
+
+          span {
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.4;
+          }
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #00bcd4, #00e5ff);
+        border-radius: 3px;
+
+        &:hover {
+          background: linear-gradient(135deg, #00e5ff, #80d8ff);
+        }
+      }
+    }
+  }
+}
+
+// Results Info with modern styling
+.results-info {
+  margin-bottom: 20px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 25px;
+  display: inline-block;
+
+  span {
+    color: #b3e5fc;
+    font-size: 14px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Poll List
+.poll-list {
+  display: grid;
+  gap: 24px;
+}
+
+// Poll Card with modern glass effect
+.poll-card {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #00bcd4, #00e5ff, #80d8ff);
+  }
+
+  &.loading {
+    .poll-preview,
+    .poll-full {
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(179, 229, 252, 0.1), transparent);
+        animation: loading-shimmer 1.5s infinite;
+        z-index: 1;
+      }
+    }
+  }
+}
+
+// Poll Preview (Collapsed) with modern styling
+.poll-preview {
+  padding: 24px;
+
+  .poll-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    .poll-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #00bcd4, #00e5ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      ion-icon {
+        font-size: 28px;
+        color: white;
+      }
+    }
+
+    .poll-meta {
+      flex: 1;
+
+      .poll-creator {
+        color: #b3e5fc;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+      }
+
+      .poll-time {
+        color: #80d8ff;
+        font-size: 13px;
+        margin: 0 0 8px 0;
+      }
+
+      .poll-academic-info {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #00bcd4;
+        font-size: 13px;
+        font-weight: 500;
+
+        ion-icon {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .poll-status {
+      .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        &.status-active {
+          background: linear-gradient(135deg, #009688, #00bcd4);
+          color: white;
+        }
+
+        &.status-closed {
+          background: linear-gradient(135deg, #e57373, #ef5350);
+          color: white;
+        }
+
+        &.status-draft {
+          background: linear-gradient(135deg, #ffb74d, #ffa726);
+          color: white;
+        }
+      }
+    }
+  }
+
+  .poll-question-preview {
+    margin-bottom: 20px;
+
+    h2 {
+      color: #b3e5fc;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+      line-height: 1.3;
+    }
+
+    .poll-description {
+      color: #80d8ff;
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0;
+    }
+  }
+
+  .poll-stats-preview {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #80d8ff;
+      font-size: 14px;
+
+      ion-icon {
+        font-size: 18px;
+        color: #00bcd4;
+      }
+    }
+  }
+
+  .view-poll-button {
+    .view-btn {
+      --background: transparent;
+      --color: #00bcd4;
+      border: 2px solid #00bcd4;
+      border-radius: 12px;
+      height: 48px;
+      font-weight: 600;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        --background: #00bcd4;
+        --color: white;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+      }
+    }
+  }
+}
+
+// Poll Full (Expanded) with modern styling
+.poll-full {
+  .collapse-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: flex-end;
+
+    .collapse-btn {
+      --color: #80d8ff;
+      font-size: 14px;
+
+      &:hover {
+        --color: #b3e5fc;
+      }
+    }
+  }
+
+  .poll-header {
+    padding: 24px 24px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .poll-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #00bcd4, #00e5ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      ion-icon {
+        font-size: 28px;
+        color: white;
+      }
+    }
+
+    .poll-meta {
+      flex: 1;
+
+      .poll-creator {
+        color: #b3e5fc;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+      }
+
+      .poll-time {
+        color: #80d8ff;
+        font-size: 13px;
+        margin: 0 0 8px 0;
+      }
+
+      .poll-academic-info {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #00bcd4;
+        font-size: 13px;
+        font-weight: 500;
+
+        ion-icon {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .poll-question {
+    padding: 0 24px;
+    margin-bottom: 32px;
+
+    h2 {
+      color: #b3e5fc;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 16px 0;
+      line-height: 1.3;
+    }
+
+    .poll-description {
+      color: #80d8ff;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  .poll-options {
+    padding: 0 24px;
+    margin-bottom: 32px;
+
+    .poll-option {
+      margin-bottom: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+        transition: left 0.5s ease;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(0, 188, 212, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 188, 212, 0.15);
+
+        &::before {
+          left: 100%;
+        }
+      }
+
+      &.selected {
+        background: linear-gradient(135deg, rgba(0, 188, 212, 0.2), rgba(0, 229, 255, 0.1));
+        border-color: #00bcd4;
+        box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+      }
+
+      &.voted {
+        cursor: default;
+        
+        &:hover {
+          transform: none;
+        }
+
+        .vote-progress {
+          .progress-bar {
+            &.selected-bar {
+              background: linear-gradient(90deg, #00bcd4, #00e5ff, #80d8ff);
+              box-shadow: 0 2px 8px rgba(0, 188, 212, 0.3);
+            }
+          }
+
+          .percentage-text {
+            font-weight: 700;
+            font-size: 13px;
+            color: #b3e5fc;
+          }
+        }
+      }
+
+      .option-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 12px;
+
+        .radio-container {
+          position: relative;
+          flex-shrink: 0;
+
+          input[type="radio"],
+          input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+
+            &:checked + .radio-label .radio-button {
+              background: linear-gradient(135deg, #00bcd4, #00e5ff);
+              border-color: #00bcd4;
+              box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+
+              &::after {
+                opacity: 1;
+                transform: scale(1);
+              }
+
+              &.checkbox::after {
+                content: '✓';
+                font-size: 12px;
+                font-weight: bold;
+              }
+            }
+
+            &:focus + .radio-label .radio-button {
+              box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.3);
+            }
+          }
+
+          .radio-label {
+            cursor: pointer;
+            display: block;
+
+            .radio-button {
+              width: 24px;
+              height: 24px;
+              border: 2px solid rgba(255, 255, 255, 0.4);
+              border-radius: 50%;
+              background: rgba(255, 255, 255, 0.1);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.3s ease;
+              position: relative;
+
+              &::after {
+                content: '';
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: white;
+                opacity: 0;
+                transform: scale(0);
+                transition: all 0.2s ease;
+              }
+
+              &.checkbox {
+                border-radius: 6px;
+
+                &::after {
+                  color: white;
+                  font-size: 12px;
+                  font-weight: bold;
+                  width: auto;
+                  height: auto;
+                  border-radius: 0;
+                  background: transparent;
+                }
+              }
+            }
+          }
+        }
+
+        .option-content {
+          flex: 1;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .option-text {
+            color: #b3e5fc;
+            font-size: 16px;
+            font-weight: 500;
+          }
+
+          .vote-count {
+            color: #80d8ff;
+            font-size: 14px;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .vote-progress {
+        position: relative;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 12px;
+
+        .progress-bar {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+          position: relative;
+          overflow: hidden;
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+          }
+
+          &.selected-bar {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff, #80d8ff);
+          }
+
+          &:not(.selected-bar) {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+          }
+
+          &.preview-bar {
+            background: linear-gradient(90deg, #00bcd4, #00e5ff);
+            animation: pulse 1.5s infinite;
+          }
+        }
+
+        .percentage-text,
+        .preview-text {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 12px;
+          font-weight: 600;
+          color: #b3e5fc;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .preview-text {
+          color: #00bcd4;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+
+  .vote-button-container,
+  .action-button-container {
+    padding: 0 24px 24px;
+
+    .vote-btn {
+      --background: #00bcd4;
+      --color: white;
+      border-radius: 16px;
+      height: 56px;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+      transition: all 0.3s ease-in-out;
+
+      &:hover:not([disabled]) {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 35px rgba(0, 188, 212, 0.4);
+        --background: #00e5ff;
+      }
+
+      &[disabled] {
+        --background: rgba(255, 255, 255, 0.1);
+        --color: rgba(255, 255, 255, 0.5);
+        box-shadow: none;
+      }
+    }
+  }
+
+  .poll-stats {
+    padding: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 32px;
+    background: rgba(255, 255, 255, 0.03);
+
+    .total-votes,
+    .poll-type {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #80d8ff;
+      font-size: 14px;
+      font-weight: 500;
+
+      ion-icon {
+        font-size: 18px;
+        color: #00bcd4;
+      }
+    }
+  }
+}
+
+// Empty States with modern styling
+.empty-state {
+  text-align: center;
+  padding: 60px 40px;
+  background: rgba(255, 255, 255, 0.05);
+
+  .empty-content {
+    ion-icon {
+      font-size: 80px;
+      color: rgba(179, 229, 252, 0.3);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    h2 {
+      color: #b3e5fc;
+      margin-bottom: 12px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    p {
+      color: #80d8ff;
+      margin-bottom: 32px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .clear-filters-btn {
+      --background: transparent;
+      --color: #00bcd4;
+      border: 2px solid #00bcd4;
+      border-radius: 12px;
+      height: 48px;
+      font-weight: 600;
+      min-width: 160px;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        --background: #00bcd4;
+        --color: white;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+      }
+    }
+  }
+}
+
+// Enhanced animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes loading-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .polls-container {
+    padding: 16px;
+  }
+
+  .poll-preview .poll-stats-preview {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .poll-full .poll-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .category-filter .dropdown-container .dropdown-menu {
+    left: -10px;
+    right: -10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .poll-preview,
+  .poll-full .poll-question,
+  .poll-full .poll-options,
+  .poll-full .vote-button-container,
+  .poll-full .action-button-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .poll-preview .poll-question-preview h2,
+  .poll-full .poll-question h2 {
+    font-size: 18px;
+  }
+}
+
+// Ensure proper layering - CRITICAL FIX FOR CENTRAL CONTENT OVERLAP
+.polls-container {
+  position: relative;
+  z-index: 1;
+}
+
+// Make sure any central content/empty state has lower z-index than dropdown
+.empty-state,
+.results-info,
+.poll-list,
+.glass-card:not(.category-filter) {
+  position: relative;
+  z-index: 10;
+}
+
+.dropdown-container {
+  position: relative;
+  z-index: 2000;
+}
+
+.dropdown-button {
+  position: relative;
+  z-index: 2001 !important;
+}
+
+.dropdown-menu {
+  z-index: 2002 !important;
+}
+
+// Modern button classes for consistency
+.neon-button {
+  --background: #00bcd4;
+  --color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.4);
+    --background: #00e5ff;
+  }
+}
+
+.neon-button-outline {
+  --background: transparent;
+  --color: #00bcd4;
+  border: 2px solid #00bcd4;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    --background: #00bcd4;
+    --color: white;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.3);
+  }
+}
+
+// Enhanced focus styles for accessibility
+.dropdown-button:focus,
+.poll-option:focus,
+.vote-btn:focus,
+.clear-filters-btn:focus,
+.view-btn:focus {
+  outline: 2px solid #00e5ff;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .glass-card {
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #00e5ff;
+  }
+
+  .dropdown-menu {
+    background: rgba(255, 255, 255, 1);
+    border: 2px solid #00bcd4;
+  }
+
+  .poll-option {
+    border: 2px solid rgba(179, 229, 252, 0.8);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .glass-card:hover {
+    transform: none;
+  }
+  
+  .poll-option:hover {
+    transform: none;
+  }
+  
+  .neon-button:hover,
+  .neon-button-outline:hover {
+    transform: none;
+  }
+}
+
+// Modern theme variables
+:root {
+  --polls-primary: #00bcd4;
+  --polls-primary-light: #00e5ff;
+  --polls-primary-dark: #0097a7;
+  --polls-secondary: #80d8ff;
+  --polls-accent: #b3e5fc;
+  --polls-success: #009688;
+  --polls-warning: #ffa726;
+  --polls-error: #ef5350;
+  --polls-background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --polls-card-bg: rgba(255, 255, 255, 0.07);
+  --polls-text-primary: #b3e5fc;
+  --polls-text-secondary: #80d8ff;
+  --polls-border: rgba(255, 255, 255, 0.15);
+  --polls-blur: blur(12px);
+  --polls-blur-light: blur(8px);
+}
+
+// Additional utility classes
+.text-gradient {
+  background: linear-gradient(135deg, #00bcd4, #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-effect {
+  box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+// Modern glass morphism utilities
+.glass-light {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-medium {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-heavy {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// Interactive hover effects
+.hover-lift {
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.hover-glow {
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    box-shadow: 0 8px 25px rgba(0, 188, 212, 0.2);
+  }
+}
+
+.hover-scale {
+  transition: all 0.3s ease-in-out;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+// Print styles
+@media print {
+  .polls-bg {
+    background: white !important;
+  }
+
+  .glass-card {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+
+  .dropdown-menu {
+    display: none !important;
+  }
+
+  .poll-preview .view-poll-button,
+  .poll-full .collapse-header,
+  .poll-full .vote-button-container,
+  .poll-full .action-button-container {
+    display: none !important;
+  }
+  
+  .poll-creator,
+  .poll-question-preview h2,
+  .poll-question h2 {
+    color: #000 !important;
+  }
+  
+  .poll-description,
+  .poll-time,
+  .option-text {
+    color: #333 !important;
   }
 }

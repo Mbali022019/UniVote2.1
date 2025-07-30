@@ -1,611 +1,437 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { LoadingController, ToastController, AlertController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
-
-interface PollOption {
-  id: string;
-  text: string;
-  votes: number;
-}
-
-interface Poll {
-  id: string;
-  title: string;
-  description?: string;
-  creatorName: string;
-  creatorAvatar?: string;
-  createdDate: string;
-  category: string;
-  options: PollOption[];
-  totalVotes: number;
-  allowMultiple: boolean;
-  isActive: boolean;
-  endDate?: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  icon: string;
-}
-
-interface UserVote {
-  pollId: string;
-  selectedOptions: string[];
-  votedAt: Date;
-}
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-polls',
   templateUrl: './polls.page.html',
   styleUrls: ['./polls.page.scss'],
-  standalone: false,
+  standalone: false
 })
-export class PollsPage implements OnInit, OnDestroy {
-  polls: Poll[] = [];
-  filteredPolls: Poll[] = [];
-  searchQuery: string = '';
-  selectedCategory: string = 'all';
-  expandedPolls: Set<string> = new Set();
-  selectedOptions: { [pollId: string]: string[] } = {};
-  votedPolls: Set<string> = new Set();
-  userVotes: UserVote[] = [];
-  isLoading: boolean = false;
+export class PollsPage implements OnInit {
   
-  private subscriptions: Subscription = new Subscription();
+  // Search and filter properties
+  searchQuery: string = '';
+  selectedCategory: string = ''; // Start with no category selected
+  isCategoryDropdownOpen: boolean = false;
+  
+  // Polls data
+  polls: any[] = []; // Your poll data will be loaded here
+  filteredPolls: any[] = [];
+  
+  // User's course and faculty information (this should come from user service)
+  userCourse = 'IT301'; // User's course
+  userFaculty = 'Applied Health & Sciences'; // User's faculty
+  
+  // Expanded polls tracking
+  expandedPolls: Set<string> = new Set();
+  
+  // User selections and votes
+  userSelections: { [pollId: string]: string[] } = {};
+  userVotes: Set<string> = new Set();
 
-  categories: Category[] = [
-    { id: 'all', name: 'All', icon: 'grid' },
-    { id: 'general', name: 'General', icon: 'chatbubbles' },
-    { id: 'tech', name: 'Technology', icon: 'laptop' },
-    { id: 'sports', name: 'Sports', icon: 'football' },
-    { id: 'entertainment', name: 'Entertainment', icon: 'film' },
-    { id: 'food', name: 'Food & Drink', icon: 'restaurant' },
-    { id: 'travel', name: 'Travel', icon: 'airplane' },
-    { id: 'lifestyle', name: 'Lifestyle', icon: 'heart' },
-    { id: 'education', name: 'Education', icon: 'school' },
-    { id: 'business', name: 'Business', icon: 'briefcase' },
-    { id: 'health', name: 'Health & Fitness', icon: 'fitness' },
-    { id: 'politics', name: 'Politics', icon: 'flag' }
-  ];
-
-  constructor(
-    private router: Router,
-    private loadingController: LoadingController,
-    private toastController: ToastController,
-    private alertController: AlertController
-  ) {}
+  constructor() { }
 
   ngOnInit() {
-    this.initializePage();
+    this.loadPolls();
   }
 
-  ngOnDestroy() {
-    this.subscriptions.unsubscribe();
-  }
-
-  async initializePage() {
-    this.showLoading();
-    try {
-      await this.loadPolls();
-      await this.loadUserVotes();
-      this.applyFilters();
-    } catch (error) {
-      console.error('Error initializing polls page:', error);
-      this.showErrorToast('Failed to load polls');
-    } finally {
-      this.hideLoading();
-    }
-  }
-
-  async loadPolls() {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock data - replace with actual API service call
+  loadPolls() {
+    // This should load from your service
+    // For now, I'll show the structure your polls should have
     this.polls = [
       {
         id: '1',
-        title: 'What\'s your favorite programming language for 2025?',
-        description: 'Help us understand the community preferences for programming languages. This will help shape our upcoming development tutorials and courses.',
-        creatorName: 'John Developer',
-        creatorAvatar: 'assets/avatars/john.jpg',
+        title: 'Best Programming Language for Web Development?',
+        description: 'Vote for the programming language you think is best for web development',
+        creatorName: 'Dr. Smith',
+        creatorAvatar: '',
         createdDate: '2 hours ago',
-        category: 'tech',
-        options: [
-          { id: '1a', text: 'JavaScript', votes: 45 },
-          { id: '1b', text: 'Python', votes: 38 },
-          { id: '1c', text: 'TypeScript', votes: 29 },
-          { id: '1d', text: 'Java', votes: 22 },
-          { id: '1e', text: 'Go', votes: 15 },
-          { id: '1f', text: 'Rust', votes: 12 }
-        ],
-        totalVotes: 161,
+        totalVotes: 45,
         allowMultiple: false,
-        isActive: true,
-        endDate: '2025-08-15'
+        scope: 'course', // 'course', 'faculty', or 'university'
+        scopeValue: 'IT301', // The specific course, faculty, or 'university-wide'
+        status: 'active',
+        options: [
+          { id: 'opt1', text: 'JavaScript', votes: 20 },
+          { id: 'opt2', text: 'Python', votes: 15 },
+          { id: 'opt3', text: 'PHP', votes: 10 }
+        ]
       },
       {
         id: '2',
-        title: 'Best streaming platforms for entertainment?',
-        description: 'Which streaming services do you think offer the best content value? You can select multiple options based on your preferences.',
-        creatorName: 'Sarah Movies',
-        creatorAvatar: 'assets/avatars/sarah.jpg',
-        createdDate: '5 hours ago',
-        category: 'entertainment',
-        options: [
-          { id: '2a', text: 'Netflix', votes: 67 },
-          { id: '2b', text: 'Disney+', votes: 45 },
-          { id: '2c', text: 'Amazon Prime Video', votes: 38 },
-          { id: '2d', text: 'HBO Max', votes: 29 },
-          { id: '2e', text: 'Apple TV+', votes: 15 },
-          { id: '2f', text: 'Hulu', votes: 12 }
-        ],
-        totalVotes: 89,
+        title: 'Faculty Budget Allocation Priority?',
+        description: 'What should be the priority for faculty budget allocation?',
+        creatorName: 'Faculty Dean',
+        creatorAvatar: '',
+        createdDate: '1 day ago',
+        totalVotes: 128,
         allowMultiple: true,
-        isActive: true,
-        endDate: '2025-08-20'
+        scope: 'faculty',
+        scopeValue: 'Applied Health & Sciences',
+        status: 'active',
+        options: [
+          { id: 'opt1', text: 'New Equipment', votes: 45 },
+          { id: 'opt2', text: 'Research Funding', votes: 38 },
+          { id: 'opt3', text: 'Student Support', votes: 45 }
+        ]
       },
       {
         id: '3',
-        title: 'Favorite cuisine type for dinner?',
-        description: 'What type of cuisine do you enjoy the most for dinner? This will help local restaurants understand customer preferences.',
-        creatorName: 'Chef Mike',
-        creatorAvatar: 'assets/avatars/chef.jpg',
-        createdDate: '1 day ago',
-        category: 'food',
-        options: [
-          { id: '3a', text: 'Italian', votes: 52 },
-          { id: '3b', text: 'Asian (Chinese/Japanese/Thai)', votes: 41 },
-          { id: '3c', text: 'Mexican', votes: 35 },
-          { id: '3d', text: 'Mediterranean', votes: 28 },
-          { id: '3e', text: 'Indian', votes: 22 },
-          { id: '3f', text: 'American', votes: 18 }
-        ],
-        totalVotes: 196,
+        title: 'University Cafeteria Hours?',
+        description: 'Should the university cafeteria extend its operating hours?',
+        creatorName: 'Student Council',
+        creatorAvatar: '',
+        createdDate: '3 days ago',
+        totalVotes: 456,
         allowMultiple: false,
-        isActive: true,
-        endDate: '2025-08-10'
+        scope: 'university',
+        scopeValue: 'university-wide',
+        status: 'active',
+        options: [
+          { id: 'opt1', text: 'Yes, extend to 10 PM', votes: 280 },
+          { id: 'opt2', text: 'No, current hours are fine', votes: 176 }
+        ]
       },
       {
         id: '4',
-        title: 'Remote work preferences post-pandemic?',
-        description: 'How do you prefer to work in the current era? Your feedback will help companies make better workplace decisions.',
-        creatorName: 'HR Analytics Team',
-        createdDate: '2 days ago',
-        category: 'business',
+        title: 'Campus Wi-Fi Improvement Priority?',
+        description: 'Which areas of campus need Wi-Fi improvements most urgently?',
+        creatorName: 'IT Services',
+        creatorAvatar: '',
+        createdDate: '5 hours ago',
+        totalVotes: 234,
+        allowMultiple: true,
+        scope: 'university',
+        scopeValue: 'university-wide',
+        status: 'active',
         options: [
-          { id: '4a', text: 'Fully remote', votes: 78 },
-          { id: '4b', text: 'Hybrid (2-3 days office)', votes: 65 },
-          { id: '4c', text: 'Hybrid (1-2 days office)', votes: 34 },
-          { id: '4d', text: 'Mostly office (4+ days)', votes: 23 },
-          { id: '4e', text: 'Fully office-based', votes: 12 }
-        ],
-        totalVotes: 212,
-        allowMultiple: false,
-        isActive: true,
-        endDate: '2025-08-25'
+          { id: 'opt1', text: 'Library', votes: 89 },
+          { id: 'opt2', text: 'Student Residence', votes: 67 },
+          { id: 'opt3', text: 'Lecture Halls', votes: 78 },
+          { id: 'opt4', text: 'Outdoor Areas', votes: 45 }
+        ]
       },
       {
         id: '5',
-        title: 'Essential mobile apps for productivity?',
-        description: 'Which mobile apps help you stay most productive during work? Select all that you actively use.',
-        creatorName: 'Productivity Guru',
-        createdDate: '3 days ago',
-        category: 'tech',
+        title: 'Preferred Study Space Type?',
+        description: 'What type of study spaces would you like to see more of on campus?',
+        creatorName: 'Campus Planning Committee',
+        creatorAvatar: '',
+        createdDate: '1 day ago',
+        totalVotes: 312,
+        allowMultiple: false,
+        scope: 'university',
+        scopeValue: 'university-wide',
+        status: 'active',
         options: [
-          { id: '5a', text: 'Notion', votes: 42 },
-          { id: '5b', text: 'Todoist', votes: 38 },
-          { id: '5c', text: 'Slack', votes: 51 },
-          { id: '5d', text: 'Trello', votes: 29 },
-          { id: '5e', text: 'Google Workspace', votes: 47 },
-          { id: '5f', text: 'Microsoft 365', votes: 33 },
-          { id: '5g', text: 'Asana', votes: 21 }
-        ],
-        totalVotes: 127,
-        allowMultiple: true,
-        isActive: true,
-        endDate: '2025-08-18'
+          { id: 'opt1', text: 'Silent Study Rooms', votes: 145 },
+          { id: 'opt2', text: 'Group Study Areas', votes: 89 },
+          { id: 'opt3', text: 'Outdoor Study Spaces', votes: 78 }
+        ]
       },
       {
         id: '6',
-        title: 'Best workout time of day?',
-        description: 'When do you feel most energized for working out? This data will help fitness centers optimize their schedules.',
-        creatorName: 'Fitness Coach Lisa',
-        createdDate: '4 days ago',
-        category: 'health',
-        options: [
-          { id: '6a', text: 'Early morning (5-7 AM)', votes: 45 },
-          { id: '6b', text: 'Morning (7-10 AM)', votes: 38 },
-          { id: '6c', text: 'Lunch time (11 AM-2 PM)', votes: 22 },
-          { id: '6d', text: 'Afternoon (2-5 PM)', votes: 19 },
-          { id: '6e', text: 'Evening (5-8 PM)', votes: 67 },
-          { id: '6f', text: 'Night (8-10 PM)', votes: 31 }
-        ],
-        totalVotes: 222,
+        title: 'Campus Transportation Options?',
+        description: 'Which transportation option would benefit students most?',
+        creatorName: 'Student Affairs',
+        creatorAvatar: '',
+        createdDate: '2 days ago',
+        totalVotes: 189,
         allowMultiple: false,
-        isActive: true,
-        endDate: '2025-08-12'
+        scope: 'university',
+        scopeValue: 'university-wide',
+        status: 'active',
+        options: [
+          { id: 'opt1', text: 'More Shuttle Routes', votes: 67 },
+          { id: 'opt2', text: 'Bike Rental Program', votes: 45 },
+          { id: 'opt3', text: 'Electric Scooter Stations', votes: 77 }
+        ]
       },
       {
         id: '7',
-        title: 'Most effective learning methods?',
-        description: 'How do you learn new skills most effectively? Multiple selections allowed to understand diverse learning preferences.',
-        creatorName: 'Education Research',
-        createdDate: '1 week ago',
-        category: 'education',
-        options: [
-          { id: '7a', text: 'Video tutorials', votes: 89 },
-          { id: '7b', text: 'Reading books/articles', votes: 56 },
-          { id: '7c', text: 'Hands-on practice', votes: 92 },
-          { id: '7d', text: 'Online courses', votes: 67 },
-          { id: '7e', text: 'Mentorship/coaching', votes: 34 },
-          { id: '7f', text: 'Group study/discussion', votes: 28 }
-        ],
-        totalVotes: 156,
+        title: 'University Events Preference?',
+        description: 'What type of events would you like to see more of on campus?',
+        creatorName: 'Events Committee',
+        creatorAvatar: '',
+        createdDate: '4 days ago',
+        totalVotes: 278,
         allowMultiple: true,
-        isActive: true,
-        endDate: '2025-08-30'
+        scope: 'university',
+        scopeValue: 'university-wide',
+        status: 'active',
+        options: [
+          { id: 'opt1', text: 'Cultural Festivals', votes: 98 },
+          { id: 'opt2', text: 'Career Fairs', votes: 87 },
+          { id: 'opt3', text: 'Sports Tournaments', votes: 93 },
+          { id: 'opt4', text: 'Academic Conferences', votes: 56 }
+        ]
       },
       {
         id: '8',
-        title: 'Preferred travel destination type?',
-        description: 'What type of destinations do you prefer for vacation? This helps travel agencies plan better packages.',
-        creatorName: 'Travel Explorer',
-        createdDate: '1 week ago',
-        category: 'travel',
-        options: [
-          { id: '8a', text: 'Beach/coastal areas', votes: 78 },
-          { id: '8b', text: 'Mountain/nature spots', votes: 65 },
-          { id: '8c', text: 'Historic cities', votes: 43 },
-          { id: '8d', text: 'Modern metropolitan areas', votes: 39 },
-          { id: '8e', text: 'Adventure/extreme locations', votes: 25 },
-          { id: '8f', text: 'Cultural/spiritual places', votes: 31 }
-        ],
-        totalVotes: 281,
+        title: 'Sustainability Initiative Priority?',
+        description: 'Which sustainability initiative should the university prioritize?',
+        creatorName: 'Green Campus Committee',
+        creatorAvatar: '',
+        createdDate: '6 hours ago',
+        totalVotes: 156,
         allowMultiple: false,
-        isActive: true,
-        endDate: '2025-09-01'
+        scope: 'university',
+        scopeValue: 'university-wide',
+        status: 'active',
+        options: [
+          { id: 'opt1', text: 'Solar Panel Installation', votes: 67 },
+          { id: 'opt2', text: 'Waste Reduction Program', votes: 45 },
+          { id: 'opt3', text: 'Campus Recycling Centers', votes: 44 }
+        ]
+      },
+      {
+        id: '9',
+        title: 'Student Health Services Improvement?',
+        description: 'What improvement would most benefit student health services?',
+        creatorName: 'Health Center',
+        creatorAvatar: '',
+        createdDate: '1 day ago',
+        totalVotes: 201,
+        allowMultiple: false,
+        scope: 'university',
+        scopeValue: 'university-wide',
+        status: 'active',
+        options: [
+          { id: 'opt1', text: 'Extended Operating Hours', votes: 89 },
+          { id: 'opt2', text: 'Mental Health Counseling', votes: 78 },
+          { id: 'opt3', text: 'Preventive Care Programs', votes: 34 }
+        ]
+      },
+      {
+        id: '10',
+        title: 'Campus Security Enhancement?',
+        description: 'Which security enhancement would make you feel safer on campus?',
+        creatorName: 'Campus Security',
+        creatorAvatar: '',
+        createdDate: '3 days ago',
+        totalVotes: 167,
+        allowMultiple: true,
+        scope: 'university',
+        scopeValue: 'university-wide',
+        status: 'active',
+        options: [
+          { id: 'opt1', text: 'Better Lighting', votes: 78 },
+          { id: 'opt2', text: 'Emergency Call Boxes', votes: 56 },
+          { id: 'opt3', text: 'More Security Patrols', votes: 67 },
+          { id: 'opt4', text: 'CCTV Cameras', votes: 45 }
+        ]
       }
     ];
+    
+    this.filterPolls();
   }
 
-  async loadUserVotes() {
-    // Load user's previous votes from local storage or API
-    const savedVotes = localStorage.getItem('pollVotes');
-    if (savedVotes) {
-      this.userVotes = JSON.parse(savedVotes);
-      this.userVotes.forEach(vote => {
-        this.votedPolls.add(vote.pollId);
-      });
+  // Category selection methods
+  selectCategory(category: string) {
+    this.selectedCategory = category;
+    this.isCategoryDropdownOpen = false;
+    this.filterPolls();
+  }
+
+  toggleCategoryDropdown() {
+    this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
+  }
+
+  closeCategoryDropdown() {
+    this.isCategoryDropdownOpen = false;
+  }
+
+  // Get category display information
+  getSelectedCategoryName(): string {
+    switch (this.selectedCategory) {
+      case 'course':
+        return `IT Development (${this.userCourse})`;
+      case 'faculty':
+        return this.userFaculty;
+      case 'university':
+        return 'University-wide Polls';
+      default:
+        return 'Select Category';
     }
   }
 
-  saveUserVotes() {
-    localStorage.setItem('pollVotes', JSON.stringify(this.userVotes));
+  getCategoryIcon(category: string): string {
+    switch (category) {
+      case 'course':
+        return 'code-slash';
+      case 'faculty':
+        return 'medical';
+      case 'university':
+        return 'school';
+      default:
+        return 'funnel';
+    }
   }
 
-  // Search and Filter Methods
-  onSearchInput(event: any) {
-    this.searchQuery = event.target.value.toLowerCase().trim();
-    this.applyFilters();
-  }
-
-  selectCategory(categoryId: string) {
-    this.selectedCategory = categoryId;
-    this.applyFilters();
-  }
-
-  applyFilters() {
+  // Filter polls based on selected category and search
+  filterPolls() {
     let filtered = [...this.polls];
 
-    // Apply category filter
-    if (this.selectedCategory !== 'all') {
-      filtered = filtered.filter(poll => poll.category === this.selectedCategory);
+    // Filter by category
+    if (this.selectedCategory) {
+      filtered = filtered.filter(poll => {
+        switch (this.selectedCategory) {
+          case 'course':
+            return poll.scope === 'course' && poll.scopeValue === this.userCourse;
+          case 'faculty':
+            return poll.scope === 'faculty' && poll.scopeValue === this.userFaculty;
+          case 'university':
+            return poll.scope === 'university';
+          default:
+            return false;
+        }
+      });
     }
 
-    // Apply search filter
-    if (this.searchQuery) {
+    // Filter by search query
+    if (this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase().trim();
       filtered = filtered.filter(poll => 
-        poll.title.toLowerCase().includes(this.searchQuery) ||
-        poll.description?.toLowerCase().includes(this.searchQuery) ||
-        poll.creatorName.toLowerCase().includes(this.searchQuery) ||
-        poll.options.some(option => option.text.toLowerCase().includes(this.searchQuery)) ||
-        this.getCategoryName(poll.category).toLowerCase().includes(this.searchQuery)
+        poll.title.toLowerCase().includes(query) ||
+        poll.description.toLowerCase().includes(query) ||
+        poll.creatorName.toLowerCase().includes(query)
       );
     }
-
-    // Sort by creation date (newest first)
-    filtered.sort((a, b) => {
-      const dateA = this.parseRelativeDate(a.createdDate);
-      const dateB = this.parseRelativeDate(b.createdDate);
-      return dateB.getTime() - dateA.getTime();
-    });
 
     this.filteredPolls = filtered;
   }
 
+  onSearchInput(event: any) {
+    this.searchQuery = event.target.value;
+    this.filterPolls();
+  }
+
   clearFilters() {
     this.searchQuery = '';
-    this.selectedCategory = 'all';
-    this.applyFilters();
+    this.selectedCategory = '';
+    this.filterPolls();
   }
 
-  // Category Helper Methods
-  getCategoryName(categoryId: string): string {
-    const category = this.categories.find(cat => cat.id === categoryId);
-    return category ? category.name : 'Unknown';
-  }
-
-  getCategoryIcon(categoryId: string): string {
-    const category = this.categories.find(cat => cat.id === categoryId);
-    return category ? category.icon : 'help-circle';
-  }
-
-  // Poll Expansion Methods
+  // Poll expansion methods
   isExpanded(pollId: string): boolean {
     return this.expandedPolls.has(pollId);
   }
 
   expandPoll(pollId: string) {
     this.expandedPolls.add(pollId);
-    // Track poll view analytics
-    this.trackPollView(pollId);
   }
 
   collapsePoll(pollId: string) {
     this.expandedPolls.delete(pollId);
   }
 
-  // Poll Status Methods
-  getStatusClass(poll: Poll): string {
-    if (!poll.isActive) return 'inactive';
-    return this.hasUserVoted(poll.id) ? 'voted' : 'not-voted';
-  }
-
-  getStatusText(poll: Poll): string {
-    if (!poll.isActive) return 'Ended';
-    return this.hasUserVoted(poll.id) ? 'Voted' : 'Not Voted';
-  }
-
-  // Voting Methods
-  hasUserVoted(pollId: string): boolean {
-    return this.votedPolls.has(pollId);
-  }
-
-  isOptionSelected(pollId: string, optionId: string): boolean {
-    return this.selectedOptions[pollId]?.includes(optionId) || false;
-  }
-
-  hasSelectedOptions(pollId: string): boolean {
-    return this.selectedOptions[pollId]?.length > 0 || false;
-  }
-
+  // Poll interaction methods
   selectOption(pollId: string, optionId: string, allowMultiple: boolean) {
     if (this.hasUserVoted(pollId)) return;
 
-    if (!this.selectedOptions[pollId]) {
-      this.selectedOptions[pollId] = [];
+    if (!this.userSelections[pollId]) {
+      this.userSelections[pollId] = [];
     }
-
-    const selectedOptions = this.selectedOptions[pollId];
-    const isSelected = selectedOptions.includes(optionId);
 
     if (allowMultiple) {
-      if (isSelected) {
-        this.selectedOptions[pollId] = selectedOptions.filter(id => id !== optionId);
+      const index = this.userSelections[pollId].indexOf(optionId);
+      if (index > -1) {
+        this.userSelections[pollId].splice(index, 1);
       } else {
-        selectedOptions.push(optionId);
+        this.userSelections[pollId].push(optionId);
       }
     } else {
-      this.selectedOptions[pollId] = isSelected ? [] : [optionId];
+      this.userSelections[pollId] = [optionId];
     }
   }
 
-  async submitVote(poll: Poll) {
-    if (!this.hasSelectedOptions(poll.id) || this.hasUserVoted(poll.id)) {
-      return;
-    }
+  isOptionSelected(pollId: string, optionId: string): boolean {
+    return this.userSelections[pollId]?.includes(optionId) || false;
+  }
 
-    const selectedOptionIds = this.selectedOptions[poll.id];
+  hasSelectedOptions(pollId: string): boolean {
+    return this.userSelections[pollId]?.length > 0 || false;
+  }
+
+  hasUserVoted(pollId: string): boolean {
+    return this.userVotes.has(pollId);
+  }
+
+  submitVote(poll: any) {
+    if (!this.hasSelectedOptions(poll.id)) return;
+
+    // Here you would typically make an API call to submit the vote
+    console.log('Submitting vote for poll:', poll.id, 'options:', this.userSelections[poll.id]);
     
-    // Show confirmation dialog for important polls
-    if (poll.totalVotes > 100) {
-      const shouldSubmit = await this.showVoteConfirmation(poll, selectedOptionIds);
-      if (!shouldSubmit) return;
-    }
+    // Mark as voted
+    this.userVotes.add(poll.id);
+    
+    // Update vote counts (this should come from the server response)
+    this.updateVoteCounts(poll);
+  }
 
-    this.showLoading('Submitting vote...');
+  private updateVoteCounts(poll: any) {
+    // This is a simplified version - in real app, this data comes from server
+    const selectedOptions = this.userSelections[poll.id];
+    selectedOptions.forEach(optionId => {
+      const option = poll.options.find((opt: any) => opt.id === optionId);
+      if (option) {
+        option.votes++;
+      }
+    });
+    poll.totalVotes++;
+  }
 
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Mark as voted
-      this.votedPolls.add(poll.id);
-
-      // Save user vote
-      const userVote: UserVote = {
-        pollId: poll.id,
-        selectedOptions: [...selectedOptionIds],
-        votedAt: new Date()
-      };
-      this.userVotes.push(userVote);
-      this.saveUserVotes();
-
-      // Update vote counts locally (in real app, get fresh data from server)
-      selectedOptionIds.forEach(optionId => {
-        const option = poll.options.find(opt => opt.id === optionId);
-        if (option) {
-          option.votes++;
-          poll.totalVotes++;
-        }
-      });
-
-      // Clear selections
-      delete this.selectedOptions[poll.id];
-
-      this.showSuccessToast('Vote submitted successfully!');
-      this.trackVoteSubmission(poll.id, selectedOptionIds);
-
-    } catch (error) {
-      console.error('Error submitting vote:', error);
-      this.showErrorToast('Failed to submit vote. Please try again.');
-    } finally {
-      this.hideLoading();
+  // Poll display helper methods
+  getPollScopeIcon(poll: any): string {
+    switch (poll.scope) {
+      case 'course':
+        return 'code-slash';
+      case 'faculty':
+        return 'medical';
+      case 'university':
+        return 'school';
+      default:
+        return 'help-circle';
     }
   }
 
-  getVotePercentage(poll: Poll, optionId: string): number {
+  getPollScopeInfo(poll: any): string {
+    switch (poll.scope) {
+      case 'course':
+        return `Course: ${poll.scopeValue}`;
+      case 'faculty':
+        return `Faculty: ${poll.scopeValue}`;
+      case 'university':
+        return 'University-wide';
+      default:
+        return 'Unknown scope';
+    }
+  }
+
+  getStatusClass(poll: any): string {
+    return `status-${poll.status}`;
+  }
+
+  getStatusText(poll: any): string {
+    switch (poll.status) {
+      case 'active':
+        return 'Active';
+      case 'closed':
+        return 'Closed';
+      case 'draft':
+        return 'Draft';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  getVotePercentage(poll: any, optionId: string): number {
     if (poll.totalVotes === 0) return 0;
-    const option = poll.options.find(opt => opt.id === optionId);
+    const option = poll.options.find((opt: any) => opt.id === optionId);
     return option ? Math.round((option.votes / poll.totalVotes) * 100) : 0;
   }
 
-  async viewDetailedResults(poll: Poll) {
-    // Navigate to detailed results page or show detailed modal
-    console.log('Viewing detailed results for poll:', poll.id);
-    // this.router.navigate(['/poll-results', poll.id]);
-    await this.showDetailedResults(poll);
-  }
-
-  // UI Helper Methods
-  async showLoading(message: string = 'Loading...') {
-    this.isLoading = true;
-    const loading = await this.loadingController.create({
-      message,
-      spinner: 'crescent',
-      translucent: true
-    });
-    await loading.present();
-  }
-
-  async hideLoading() {
-    this.isLoading = false;
-    await this.loadingController.dismiss();
-  }
-
-  async showSuccessToast(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'top',
-      color: 'success',
-      icon: 'checkmark-circle'
-    });
-    await toast.present();
-  }
-
-  async showErrorToast(message: string) {
-    const toast = await this.toastController.create({
-      message,
-      duration: 4000,
-      position: 'top',
-      color: 'danger',
-      icon: 'alert-circle'
-    });
-    await toast.present();
-  }
-
-  async showVoteConfirmation(poll: Poll, selectedOptions: string[]): Promise<boolean> {
-    const optionTexts = selectedOptions.map(id => 
-      poll.options.find(opt => opt.id === id)?.text
-    ).join(', ');
-
-    const alert = await this.alertController.create({
-      header: 'Confirm Vote',
-      message: `Are you sure you want to vote for: ${optionTexts}?`,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Submit Vote',
-          role: 'confirm'
-        }
-      ]
-    });
-
-    await alert.present();
-    const result = await alert.onDidDismiss();
-    return result.role === 'confirm';
-  }
-
-  async showDetailedResults(poll: Poll) {
-    const totalVotes = poll.totalVotes;
-    const resultsHTML = poll.options
-      .map(option => {
-        const percentage = this.getVotePercentage(poll, option.id);
-        return `
-          <div style="margin-bottom: 10px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-              <span>${option.text}</span>
-              <span>${option.votes} votes (${percentage}%)</span>
-            </div>
-            <div style="background: rgba(128, 216, 255, 0.2); border-radius: 4px; height: 8px;">
-              <div style="background: #80d8ff; height: 100%; width: ${percentage}%; border-radius: 4px;"></div>
-            </div>
-          </div>
-        `;
-      })
-      .join('');
-
-    const alert = await this.alertController.create({
-      header: poll.title,
-      message: `
-        <div style="margin-bottom: 15px;">
-          <strong>Total Votes: ${totalVotes}</strong>
-        </div>
-        ${resultsHTML}
-      `,
-      buttons: ['Close']
-    });
-
-    await alert.present();
-  }
-
-  // Utility Methods
-  trackByPollId(index: number, poll: Poll): string {
+  trackByPollId(index: number, poll: any): string {
     return poll.id;
-  }
-
-  private parseRelativeDate(dateString: string): Date {
-    const now = new Date();
-    if (dateString.includes('hour')) {
-      const hours = parseInt(dateString);
-      return new Date(now.getTime() - (hours * 60 * 60 * 1000));
-    } else if (dateString.includes('day')) {
-      const days = parseInt(dateString);
-      return new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
-    } else if (dateString.includes('week')) {
-      const weeks = parseInt(dateString);
-      return new Date(now.getTime() - (weeks * 7 * 24 * 60 * 60 * 1000));
-    }
-    return now;
-  }
-
-  private trackPollView(pollId: string) {
-    // Analytics tracking
-    console.log('Poll viewed:', pollId);
-  }
-
-  private trackVoteSubmission(pollId: string, selectedOptions: string[]) {
-    // Analytics tracking
-    console.log('Vote submitted:', pollId, selectedOptions);
-  }
-
-  // Refresh functionality
-  async doRefresh(event: any) {
-    try {
-      await this.loadPolls();
-      this.applyFilters();
-      this.showSuccessToast('Polls refreshed successfully!');
-    } catch (error) {
-      this.showErrorToast('Failed to refresh polls');
-    } finally {
-      event.target.complete();
-    }
   }
 }

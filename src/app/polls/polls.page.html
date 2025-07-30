@@ -3,11 +3,11 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title>Active Polls</ion-title>
+    <ion-title>Academic Polls</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="polls-bg">
+<ion-content [fullscreen]="true" class="polls-bg" (click)="closeCategoryDropdown()">
   <div class="polls-container">
     <!-- Search and Filter Section -->
     <div class="search-filter-section">
@@ -24,32 +24,91 @@
         </ion-searchbar>
       </div>
 
-      <!-- Category Filter -->
+      <!-- Category Dropdown Filter -->
       <div class="category-filter glass-card">
         <div class="category-header">
           <ion-icon name="filter"></ion-icon>
-          <span>Categories</span>
+          <span>Academic Level</span>
         </div>
-        <div class="category-chips">
-          <ion-chip 
-            *ngFor="let category of categories"
-            [class.selected]="selectedCategory === category.id"
-            (click)="selectCategory(category.id)"
-            class="category-chip">
-            <ion-icon [name]="category.icon" slot="start"></ion-icon>
-            <ion-label>{{category.name}}</ion-label>
-          </ion-chip>
+        
+        <!-- Dropdown Button -->
+        <div class="dropdown-container">
+          <button 
+            class="dropdown-button"
+            (click)="toggleCategoryDropdown(); $event.stopPropagation()">
+            <div class="dropdown-selected">
+              <ion-icon [name]="getCategoryIcon(selectedCategory)"></ion-icon>
+              <span>{{getSelectedCategoryName()}}</span>
+            </div>
+            <ion-icon 
+              name="chevron-down" 
+              class="dropdown-arrow"
+              [class.rotated]="isCategoryDropdownOpen">
+            </ion-icon>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div class="dropdown-menu" [class.open]="isCategoryDropdownOpen" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
+            
+            <!-- Course Level -->
+            <div class="dropdown-group">
+              <div class="dropdown-group-header" style="background: rgba(0, 123, 255, 0.1); color: #007bff; padding: 12px 16px; font-weight: 600;">
+                <ion-icon name="book"></ion-icon>
+                <span>Course</span>
+              </div>
+              <div 
+                class="dropdown-item course-item"
+                [class.selected]="selectedCategory === 'course'"
+                (click)="selectCategory('course'); $event.stopPropagation()"
+                style="padding: 12px 24px; color: #333; background: rgba(0, 0, 0, 0.02); cursor: pointer;">
+                <ion-icon name="code-slash"></ion-icon>
+                <span>IT Development (IT301)</span>
+              </div>
+            </div>
+
+            <!-- Faculty Level -->
+            <div class="dropdown-group">
+              <div class="dropdown-group-header" style="background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 12px 16px; font-weight: 600;">
+                <ion-icon name="people"></ion-icon>
+                <span>Faculty</span>
+              </div>
+              <div 
+                class="dropdown-item faculty-item"
+                [class.selected]="selectedCategory === 'faculty'"
+                (click)="selectCategory('faculty'); $event.stopPropagation()"
+                style="padding: 12px 24px; color: #333; background: rgba(0, 0, 0, 0.02); cursor: pointer;">
+                <ion-icon name="medical"></ion-icon>
+                <span>Applied Health & Sciences</span>
+              </div>
+            </div>
+
+            <!-- University Level -->
+            <div class="dropdown-group">
+              <div class="dropdown-group-header" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; padding: 12px 16px; font-weight: 600;">
+                <ion-icon name="school"></ion-icon>
+                <span>University</span>
+              </div>
+              <div 
+                class="dropdown-item university-item"
+                [class.selected]="selectedCategory === 'university'"
+                (click)="selectCategory('university'); $event.stopPropagation()"
+                style="padding: 12px 24px; color: #333; background: rgba(0, 0, 0, 0.02); cursor: pointer;">
+                <ion-icon name="school"></ion-icon>
+                <span>University-wide Polls</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Results Count -->
-    <div class="results-info" *ngIf="filteredPolls.length > 0">
+    <div class="results-info" *ngIf="filteredPolls.length > 0 && selectedCategory">
       <span>{{filteredPolls.length}} poll{{filteredPolls.length !== 1 ? 's' : ''}} found</span>
     </div>
 
     <!-- Poll Cards -->
-    <div class="poll-list">
+    <div class="poll-list" *ngIf="selectedCategory">
       <div class="glass-card poll-card" *ngFor="let poll of filteredPolls; trackBy: trackByPollId">
         <!-- Poll Preview (Collapsed State) -->
         <div class="poll-preview" *ngIf="!isExpanded(poll.id)">
@@ -61,9 +120,9 @@
             <div class="poll-meta">
               <h3 class="poll-creator">{{poll.creatorName}}</h3>
               <p class="poll-time">{{poll.createdDate}}</p>
-              <div class="poll-category">
-                <ion-icon [name]="getCategoryIcon(poll.category)"></ion-icon>
-                <span>{{getCategoryName(poll.category)}}</span>
+              <div class="poll-academic-info">
+                <ion-icon [name]="getPollScopeIcon(poll)"></ion-icon>
+                <span>{{getPollScopeInfo(poll)}}</span>
               </div>
             </div>
             <div class="poll-status">
@@ -128,9 +187,9 @@
             <div class="poll-meta">
               <h3 class="poll-creator">{{poll.creatorName}}</h3>
               <p class="poll-time">{{poll.createdDate}}</p>
-              <div class="poll-category">
-                <ion-icon [name]="getCategoryIcon(poll.category)"></ion-icon>
-                <span>{{getCategoryName(poll.category)}}</span>
+              <div class="poll-academic-info">
+                <ion-icon [name]="getPollScopeIcon(poll)"></ion-icon>
+                <span>{{getPollScopeInfo(poll)}}</span>
               </div>
             </div>
           </div>
@@ -186,21 +245,13 @@
 
                 <div class="option-content">
                   <span class="option-text">{{option.text}}</span>
-                  <span class="vote-count" *ngIf="hasUserVoted(poll.id)">{{option.votes}} votes</span>
+                  <!-- Removed vote count display - users cannot see results -->
                 </div>
               </div>
 
-              <!-- Progress Bar (shown after voting) -->
-              <div class="vote-progress" *ngIf="hasUserVoted(poll.id)">
-                <div 
-                  class="progress-bar"
-                  [class.selected-bar]="isOptionSelected(poll.id, option.id)"
-                  [style.width.%]="getVotePercentage(poll, option.id)">
-                </div>
-                <span class="percentage-text">{{getVotePercentage(poll, option.id)}}%</span>
-              </div>
-
-              <!-- Preview Progress Bar (shown while selecting) -->
+              <!-- Removed progress bars - users cannot see results -->
+              
+              <!-- Preview Selection Indicator (shown while selecting) -->
               <div class="vote-progress" *ngIf="!hasUserVoted(poll.id) && isOptionSelected(poll.id, option.id)">
                 <div class="progress-bar preview-bar" style="width: 100%"></div>
                 <span class="preview-text">Selected</span>
@@ -220,15 +271,13 @@
             </ion-button>
           </div>
 
-          <!-- Results Button -->
-          <div class="action-button-container" *ngIf="hasUserVoted(poll.id)">
-            <ion-button 
-              class="results-btn neon-button-outline"
-              expand="block"
-              (click)="viewDetailedResults(poll)">
-              <ion-icon name="bar-chart" slot="start"></ion-icon>
-              View Detailed Results
-            </ion-button>
+          <!-- Thank You Message (After Voting) -->
+          <div class="thank-you-container" *ngIf="hasUserVoted(poll.id)">
+            <div class="thank-you-message">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <h3>Thank you for voting!</h3>
+              <p>Your vote has been submitted successfully.</p>
+            </div>
           </div>
 
           <!-- Poll Stats -->
@@ -246,12 +295,21 @@
       </div>
     </div>
 
+    <!-- Category Selection Required -->
+    <div class="glass-card empty-state" *ngIf="!selectedCategory">
+      <div class="empty-content">
+        <ion-icon name="funnel-outline"></ion-icon>
+        <h2>Select a Category</h2>
+        <p>Please choose a category from the dropdown above to view polls</p>
+      </div>
+    </div>
+
     <!-- Empty State -->
-    <div class="glass-card empty-state" *ngIf="filteredPolls.length === 0 && polls.length > 0">
+    <div class="glass-card empty-state" *ngIf="selectedCategory && filteredPolls.length === 0 && polls.length > 0">
       <div class="empty-content">
         <ion-icon name="search-outline"></ion-icon>
         <h2>No polls found</h2>
-        <p>Try adjusting your search or category filter</p>
+        <p>No polls available for the selected category</p>
         <ion-button 
           class="clear-filters-btn neon-button-outline"
           (click)="clearFilters()">
@@ -261,7 +319,7 @@
     </div>
 
     <!-- No Polls State -->
-    <div class="glass-card empty-state" *ngIf="polls.length === 0">
+    <div class="glass-card empty-state" *ngIf="selectedCategory && polls.length === 0">
       <div class="empty-content">
         <ion-icon name="clipboard-outline"></ion-icon>
         <h2>No Active Polls</h2>
